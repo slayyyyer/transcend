@@ -1,12 +1,12 @@
 # transcend — English↔French neural machine translation, trained from scratch
 
 A reproducible EN↔FR translation project whose tokenizer and translation model are
-both trained from scratch on this machine, plus an offline Java 17 inference
+both trained from scratch, plus an offline Java 17 inference
 library that runs the exported ONNX package without Python or network access.
 
 **Status: pipeline complete, pilot reached the 82M-token cap at 15,897 updates,
 quality measured — still not a usable translator.** Every stage below actually
-ran on the target machine (Windows 11, RTX 3050 Ti Laptop 4 GB). The step-14,500
+ran end to end. The step-14,500
 checkpoint improves on step 9,500 on newstest2014 in both directions: BLEU
 11.03/11.28 and chrF++ 38.67/38.86, with paired chrF++ gains of +3.10 EN→FR and
 +2.92 FR→EN (95% CIs exclude zero). A dev-tuned beam-4 decoder (length penalty
@@ -46,6 +46,7 @@ nmt/                 Python training, evaluation and export package
   parity.py          Python ↔ ONNX Runtime numeric and generation parity
   evaluate.py        SacreBLEU + chrF++ end to end + paired bootstrap
   review_packet.py   blind bilingual review packet generator
+  review_api.py      machine-assisted greedy/beam vs translation API comparison
 java/                Maven module: ONNX Runtime Java inference library + CLI
 configs/             architecture/recipe presets (smoke, cpu_small,
                      existing_accelerator, compact)
@@ -58,11 +59,11 @@ docs/                decisions, data card, model card
 
 ## Quick start
 
-Use a real Python 3.10+ interpreter; on this machine the Store alias is broken, so
-every command below uses `$PY` explicitly:
+Use a Python 3.10+ interpreter. The commands below invoke it as `$PY`; set that
+variable first:
 
 ```bash
-PY="/c/Users/justin/AppData/Local/Python/pythoncore-3.14-64/python.exe"
+PY=python  # replace with the full path to your Python 3.10+ interpreter if needed
 ```
 
 ```bash
@@ -117,24 +118,30 @@ $PY -m nmt.cli review-packet --report reports/newstest2014.82m.en-fr.full.json \
   --out reports/review_packet_82m_enfr --per-direction 100
 $PY -m nmt.cli review-packet --report reports/newstest2014.82m.fr-en.full.json \
   --out reports/review_packet_82m_fren --per-direction 100
+
+# 9. Optional machine-assisted spot check against a free, no-key API.
+#    This is not human review and does not replace the blind packets.
+$PY -m nmt.cli review-api --provider google-gtx \
+  --greedy-report reports/newstest2014.82m.en-fr.full.json \
+  --beam-report reports/beam_tuned_step14500.en-fr.full.json \
+  --out reports/review_api_google_82m_enfr --per-direction 25
+$PY -m nmt.cli review-api --provider google-gtx \
+  --greedy-report reports/newstest2014.82m.fr-en.full.json \
+  --beam-report reports/beam_tuned_step14500.fr-en.full.json \
+  --out reports/review_api_google_82m_fren --per-direction 25
 ```
 
-Java (JDK 17+ and Maven; this repo's `.tools/` holds the session's JDK 21). If
-`java` and `mvn` are not on `PATH`, use the bundled toolchain:
+Java (JDK 17+ and Maven; configure your installation if they are not on `PATH`):
 
 ```bash
-export JAVA_HOME="$PWD/.tools/jdk-21.0.13+9"
-JAVA="$JAVA_HOME/bin/java.exe"
-MVN="$PWD/.tools/apache-maven-3.9.11/bin/mvn"
 cd java
-"$MVN" -B package -Dtranscend.model.dir=../models/accel_export  # unit + parity tests
-"$JAVA" -cp "target/classes;target/lib/*" org.transcend.nmt.Main translate \
+mvn -B package -Dtranscend.model.dir=../models/accel_export  # unit + parity tests
+CP="target/classes:target/lib/*"  # use the classpath separator for your platform
+java -cp "$CP" org.transcend.nmt.Main translate \
   --model ../models/accel_export --from en --to fr "The train leaves at eight in the morning."
-"$JAVA" -cp "target/classes;target/lib/*" org.transcend.nmt.Main bench \
+java -cp "$CP" org.transcend.nmt.Main bench \
   --model ../models/accel_export --from en --to fr --count 20 --out ../reports/java_benchmark.json
 ```
-
-On Linux/macOS use `:` instead of `;` in the classpath and a system JDK/Maven.
 
 The exported package (`manifest.json`, `model_config.json`, `generation.json`,
 `tokenizer/tokenizer.json`, `tokenizer/merges.txt`, three ONNX graphs,
@@ -148,7 +155,7 @@ ONNX parity and the Java suite were rerun against it.
 
 ## Architecture and training recipe
 
-| Item | `existing_accelerator` (trained here) | `cpu_small` (pilot only) |
+| Item | `existing_accelerator` (main run) | `cpu_small` (pilot only) |
 | --- | --- | --- |
 | Layers (enc+dec) | 4 + 4 | 2 + 2 |
 | `d_model` / heads / FFN | 256 / 4 / 1024 | 128 / 4 / 512 |
@@ -177,8 +184,8 @@ The actual pilot ran to the 82M-token cap: 2,000 updates in 643.5 s, a
 continuation in 1,318.2 s, for 15,897 updates / 82,000,043 non-padding target
 tokens / 3,761.9 s (62.7 minutes) of accelerator time. The best development
 checkpoint is step 14,500 (47.18 mean chrF++); the final resumable checkpoint is
-step 15,897. Throughput in the final run was 24,529 target tokens/s on the RTX
-3050 Ti with BF16 autocast. The run stopped on the token cap before 20,000
+step 15,897. Throughput in the final run was 24,529 target tokens/s with BF16
+autocast. The run stopped on the token cap before 20,000
 updates because realized groups average about 5,158 target tokens rather than
 exactly 4,096; batching was not changed mid-run.
 
@@ -225,6 +232,33 @@ same 200 rows, 19 became acceptable and 9 stopped being acceptable versus the
 archived step-9,500 review. The shift is not uniform: the fresh review also
 assigns more CRITICAL labels (50 vs 25), so this is not a general quality claim.
 
+### API-assisted spot check (not human review)
+
+A separate deterministic 25-row-per-direction sample was translated with
+Google's no-key `gtx` endpoint through `nmt.cli review-api`. This is a
+machine-assisted spot check, not a human evaluation, not a full-set benchmark,
+and not a quality estimate for the pilot: the API is a production system and a
+much stronger MT baseline, so its scores say more about the sample than about
+this model.
+
+| System (25 rows/direction) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
+| --- | --- | --- | --- | --- |
+| Greedy | 3.996 | 29.785 | 15.867 | 42.223 |
+| Tuned beam 4 | 4.662 | 30.414 | 19.532 | 44.947 |
+| Google `gtx` | 31.149 | 56.128 | 49.329 | 68.008 |
+
+The API beat greedy and tuned beam on sentence chrF++ in all 50 sampled rows
+(25/25 in each direction). That is expected for a production translator; it is
+not a human judgment. The sample is diagnostic-stratified, and BLEU on 25
+segments is unstable. Per-row TSV, summary JSON and Markdown are in
+`reports/review_api_google_82m_enfr/` and `reports/review_api_google_82m_fren/`.
+
+MyMemory was probed first, but it returned exact newstest references on the
+small sample (BLEU 100), so it is not an independent baseline. It remains
+available via `--provider mymemory` for retrieval-style comparison, with a
+report caveat; it is translation-memory-backed. Google `gtx` is an undocumented
+no-key endpoint with no SLA, suitable for spot checks only.
+
 The development metric (in-domain block holdout, 300 rows per direction) rose
 from 27.09 mean chrF++ at step 2,000 to **47.18** at step 14,500; the last
 validation, at step 15,500, was 46.82, and the final step-15,897 checkpoint was
@@ -265,13 +299,17 @@ constraints recorded in the model card.
   human evaluation. Default decoding remains greedy; see
   `reports/beam_tuned_step14500.md` and the earlier sample in
   `reports/beam_vs_greedy_step14500.md`.
+- API-assisted review is a 25-row-per-direction spot check with an unofficial
+  no-key Google endpoint. It is not a full benchmark, COMET, or human review.
 
 ## Verification actually run
 
-- `pytest -q`: **27 passed** on CPU, covering tokenizer parity, masking, causal
+- `pytest -q`: **33 passed** on CPU, covering tokenizer parity, masking, causal
   decoder behavior, padding, memorization, resume determinism, ONNX export,
   Python↔ONNX Runtime parity, beam-search validity/exploration, batched/single
-  beam parity, and minimum-length EOS blocking.
+  beam parity, and minimum-length EOS blocking. Review-harness tests cover
+  UTF-8 chunking, provider response parsing, provider-scoped caches, dry-run
+  output, and report alignment.
 - `mvn -B package -Dtranscend.model.dir=../models/accel_export`: **10 tests, 0
   failures**, including the Java↔Python greedy parity tests.
 - Python↔ONNX parity on three cases: worst max-absolute logit difference
@@ -286,6 +324,10 @@ constraints recorded in the model card.
   (2,959/2,922 retained): BLEU +2.39/+1.87 and chrF++ +2.15/+2.03 versus greedy;
   1,017/984 sentence-level chrF++ regressions; see
   `reports/beam_tuned_step14500.md`.
+- Real API-assisted spot check: 25 rows per direction with Google `gtx`
+  (40 new requests plus 10 cached responses; 50/50 usable), with per-row TSV,
+  summary JSON and Markdown under `reports/review_api_google_82m_enfr/` and
+  `reports/review_api_google_82m_fren/`. This is not a human evaluation.
 - Historical beam-4 vs greedy sample on the first 500 raw rows per direction (495
   retained each): BLEU +2.79/+2.44 and chrF++ +1.54/+2.09, but 932/990 outputs
   changed and 575 got shorter; see `reports/beam_vs_greedy_step14500.md`.
@@ -306,11 +348,12 @@ constraints recorded in the model card.
   phrases.
 - Dev chrF++ (47.18 at step 14,500) is in-domain and higher than the external
   result; it is used for checkpoint selection, not as a quality claim.
-- No qualified human review, COMET, or external pretrained MT comparator has
-  been run. The AI-assisted review of the step-14,500 packet found only 43/200
-  acceptable (21.5%) and 50 CRITICAL rows. It supports, but does not replace,
-  human evaluation. Round-trip translation is not treated as evidence of
-  correctness.
+- No qualified human review or COMET has been run. A 50-row no-key Google
+  `gtx` spot check was run; it is not a full-set comparator and its output is
+  not a human judgment. The AI-assisted review of the step-14,500 packet found
+  only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It supports, but does not
+  replace, human evaluation. Round-trip translation is not treated as evidence
+  of correctness.
 - Splits are opaque 200-pair blocks, not verified document boundaries; leakage is
   checked per side but the limitation is documented in `docs/DATA_CARD.md`.
 - Changing the tokenizer or architecture requires a fresh run. The 82M-token

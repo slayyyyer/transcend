@@ -100,6 +100,26 @@ Sentence-level chrF++ still regresses on 1,017 EN→FR and 984 FR→EN sentences
 and 1,519/1,365 outputs are shorter. These are automatic metrics, not a human
 evaluation; default decoding remains greedy.
 
+### API-assisted spot check
+
+A separate deterministic 25-row-per-direction sample was translated through the
+no-key Google `gtx` endpoint and compared with greedy and tuned beam by
+`nmt.cli review-api`. This is machine-assisted review, not a human evaluation,
+and it is not a full-set comparator.
+
+| System (25 rows/direction) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
+| --- | --- | --- | --- | --- |
+| Greedy | 3.996 | 29.785 | 15.867 | 42.223 |
+| Tuned beam 4 | 4.662 | 30.414 | 19.532 | 44.947 |
+| Google `gtx` | 31.149 | 56.128 | 49.329 | 68.008 |
+
+The API won all 50 sentence chrF++ comparisons against both models. That is an
+expected result for a production translator and is not evidence that the pilot
+is usable. BLEU on 25 segments is unstable. The Google `gtx` endpoint is
+undocumented, has no SLA, and is suitable only for spot checks. MyMemory was
+probed first but returned exact newstest references on the sample (BLEU 100);
+it is translation-memory-backed and is not used as an independent baseline.
+
 Paired document bootstrap, 1,000 resamples over 176 documents:
 
 | Comparison | EN→FR ΔchrF++ [95% CI] | FR→EN ΔchrF++ [95% CI] |
@@ -163,11 +183,11 @@ human judgment is reported. Round-trip similarity is not used.
 - No quantified bias, toxicity, or privacy audit was performed. Parliamentary
   proceedings contain personal names and political content inherited from the
   source corpora.
-- No qualified human review, COMET, or external pretrained MT comparator was
-  run; COMET and an external comparator remain optional offline tools. The
-  AI-assisted review of the step-14,500 packet found only 43/200 acceptable
-  (21.5%) and 50 CRITICAL rows. It is not a substitute for qualified human
-  evaluation.
+- No qualified human review or COMET was run. A 25-row-per-direction no-key
+  Google `gtx` spot check was run, but it is not a full-set comparator and its
+  output is not human judgment. The AI-assisted review of the step-14,500 packet
+  found only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It is not a
+  substitute for qualified human evaluation.
 
 ## Provenance, licensing and artifacts
 

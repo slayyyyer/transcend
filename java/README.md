@@ -5,9 +5,9 @@ no model download at runtime.
 
 ## Requirements
 
-* Java 17 or newer (tested on Temurin 21.0.13; the code targets release 17).
+* Java 17 or newer (the code targets release 17).
 * Windows x64, Linux x64 or macOS (ONNX Runtime ships the native libraries in
-  the Maven artifact). Only Windows x64 was executed here.
+  the Maven artifact).
 * About 3× the ONNX file size of free RAM for loading; the 9.4M-parameter model
   package is roughly 40 MB.
 
@@ -20,28 +20,22 @@ mvn -B test                        # unit tests only
 mvn -B test -Dtranscend.model.dir=../models/accel_export   # + integration parity test
 ```
 
-If Maven is not on `PATH`, this project used a project-local toolchain:
-
-```bash
-export JAVA_HOME="$PWD/../.tools/jdk-21.0.13+9"
-../.tools/apache-maven-3.9.11/bin/mvn -B package
-```
+If Maven is not on `PATH`, configure your JDK 17+ and Maven installation.
 
 ## CLI
 
 ```bash
-java -cp "target/classes;target/lib/*" org.transcend.nmt.Main translate \
+CP="target/classes:target/lib/*"  # use the classpath separator for your platform
+java -cp "$CP" org.transcend.nmt.Main translate \
   --model ../models/accel_export --from en --to fr \
   "The train leaves at eight in the morning."
 
-java -cp "target/classes;target/lib/*" org.transcend.nmt.Main batch \
+java -cp "$CP" org.transcend.nmt.Main batch \
   --model ../models/accel_export --from en --to fr --file inputs.txt
 
-java -cp "target/classes;target/lib/*" org.transcend.nmt.Main bench \
+java -cp "$CP" org.transcend.nmt.Main bench \
   --model ../models/accel_export --from en --to fr --count 20 --out report.json
 ```
-
-On Linux/macOS use `:` instead of `;` in the classpath.
 
 ## API
 
@@ -107,7 +101,7 @@ model_dir/
 Masks are additive `float32`; cache tensors are `[batch, heads, sequence, head_dim]`.
 All sequence axes are dynamic; the step graph takes exactly one new token.
 
-## Verified here
+## Verification
 
 * Full Maven suite: **10 tests, 0 failures** (2 cache-reorder, 3 preprocessor,
   2 tokenizer-golden, 3 model-package integration).

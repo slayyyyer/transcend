@@ -91,9 +91,12 @@ evaluation), the beam-vs-greedy sample reports
 beam-4 raw JSON, the dev tuning report `reports/beam_tuning_dev.md` with its raw
 sweep directory, and the full tuned comparison
 `reports/beam_tuned_step14500.{json,md}` with the per-direction full JSON. The
-per-direction evaluation JSON is written by the commands named
-in `README.md`; `newstest2014.82m.comparisons.json` is a combined view assembled
-from the two `_summary.json` files. Training history and checkpoints are under
+machine-assisted API spot check is in `reports/review_api_google_82m_enfr/` and
+`reports/review_api_google_82m_fren/` (per-row TSV, summary JSON, Markdown, and
+local API caches; **not** human review). The per-direction evaluation JSON is
+written by the commands named in `README.md`;
+`newstest2014.82m.comparisons.json` is a combined view assembled from the two
+`_summary.json` files. Training history and checkpoints are under
 `models/accel_pilot/`;
 the final training report records `stop_reason = max_train_tokens`, with the
 continuation log in `reports/train_continue_82m.log`.

@@ -10,6 +10,7 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+from typing import Sequence
 
 DIAGNOSTIC_MARKERS = {
     "negation": ("not ", "n't", "never", "no ", "ne ", "n'", "jamais", "rien", "personne"),
@@ -23,6 +24,22 @@ DIAGNOSTIC_MARKERS = {
 def _flags(text: str) -> list[str]:
     lowered = f" {text.lower()} "
     return [name for name, markers in DIAGNOSTIC_MARKERS.items() if any(m in lowered for m in markers)]
+
+
+def select_indices(
+    sources: Sequence[str], *, per_direction: int, seed: int = 20261107
+) -> tuple[list[int], int]:
+    """Deterministically select a diagnostic-stratified review sample."""
+    ranked = sorted(
+        range(len(sources)),
+        key=lambda index: hashlib.sha256(f"{seed}:{index}".encode()).hexdigest(),
+    )
+    flagged = [index for index in ranked if _flags(sources[index])]
+    flagged_set = set(flagged)
+    plain = [index for index in ranked if index not in flagged_set]
+    diagnostic_quota = min(len(flagged), max(1, per_direction // 4))
+    selected = flagged[:diagnostic_quota] + plain[: per_direction - diagnostic_quota]
+    return sorted(selected)[:per_direction], diagnostic_quota
 
 
 def build_review_packet(
@@ -45,17 +62,11 @@ def build_review_packet(
     hypotheses = models[preferred]["hypotheses"]
     doc_ids = report.get("doc_ids") or [""] * len(sources)
 
-    ranked = sorted(
-        range(len(sources)),
-        key=lambda index: hashlib.sha256(f"{seed}:{index}".encode()).hexdigest(),
-    )
     # Stratify: take up to a quarter of the sample from segments that carry at
     # least one diagnostic marker, then fill deterministically.
-    flagged = [index for index in ranked if _flags(sources[index])]
-    plain = [index for index in ranked if index not in set(flagged)]
-    diagnostic_quota = min(len(flagged), max(1, per_direction // 4))
-    selected = flagged[:diagnostic_quota] + plain[: per_direction - diagnostic_quota]
-    selected = sorted(selected)[:per_direction]
+    selected, diagnostic_quota = select_indices(
+        sources, per_direction=per_direction, seed=seed
+    )
 
     path = out_dir / f"review_{report['direction']}.tsv"
     with path.open("w", encoding="utf-8", newline="") as handle:

@@ -179,9 +179,9 @@ artifact terms; see `NOTICE`.
 * Metrics: SacreBLEU (`13a`, cased) and chrF++ (`word_order=2`), with signatures.
 * A documented 564-row EN→FR subset retains random-initialized, CPU-pilot and
   accelerator baselines (`reports/subset600.en-fr*`). The full-set baselines are
-  source-copy and the step-2,000 checkpoint. A COMET or external pretrained MT
-  comparator was **not** run: it would require downloading model weights that
-  are not otherwise needed, and the brief makes it optional.
+  source-copy and the step-2,000 checkpoint. A COMET comparator was **not** run:
+  it would require downloading model weights. A small API-assisted spot check
+  was run instead; it is not a full-set comparator and is not human review.
 * Human evaluation: **pending**. An AI-assisted review of all 200 packet rows
   from the step-14,500 checkpoint found 43 acceptable (3 OK, 40 MINOR), 107 MAJOR
   and 50 CRITICAL. The same deterministic IDs were reviewed for step 9,500:
@@ -206,12 +206,23 @@ artifact terms; see `NOTICE`.
   remains the default. See `reports/beam_tuning_dev.md` and
   `reports/beam_tuned_step14500.md`; the earlier untuned 495-row sample is in
   `reports/beam_vs_greedy_step14500.md`.
+* API-assisted review (`nmt/review_api.py`): a deterministic 25-row-per-direction
+  sample is translated by a no-key Google `gtx` endpoint and compared with
+  greedy and tuned beam using sentence/corpus chrF++ and BLEU. On the 50 sampled
+  rows the API scored BLEU 31.149/49.329 and chrF++ 56.128/68.008 (EN→FR/FR→EN),
+  versus tuned beam 4.662/19.532 and 30.414/44.947; the API wins all 50 sentence
+  chrF++ comparisons. This is a machine-assisted sanity check, not a human
+  evaluation, and BLEU on 25 segments is unstable. The endpoint is undocumented
+  and has no SLA. MyMemory was probed first but returned exact newstest
+  references (BLEU 100) because it is translation-memory-backed; it remains
+  optional via `--provider mymemory` with an explicit caveat and is not treated
+  as an independent baseline.
 
 ## Acceptance criteria recorded before final testing
 
 Engineering criteria (must pass): export/parity, deterministic mask/cache
 behaviour, bounded generation, resume, Java/Python token and output equality.
-These pass: 27 Python tests, 10 Java tests, ONNX parity with a worst logit
+These pass: 33 Python tests, 10 Java tests, ONNX parity with a worst logit
 absolute difference of 8.58e-6, and identical greedy generation.
 
 Quality criteria for this hardware budget (expected, not guaranteed): the

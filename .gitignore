@@ -14,6 +14,7 @@ data/prepared/
 models/
 artifacts/
 reports/*.json.tmp
+reports/review_api_*/api_cache.json
 
 # Java build output
 java/target/

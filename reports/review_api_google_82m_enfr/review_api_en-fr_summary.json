@@ -1,0 +1,84 @@
+{
+  "provider": "google-gtx",
+  "provider_label": "Google Translate (gtx, unofficial)",
+  "endpoint": "https://translate.googleapis.com/translate_a/single",
+  "machine_translation": true,
+  "human_evaluation": false,
+  "direction": "en-fr",
+  "per_direction": 25,
+  "sample_count": 25,
+  "diagnostic_quota": 6,
+  "sample_policy": "Deterministic SHA-256 ranking with the same diagnostic-marker stratification as the blind review packet.",
+  "decoder_settings": {
+    "greedy": "beam 1",
+    "tuned_beam": "beam 4, length penalty 1.2, minimum 16 new tokens"
+  },
+  "api": {
+    "provider": "google-gtx",
+    "independently_trained_from_reference": true,
+    "dry_run": false,
+    "email_supplied": false,
+    "cache_path": "reports\\review_api_google_82m_enfr\\api_cache.json",
+    "max_query_bytes": 450,
+    "calls": 20,
+    "cache_hits": 5,
+    "chunked_rows": 0,
+    "status_counts": {
+      "ok": 20,
+      "cache": 5
+    }
+  },
+  "scored_rows": 25,
+  "scores": {
+    "greedy": {
+      "bleu": 3.996,
+      "chrfpp": 29.785,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 25
+    },
+    "tuned_beam": {
+      "bleu": 4.662,
+      "chrfpp": 30.414,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 25
+    },
+    "api": {
+      "bleu": 31.149,
+      "chrfpp": 56.128,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 25
+    }
+  },
+  "mean_words": {
+    "greedy": 17.72,
+    "tuned_beam": 16.56,
+    "api": 13.88
+  },
+  "sentence_chrfpp": {
+    "beam_vs_greedy": {
+      "candidate_wins": 17,
+      "baseline_wins": 7,
+      "ties": 1
+    },
+    "api_vs_greedy": {
+      "candidate_wins": 25,
+      "baseline_wins": 0,
+      "ties": 0
+    },
+    "api_vs_beam": {
+      "candidate_wins": 25,
+      "baseline_wins": 0,
+      "ties": 0
+    }
+  },
+  "caveats": [
+    "API output is machine translation, not a gold reference or human judgment.",
+    "The sample is diagnostic-stratified and is not the full newstest2014 set.",
+    "Long sources are chunked; chunking can degrade translation quality.",
+    "The Google gtx endpoint is free and needs no key, but it is an undocumented public endpoint with no SLA and may rate-limit or change.",
+    "This report must not be described as a human evaluation."
+  ]
+}

@@ -26,6 +26,7 @@ from .export_onnx import export_model
 from .hardware import inspect_hardware, resolve_device
 from .model import build_model
 from .parity import run_parity
+from .review_api import build_api_review
 from .review_packet import build_review_packet
 from .tokenizer import ByteBPETokenizer, BOS_ID
 from .train import run_training
@@ -342,6 +343,27 @@ def cmd_review(args) -> int:
     return 0
 
 
+def cmd_review_api(args) -> int:
+    summary = build_api_review(
+        greedy_report=Path(args.greedy_report),
+        beam_report=Path(args.beam_report),
+        out_dir=Path(args.out),
+        per_direction=args.per_direction,
+        seed=args.seed,
+        provider=args.provider,
+        endpoint=args.endpoint,
+        email=args.email,
+        cache_path=Path(args.cache) if args.cache else None,
+        sleep_s=args.sleep,
+        retries=args.retries,
+        timeout_s=args.timeout,
+        max_query_bytes=args.max_query_bytes,
+        dry_run=args.dry_run,
+    )
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return 0 if args.dry_run or summary["scored_rows"] else 1
+
+
 def cmd_smoke(args) -> int:
     from .smoke import run_smoke
 
@@ -427,6 +449,31 @@ def build_parser() -> argparse.ArgumentParser:
     review.add_argument("--per-direction", type=int, default=100)
     review.add_argument("--seed", type=int, default=20261107)
     review.set_defaults(func=cmd_review)
+
+    review_api = sub.add_parser(
+        "review-api", help="compare greedy and beam outputs with a free MT API"
+    )
+    review_api.add_argument("--greedy-report", required=True)
+    review_api.add_argument("--beam-report", required=True)
+    review_api.add_argument("--out", required=True)
+    review_api.add_argument("--per-direction", type=int, default=25)
+    review_api.add_argument("--seed", type=int, default=20261107)
+    review_api.add_argument(
+        "--provider", default="google-gtx", choices=["google-gtx", "mymemory"]
+    )
+    review_api.add_argument(
+        "--endpoint", default=None, help="override the provider endpoint"
+    )
+    review_api.add_argument(
+        "--email", default=None, help="optional MyMemory 'de' address for a larger quota"
+    )
+    review_api.add_argument("--cache", default=None)
+    review_api.add_argument("--sleep", type=float, default=0.5)
+    review_api.add_argument("--retries", type=int, default=2)
+    review_api.add_argument("--timeout", type=float, default=30.0)
+    review_api.add_argument("--max-query-bytes", type=int, default=450)
+    review_api.add_argument("--dry-run", action="store_true")
+    review_api.set_defaults(func=cmd_review_api)
 
     smoke = sub.add_parser("smoke", help="end-to-end tiny pipeline: tokenizer -> train -> export -> parity")
     smoke.add_argument("--out", default="models/smoke")
