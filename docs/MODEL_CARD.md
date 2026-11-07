@@ -7,11 +7,11 @@
 | Name | `transcend-enfr-accel-pilot` |
 | Checkpoint | `models/accel_pilot/best.pt`, optimizer step 14,500 |
 | Checkpoint SHA-256 | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
-| Latest checkpoint | `models/accel_pilot/checkpoint.pt`, step 15,897 (last validation at 15,500) |
+| Latest checkpoint | `models/accel_pilot/checkpoint.pt`, step 15,897 (evaluated on newstest2014 after selection; last validation at 15,500) |
 | Exported package | `models/accel_export` (11 files, 120 MB; rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
 | Export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
-| Training code version | repository state at 2026-11-07; no git history was present |
+| Training code version | repository state at 2026-11-07 |
 
 The model was initialized from the documented random scheme `N(0, 0.02)` with
 seed 1337 (`nmt/model.py::INITIALIZATION_MANIFEST`). No pretrained weights,
@@ -91,6 +91,7 @@ FR→EN: n = 2,922, 81 skipped.
 | Step 2,000 checkpoint | 1.37 | 19.13 | 1.45 | 19.39 |
 | Step 9,500 checkpoint | 9.21 | 35.56 | 9.60 | 35.94 |
 | Step 14,500 candidate (82M-token run), greedy | **11.03** | **38.67** | **11.28** | **38.86** |
+| Step 15,897 final (not dev-selected), greedy | 12.11 | 39.46 | 12.17 | 39.53 |
 | Step 14,500 tuned beam 4 (LP 1.2, min 16) | 13.42 | 40.82 | 13.15 | 40.88 |
 
 The tuned beam row uses beam 4, length penalty 1.2 and a minimum of 16 new
@@ -98,7 +99,10 @@ target tokens, selected on dev only. Paired chrF++ gains versus greedy are +2.15
 [1.96, 2.34] EN→FR and +2.03 [1.81, 2.26] FR→EN; BLEU gains are +2.39/+1.87.
 Sentence-level chrF++ still regresses on 1,017 EN→FR and 984 FR→EN sentences,
 and 1,519/1,365 outputs are shorter. These are automatic metrics, not a human
-evaluation; default decoding remains greedy.
+evaluation; default decoding remains greedy. The final step-15,897 checkpoint
+was evaluated after selection and improves on the step-14,500 candidate by
++0.79/+0.67 chrF++ (95% CIs [0.58, 1.01] and [0.47, 0.88]); it was not used to
+choose the exported model.
 
 ### API-assisted spot check
 
@@ -118,7 +122,9 @@ expected result for a production translator and is not evidence that the pilot
 is usable. BLEU on 25 segments is unstable. The Google `gtx` endpoint is
 undocumented, has no SLA, and is suitable only for spot checks. MyMemory was
 probed first but returned exact newstest references on the sample (BLEU 100);
-it is translation-memory-backed and is not used as an independent baseline.
+it is translation-memory-backed and is not used as an independent baseline. For
+this proof of concept, Google `gtx` is the external machine-assisted comparator;
+it is evaluation-only and is not used as training data.
 
 Paired document bootstrap, 1,000 resamples over 176 documents:
 
@@ -127,14 +133,19 @@ Paired document bootstrap, 1,000 resamples over 176 documents:
 | Step 9,500 vs step 2,000 | +16.44 [15.89, 16.97] | +16.55 [15.85, 17.21] |
 | Step 9,500 vs source-copy | +13.69 [12.95, 14.44] | +12.22 [11.43, 12.99] |
 | Step 14,500 vs step 9,500 | +3.10 [2.88, 3.31] | +2.92 [2.65, 3.16] |
+| Step 14,500 vs source-copy | +16.79 [15.99, 17.64] | +15.13 [14.35, 15.93] |
+| Step 15,897 vs step 14,500 | +0.79 [0.58, 1.01] | +0.67 [0.47, 0.88] |
+| Step 15,897 vs source-copy | +17.58 [16.87, 18.34] | +15.81 [15.04, 16.61] |
 
 The step-9,500 checkpoint beat both baselines on chrF++ in both directions; the
-step-14,500 checkpoint then improved on step 9,500 by +3.10/+2.92 chrF++. Those
-are measured improvements within the pilot, not evidence of usable translation
-quality. A fresh step-14,500-vs-source-copy bootstrap was not run; the corpus
-scores are 38.67/38.86 versus 21.88/23.72.
+step-14,500 candidate then improved on step 9,500 by +3.10/+2.92 chrF++ and beat
+source-copy by +16.79/+15.13. The final step-15,897 checkpoint improved on the
+candidate by +0.79/+0.67 chrF++ and on source-copy by +17.58/+15.81; all
+intervals exclude zero. These are measured improvements within the pilot, not
+evidence of usable translation quality.
 
-Human evaluation: **pending**. An AI-assisted review of all 200 packet rows from
+Human evaluation: **not performed.** This proof of concept uses machine-assisted
+comparisons only. An AI-assisted review of all 200 packet rows from
 the step-14,500 checkpoint found 43/200 acceptable (3 OK, 40 MINOR), 107 MAJOR
 and 50 CRITICAL; the per-row record is in
 `reports/review_packet_82m_enfr/review_en-fr_reviewed.tsv` and
@@ -183,10 +194,11 @@ human judgment is reported. Round-trip similarity is not used.
 - No quantified bias, toxicity, or privacy audit was performed. Parliamentary
   proceedings contain personal names and political content inherited from the
   source corpora.
-- No qualified human review or COMET was run. A 25-row-per-direction no-key
-  Google `gtx` spot check was run, but it is not a full-set comparator and its
-  output is not human judgment. The AI-assisted review of the step-14,500 packet
-  found only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It is not a
+- No qualified human review was performed; this proof of concept uses
+  machine-assisted comparisons only. A 25-row-per-direction no-key Google `gtx`
+  spot check was run, but it is not a full-set comparator and its output is not
+  human judgment. COMET was not run. The AI-assisted review of the step-14,500
+  packet found only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It is not a
   substitute for qualified human evaluation.
 
 ## Provenance, licensing and artifacts

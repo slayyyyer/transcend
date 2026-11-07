@@ -4,15 +4,17 @@ A reproducible EN↔FR translation project whose tokenizer and translation model
 both trained from scratch, plus an offline Java 17 inference
 library that runs the exported ONNX package without Python or network access.
 
-**Status: pipeline complete, pilot reached the 82M-token cap at 15,897 updates,
-quality measured — still not a usable translator.** Every stage below actually
-ran end to end. The step-14,500
-checkpoint improves on step 9,500 on newstest2014 in both directions: BLEU
-11.03/11.28 and chrF++ 38.67/38.86, with paired chrF++ gains of +3.10 EN→FR and
-+2.92 FR→EN (95% CIs exclude zero). A dev-tuned beam-4 decoder (length penalty
-1.2, minimum 16 tokens) raises the full-set automatic scores to BLEU 13.42/13.15
-and chrF++ 40.82/40.88, but greedy remains the default pending human review. A
-fresh AI-assisted sentence-level review of the step-14,500 packet found 43/200 acceptable, but 157/200 MAJOR or CRITICAL,
+**Status: proof of concept; pipeline complete, pilot reached the 82M-token cap
+at 15,897 updates, quality measured — still not a usable translator.** Every
+stage below actually ran end to end. The step-14,500 checkpoint improves on step
+9,500 on newstest2014 in both directions: BLEU 11.03/11.28 and chrF++
+38.67/38.86, with paired chrF++ gains of +3.10 EN→FR and +2.92 FR→EN (95% CIs
+exclude zero). The final step-15,897 checkpoint, evaluated after selection,
+raises the greedy scores to BLEU 12.11/12.17 and chrF++ 39.46/39.53. A dev-tuned
+beam-4 decoder (length penalty 1.2, minimum 16 tokens) raises the full-set
+automatic scores to BLEU 13.42/13.15 and chrF++ 40.82/40.88; greedy remains the
+default. A fresh AI-assisted sentence-level review of the step-14,500 packet
+found 43/200 acceptable, but 157/200 MAJOR or CRITICAL,
 and ordinary sentences are frequently mistranslated (see [Measured
 results](#measured-results)). This demonstrates a working, auditable training →
 export → Java pipeline, not translation quality.
@@ -203,6 +205,7 @@ truncated.
 | Step 2,000 checkpoint | 1.37 | 19.13 | 1.45 | 19.39 |
 | Step 9,500 checkpoint | 9.21 | 35.56 | 9.60 | 35.94 |
 | Step 14,500 candidate (82M-token run), greedy | **11.03** | **38.67** | **11.28** | **38.86** |
+| Step 15,897 final (not dev-selected), greedy | 12.11 | 39.46 | 12.17 | 39.53 |
 | Step 14,500 tuned beam 4 (LP 1.2, min 16) | 13.42 | 40.82 | 13.15 | 40.88 |
 
 The tuned beam row is the full-set comparison from
@@ -213,16 +216,26 @@ Results remain mixed at the sentence level: 1,017/984 sentences regress on
 sentence chrF++ and 1,519/1,365 outputs are shorter. This is an automatic metric
 comparison; default decoding remains greedy.
 
-Paired document bootstrap, 1,000 resamples over 176 documents. The new
-continuation comparison is in `reports/newstest2014.82m.comparisons.json`; the
-two prior step-9,500 comparisons are archived in
-`reports/newstest2014.comparisons.json`:
+The final step-15,897 checkpoint was evaluated after selection; it improves on
+the step-14,500 candidate by +0.79/+0.67 chrF++ (95% CIs [0.58, 1.01] and
+[0.47, 0.88]) and was not used to choose the exported model. See
+`reports/newstest2014.82m.final.md`.
+
+Paired document bootstrap, 1,000 resamples over 176 documents. The final
+checkpoint and source-copy comparisons are in
+`reports/newstest2014.82m.final.comparisons.json` (Markdown:
+`reports/newstest2014.82m.final.md`); the step-14,500-vs-step-9,500 comparison
+is in `reports/newstest2014.82m.comparisons.json`, and the two prior step-9,500
+comparisons are archived in `reports/newstest2014.comparisons.json`:
 
 | Comparison | EN→FR ΔchrF++ [95% CI] | FR→EN ΔchrF++ [95% CI] |
 | --- | --- | --- |
 | Step 9,500 vs step 2,000 | +16.44 [15.89, 16.97] | +16.55 [15.85, 17.21] |
 | Step 9,500 vs source-copy | +13.69 [12.95, 14.44] | +12.22 [11.43, 12.99] |
 | Step 14,500 vs step 9,500 | +3.10 [2.88, 3.31] | +2.92 [2.65, 3.16] |
+| Step 14,500 vs source-copy | +16.79 [15.99, 17.64] | +15.13 [14.35, 15.93] |
+| Step 15,897 vs step 14,500 | +0.79 [0.58, 1.01] | +0.67 [0.47, 0.88] |
+| Step 15,897 vs source-copy | +17.58 [16.87, 18.34] | +15.81 [15.04, 16.61] |
 
 A 200-example AI-assisted packet review (100 per direction) of the **step-14,500
 checkpoint** found **43/200 acceptable** (3 OK, 40 MINOR), 107 MAJOR and 50
@@ -257,13 +270,16 @@ MyMemory was probed first, but it returned exact newstest references on the
 small sample (BLEU 100), so it is not an independent baseline. It remains
 available via `--provider mymemory` for retrieval-style comparison, with a
 report caveat; it is translation-memory-backed. Google `gtx` is an undocumented
-no-key endpoint with no SLA, suitable for spot checks only.
+no-key endpoint with no SLA, suitable for spot checks only. For this proof of
+concept it is the external machine-assisted comparator; it is used for
+evaluation only, not as training data, and no qualified human review was
+performed.
 
 The development metric (in-domain block holdout, 300 rows per direction) rose
 from 27.09 mean chrF++ at step 2,000 to **47.18** at step 14,500; the last
-validation, at step 15,500, was 46.82, and the final step-15,897 checkpoint was
-not separately validated. The lower external scores are the honest measure of
-transfer. BLEU and chrF++ are corpus-level metrics, not "percent correct", and
+validation, at step 15,500, was 46.82. The final step-15,897 checkpoint was
+evaluated on newstest2014 after selection, not used for model selection. The
+lower external scores are the honest measure of transfer. BLEU and chrF++ are corpus-level metrics, not "percent correct", and
 these results are not evidence of usable general translation.
 
 ## Data and licensing
@@ -317,9 +333,11 @@ constraints recorded in the model card.
 - Java benchmark on the step-14,500 package: cold load 1,297 ms; first
   translation 380 ms; warm median 233 ms, p95 443 ms; batch of 5 inputs
   1,219 ms (4.10 inputs/s). See `reports/java_benchmark.json`.
-- Full newstest2014 evaluation in both directions for the step-14,500 and
-  step-9,500 checkpoints, using 1,000-sample document bootstrap intervals;
-  reports are in `reports/newstest2014.82m.*` and `reports/`.
+- Full newstest2014 evaluation in both directions for the step-15,897,
+  step-14,500 and step-9,500 checkpoints, using 1,000-sample document bootstrap
+  intervals. The final-checkpoint and source-copy comparisons are in
+  `reports/newstest2014.82m.final.comparisons.json`; other reports are under
+  `reports/`.
 - Full newstest2014 tuned beam-4 (LP 1.2, min 16), both directions
   (2,959/2,922 retained): BLEU +2.39/+1.87 and chrF++ +2.15/+2.03 versus greedy;
   1,017/984 sentence-level chrF++ regressions; see
@@ -333,7 +351,7 @@ constraints recorded in the model card.
   changed and 575 got shorter; see `reports/beam_vs_greedy_step14500.md`.
 - AI-assisted bilingual review of the step-14,500 packet: **200/200 rows
   reviewed**; 43/200 acceptable (3 OK, 40 MINOR), 107 MAJOR, 50 CRITICAL. This
-  is not a qualified human evaluation; human review remains pending. See
+  is not a qualified human evaluation; human review was not performed. See
   `reports/review_summary_82m.md`.
 
 ## Known limitations of the trained pilot
@@ -343,15 +361,17 @@ constraints recorded in the model card.
   only 150,000 of 565,475 prepared pairs were sampled. Ordinary sentences remain
   unreliable: for example, "The train leaves at eight in the morning." becomes
   "La formation est en train de se détourner." That is a wrong translation.
-- BLEU 11.03/11.28 and chrF++ 38.67/38.86 improve on step 9,500 but are far from
-  a useful translator. Outputs show omissions, invented morphology and repeated
-  phrases.
+- Greedy BLEU is 11.03/11.28 and chrF++ 38.67/38.86 for the step-14,500
+  candidate, and 12.11/12.17 and 39.46/39.53 for the final checkpoint; both are
+  far from a useful translator. Outputs show omissions, invented morphology and
+  repeated phrases.
 - Dev chrF++ (47.18 at step 14,500) is in-domain and higher than the external
   result; it is used for checkpoint selection, not as a quality claim.
-- No qualified human review or COMET has been run. A 50-row no-key Google
-  `gtx` spot check was run; it is not a full-set comparator and its output is
-  not a human judgment. The AI-assisted review of the step-14,500 packet found
-  only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It supports, but does not
+- No qualified human review was performed; this proof of concept uses
+  machine-assisted comparisons only. A 50-row no-key Google `gtx` spot check was
+  run; it is not a full-set comparator and its output is not a human judgment.
+  COMET was not run. The AI-assisted review of the step-14,500 packet found only
+  43/200 acceptable (21.5%) and 50 CRITICAL rows. It supports, but does not
   replace, human evaluation. Round-trip translation is not treated as evidence
   of correctness.
 - Splits are opaque 200-pair blocks, not verified document boundaries; leakage is

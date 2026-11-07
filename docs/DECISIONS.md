@@ -176,13 +176,17 @@ artifact terms; see `NOTICE`.
   the archived step-2,000 checkpoint and the raw-text source-copy baseline
   (`reports/newstest2014.comparisons.json`); the step-14,500 checkpoint was
   compared directly with step 9,500 (`reports/newstest2014.82m.comparisons.json`).
+  The final step-15,897 checkpoint was evaluated after selection against the
+  step-14,500 candidate and source-copy
+  (`reports/newstest2014.82m.final.comparisons.json`).
 * Metrics: SacreBLEU (`13a`, cased) and chrF++ (`word_order=2`), with signatures.
 * A documented 564-row EN→FR subset retains random-initialized, CPU-pilot and
   accelerator baselines (`reports/subset600.en-fr*`). The full-set baselines are
   source-copy and the step-2,000 checkpoint. A COMET comparator was **not** run:
   it would require downloading model weights. A small API-assisted spot check
   was run instead; it is not a full-set comparator and is not human review.
-* Human evaluation: **pending**. An AI-assisted review of all 200 packet rows
+* Human evaluation: **not performed.** This proof of concept uses machine-assisted
+  comparisons only. An AI-assisted review of all 200 packet rows
   from the step-14,500 checkpoint found 43 acceptable (3 OK, 40 MINOR), 107 MAJOR
   and 50 CRITICAL. The same deterministic IDs were reviewed for step 9,500:
   19 became acceptable and 9 stopped being acceptable, but the fresh review also
@@ -216,7 +220,8 @@ artifact terms; see `NOTICE`.
   and has no SLA. MyMemory was probed first but returned exact newstest
   references (BLEU 100) because it is translation-memory-backed; it remains
   optional via `--provider mymemory` with an explicit caveat and is not treated
-  as an independent baseline.
+  as an independent baseline. Google `gtx` is the external machine-assisted
+  comparator for this proof of concept; it is evaluation-only.
 
 ## Acceptance criteria recorded before final testing
 
@@ -230,10 +235,12 @@ accelerator pilot should beat source-copy on chrF++ in both directions and show
 recognisable word-level transfer on frequent vocabulary. The step-9,500
 checkpoint beat source-copy (+13.69 EN→FR, +12.22 FR→EN chrF++, with 95%
 document-bootstrap intervals excluding zero); the step-14,500 checkpoint then
-beat step 9,500 by +3.10/+2.92 chrF++ (intervals excluding zero). A fresh
-step-14,500-vs-source-copy bootstrap was not run, but its corpus scores are
-higher. General-purpose translation quality is explicitly **not** claimed; BLEU
-is 11.03/11.28 and sample sentences are frequently wrong. The AI-assisted
-sentence review of the step-14,500 packet found 21.5% acceptable; the fresh
-review's distribution is not uniformly better (50 CRITICAL rows vs 25 archived).
-Qualified human review remains pending.
+beat step 9,500 by +3.10/+2.92 chrF++ and source-copy by +16.79/+15.13. The
+final step-15,897 checkpoint improved on the candidate by +0.79/+0.67 chrF++
+and on source-copy by +17.58/+15.81; all intervals exclude zero.
+General-purpose translation quality is explicitly **not** claimed; BLEU is
+11.03/11.28 for the candidate and 12.11/12.17 for the final checkpoint, and
+sample sentences are frequently wrong. The AI-assisted sentence review of the
+step-14,500 packet found 21.5% acceptable; the fresh review's distribution is
+not uniformly better (50 CRITICAL rows vs 25 archived). Qualified human review
+was not performed; this proof of concept uses machine-assisted comparisons only.

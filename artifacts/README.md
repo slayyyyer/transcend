@@ -93,7 +93,10 @@ sweep directory, and the full tuned comparison
 `reports/beam_tuned_step14500.{json,md}` with the per-direction full JSON. The
 machine-assisted API spot check is in `reports/review_api_google_82m_enfr/` and
 `reports/review_api_google_82m_fren/` (per-row TSV, summary JSON, Markdown, and
-local API caches; **not** human review). The per-direction evaluation JSON is
+local API caches; **not** human review). The final-checkpoint reports are
+`reports/newstest2014.82m.final.{en-fr,fr-en}.full.json` with summaries, plus
+`reports/newstest2014.82m.final.comparisons.json` and `.md` for the combined
+source-copy and checkpoint comparisons. The per-direction evaluation JSON is
 written by the commands named in `README.md`;
 `newstest2014.82m.comparisons.json` is a combined view assembled from the two
 `_summary.json` files. Training history and checkpoints are under
