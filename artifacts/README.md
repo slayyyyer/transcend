@@ -92,9 +92,13 @@ evaluation), the beam-vs-greedy sample reports
 beam-4 raw JSON, the dev tuning report `reports/beam_tuning_dev.md` with its raw
 sweep directory, and the full tuned comparison
 `reports/beam_tuned_step14500.{json,md}` with the per-direction full JSON. The
-machine-assisted API spot check is in `reports/review_api_google_82m_enfr/` and
-`reports/review_api_google_82m_fren/` (per-row TSV, summary JSON, Markdown, and
-local API caches; **not** human review). The final-checkpoint reports are
+machine-assisted API spot check currently uses the final step-15,897 checkpoint
+in `reports/review_api_google_82m_final_enfr/` and
+`reports/review_api_google_82m_final_fren/` (per-row TSV, summary JSON,
+Markdown, and local API caches; **not** human review); the earlier step-14,500
+comparison remains under `reports/review_api_google_82m_enfr/` and
+`reports/review_api_google_82m_fren/`. The final-only 25-row inputs are under
+`reports/gtx_final_step15897_inputs/`. The final-checkpoint reports are
 `reports/newstest2014.82m.final.{en-fr,fr-en}.full.json` with summaries, plus
 `reports/newstest2014.82m.final.comparisons.json` and `.md` for the combined
 source-copy and checkpoint comparisons. The per-direction evaluation JSON is

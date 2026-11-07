@@ -262,6 +262,9 @@ def _load_report(path: Path) -> dict:
         "references": data["references"],
         "doc_ids": data.get("doc_ids") or [""] * len(hypotheses),
         "hypotheses": hypotheses,
+        "model": preferred,
+        "step": models[preferred].get("step"),
+        "checkpoint": models[preferred].get("checkpoint"),
     }
 
 
@@ -479,6 +482,18 @@ def build_api_review(
             "Deterministic SHA-256 ranking with the same diagnostic-marker "
             "stratification as the blind review packet."
         ),
+        "models": {
+            "greedy": {
+                "label": greedy["model"],
+                "step": greedy["step"],
+                "checkpoint": greedy["checkpoint"],
+            },
+            "tuned_beam": {
+                "label": beam["model"],
+                "step": beam["step"],
+                "checkpoint": beam["checkpoint"],
+            },
+        },
         "decoder_settings": {
             "greedy": "beam 1",
             "tuned_beam": "beam 4, length penalty 1.2, minimum 16 new tokens",
@@ -529,6 +544,8 @@ def build_api_review(
         "",
         f"Sample: {len(rows)} segments selected deterministically (seed {seed}) "
         "with the same diagnostic-marker stratification as the blind review packet.",
+        f"Checkpoint: `{greedy['model']}` step {greedy['step']} (greedy); "
+        f"`{beam['model']}` step {beam['step']} (tuned beam).",
         f"API: {provider_label}, {api_calls} network calls, {cache_hits} cache hits, "
         f"{len(valid_rows)} rows usable. Long sources were split at "
         f"{max_query_bytes} UTF-8 bytes.",

@@ -106,6 +106,34 @@ def test_dry_run_writes_side_by_side_review_without_network(tmp_path):
     assert "not a human evaluation" in markdown
 
 
+def test_final_only_report_is_labelled_in_outputs(tmp_path):
+    sources = ["Hello."]
+    references = ["Bonjour."]
+    report = _report("en-fr", sources, references, ["Bonjour."])
+    report["models"] = {
+        "final": {
+            "hypotheses": ["Bonjour."],
+            "step": 15897,
+            "checkpoint": "models/accel_pilot/checkpoint.pt",
+        }
+    }
+    path = tmp_path / "final.json"
+    path.write_text(json.dumps(report), encoding="utf-8")
+
+    summary = build_api_review(
+        greedy_report=path,
+        beam_report=path,
+        out_dir=tmp_path / "out",
+        per_direction=1,
+        dry_run=True,
+    )
+
+    assert summary["models"]["greedy"]["label"] == "final"
+    assert summary["models"]["greedy"]["step"] == 15897
+    markdown = (tmp_path / "out" / "review_api_en-fr.md").read_text(encoding="utf-8")
+    assert "`final` step 15897" in markdown
+
+
 def test_reports_must_cover_identical_rows(tmp_path):
     greedy_path = tmp_path / "greedy.json"
     beam_path = tmp_path / "beam.json"

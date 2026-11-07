@@ -210,18 +210,22 @@ artifact terms; see `NOTICE`.
   remains the default. See `reports/beam_tuning_dev.md` and
   `reports/beam_tuned_step14500.md`; the earlier untuned 495-row sample is in
   `reports/beam_vs_greedy_step14500.md`.
-* API-assisted review (`nmt/review_api.py`): a deterministic 25-row-per-direction
-  sample is translated by a no-key Google `gtx` endpoint and compared with
-  greedy and tuned beam using sentence/corpus chrF++ and BLEU. On the 50 sampled
-  rows the API scored BLEU 31.149/49.329 and chrF++ 56.128/68.008 (EN→FR/FR→EN),
-  versus tuned beam 4.662/19.532 and 30.414/44.947; the API wins all 50 sentence
-  chrF++ comparisons. This is a machine-assisted sanity check, not a human
-  evaluation, and BLEU on 25 segments is unstable. The endpoint is undocumented
-  and has no SLA. MyMemory was probed first but returned exact newstest
-  references (BLEU 100) because it is translation-memory-backed; it remains
-  optional via `--provider mymemory` with an explicit caveat and is not treated
-  as an independent baseline. Google `gtx` is the external machine-assisted
-  comparator for this proof of concept; it is evaluation-only.
+* API-assisted review (`nmt/review_api.py`): the current deterministic
+  25-row-per-direction sample uses the final step-15,897 checkpoint for both
+  greedy and beam-4 decoding (the same dev-selected settings as step 14,500).
+  It is translated by a no-key Google `gtx` endpoint and compared using
+  sentence/corpus chrF++ and BLEU. On the 50 sampled rows the API scored BLEU
+  31.149/49.329 and chrF++ 56.128/68.008 (EN→FR/FR→EN), versus final beam-4
+  5.383/21.780 and 32.249/45.658 and final greedy 3.413/18.341 and 30.176/43.487;
+  the API wins all 50 sentence chrF++ comparisons. This is a
+  machine-assisted sanity check, not a human evaluation, and BLEU on 25 segments
+  is unstable. The endpoint is undocumented and has no SLA. MyMemory was probed
+  first but returned exact newstest references (BLEU 100) because it is
+  translation-memory-backed; it remains optional via `--provider mymemory` with
+  an explicit caveat and is not treated as an independent baseline. Google `gtx`
+  is the external machine-assisted comparator for this proof of concept; it is
+  evaluation-only. The earlier step-14,500 gtx reports remain under
+  `reports/review_api_google_82m_enfr/` and `reports/review_api_google_82m_fren/`.
 
 ## Acceptance criteria recorded before final testing
 

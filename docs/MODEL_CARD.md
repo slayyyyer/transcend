@@ -107,25 +107,30 @@ choose the exported model.
 
 ### API-assisted spot check
 
-A separate deterministic 25-row-per-direction sample was translated through the
-no-key Google `gtx` endpoint and compared with greedy and tuned beam by
-`nmt.cli review-api`. This is machine-assisted review, not a human evaluation,
-and it is not a full-set comparator.
+The current deterministic 25-row-per-direction sample uses the final step-15,897
+checkpoint for both greedy and beam-4 decoding (the same dev-selected settings
+as step 14,500). It was translated through the no-key Google `gtx` endpoint and
+compared by `nmt.cli review-api`. This is machine-assisted review, not a human
+evaluation, and it is not a full-set comparator.
 
-| System (25 rows/direction) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
+| System (25 rows/direction, final step 15,897) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
 | --- | --- | --- | --- | --- |
-| Greedy | 3.996 | 29.785 | 15.867 | 42.223 |
-| Tuned beam 4 | 4.662 | 30.414 | 19.532 | 44.947 |
+| Final greedy | 3.413 | 30.176 | 18.341 | 43.487 |
+| Final beam 4 (dev-tuned) | 5.383 | 32.249 | 21.780 | 45.658 |
 | Google `gtx` | 31.149 | 56.128 | 49.329 | 68.008 |
 
-The API won all 50 sentence chrF++ comparisons against both models. That is an
-expected result for a production translator and is not evidence that the pilot
-is usable. BLEU on 25 segments is unstable. The Google `gtx` endpoint is
-undocumented, has no SLA, and is suitable only for spot checks. MyMemory was
-probed first but returned exact newstest references on the sample (BLEU 100);
-it is translation-memory-backed and is not used as an independent baseline. For
-this proof of concept, Google `gtx` is the external machine-assisted comparator;
-it is evaluation-only and is not used as training data.
+The API won all 50 sentence chrF++ comparisons against both final model
+variants. That is an expected result for a production translator and is not
+evidence that the pilot is usable. BLEU on 25 segments is unstable. The Google
+`gtx` endpoint is undocumented, has no SLA, and is suitable only for spot
+checks. Reports are in `reports/review_api_google_82m_final_enfr/` and
+`reports/review_api_google_82m_final_fren/`; the earlier step-14,500 comparison
+remains in `reports/review_api_google_82m_enfr/` and
+`reports/review_api_google_82m_fren/`. MyMemory was probed first but returned
+exact newstest references on the sample (BLEU 100); it is translation-memory-
+backed and is not used as an independent baseline. For this proof of concept,
+Google `gtx` is the external machine-assisted comparator; it is evaluation-only
+and is not used as training data.
 
 Paired document bootstrap, 1,000 resamples over 176 documents:
 

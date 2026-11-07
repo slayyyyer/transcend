@@ -130,14 +130,15 @@ $PY -m nmt.cli review-packet --report reports/newstest2014.82m.fr-en.full.json \
 
 # 9. Optional machine-assisted spot check against a free, no-key API.
 #    This is not human review and does not replace the blind packets.
+#    The final-only inputs keep greedy and beam on the same 25 rows.
 $PY -m nmt.cli review-api --provider google-gtx \
-  --greedy-report reports/newstest2014.82m.en-fr.full.json \
-  --beam-report reports/beam_tuned_step14500.en-fr.full.json \
-  --out reports/review_api_google_82m_enfr --per-direction 25
+  --greedy-report reports/gtx_final_step15897_inputs/en-fr.greedy.json \
+  --beam-report reports/gtx_final_step15897_inputs/en-fr.beam.json \
+  --out reports/review_api_google_82m_final_enfr --per-direction 25
 $PY -m nmt.cli review-api --provider google-gtx \
-  --greedy-report reports/newstest2014.82m.fr-en.full.json \
-  --beam-report reports/beam_tuned_step14500.fr-en.full.json \
-  --out reports/review_api_google_82m_fren --per-direction 25
+  --greedy-report reports/gtx_final_step15897_inputs/fr-en.greedy.json \
+  --beam-report reports/gtx_final_step15897_inputs/fr-en.beam.json \
+  --out reports/review_api_google_82m_final_fren --per-direction 25
 ```
 
 Java (JDK 17+ and Maven; configure your installation if they are not on `PATH`):
@@ -256,24 +257,28 @@ assigns more CRITICAL labels (50 vs 25), so this is not a general quality claim.
 
 ### API-assisted spot check (not human review)
 
-A separate deterministic 25-row-per-direction sample was translated with
-Google's no-key `gtx` endpoint through `nmt.cli review-api`. This is a
-machine-assisted spot check, not a human evaluation, not a full-set benchmark,
-and not a quality estimate for the pilot: the API is a production system and a
-much stronger MT baseline, so its scores say more about the sample than about
-this model.
+The current deterministic 25-row-per-direction sample uses the final step-15,897
+checkpoint for both greedy and beam-4 decoding (the same dev-selected settings
+as step 14,500). It was translated with Google's no-key `gtx` endpoint through
+`nmt.cli review-api`. This is a machine-assisted spot check, not a human
+evaluation, not a full-set benchmark, and not a quality estimate for the pilot:
+the API is a production system and a much stronger MT baseline, so its scores
+say more about the sample than about this model.
 
-| System (25 rows/direction) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
+| System (25 rows/direction, final step 15,897) | EN→FR BLEU | EN→FR chrF++ | FR→EN BLEU | FR→EN chrF++ |
 | --- | --- | --- | --- | --- |
-| Greedy | 3.996 | 29.785 | 15.867 | 42.223 |
-| Tuned beam 4 | 4.662 | 30.414 | 19.532 | 44.947 |
+| Final greedy | 3.413 | 30.176 | 18.341 | 43.487 |
+| Final beam 4 (dev-tuned) | 5.383 | 32.249 | 21.780 | 45.658 |
 | Google `gtx` | 31.149 | 56.128 | 49.329 | 68.008 |
 
-The API beat greedy and tuned beam on sentence chrF++ in all 50 sampled rows
-(25/25 in each direction). That is expected for a production translator; it is
-not a human judgment. The sample is diagnostic-stratified, and BLEU on 25
-segments is unstable. Per-row TSV, summary JSON and Markdown are in
-`reports/review_api_google_82m_enfr/` and `reports/review_api_google_82m_fren/`.
+The API beat final greedy and final beam-4 decoding on sentence chrF++ in all 50
+sampled rows (25/25 in each direction). That is expected for a production
+translator; it is not a human judgment. The sample is diagnostic-stratified,
+and BLEU on 25 segments is unstable. Per-row TSV, summary JSON and Markdown are
+in `reports/review_api_google_82m_final_enfr/` and
+`reports/review_api_google_82m_final_fren/`. The earlier step-14,500 comparison
+remains under `reports/review_api_google_82m_enfr/` and
+`reports/review_api_google_82m_fren/`.
 
 MyMemory was probed first, but it returned exact newstest references on the
 small sample (BLEU 100), so it is not an independent baseline. It remains
@@ -359,10 +364,11 @@ constraints recorded in the model card.
   (2,959/2,922 retained): BLEU +2.39/+1.87 and chrF++ +2.15/+2.03 versus greedy;
   1,017/984 sentence-level chrF++ regressions; see
   `reports/beam_tuned_step14500.md`.
-- Real API-assisted spot check: 25 rows per direction with Google `gtx`
-  (40 new requests plus 10 cached responses; 50/50 usable), with per-row TSV,
-  summary JSON and Markdown under `reports/review_api_google_82m_enfr/` and
-  `reports/review_api_google_82m_fren/`. This is not a human evaluation.
+- Real API-assisted spot check: 25 rows per direction from the final step-15,897
+  checkpoint with Google `gtx` (50 new requests; 50/50 usable), with per-row
+  TSV, summary JSON and Markdown under
+  `reports/review_api_google_82m_final_enfr/` and
+  `reports/review_api_google_82m_final_fren/`. This is not a human evaluation.
 - Historical beam-4 vs greedy sample on the first 500 raw rows per direction (495
   retained each): BLEU +2.79/+2.44 and chrF++ +1.54/+2.09, but 932/990 outputs
   changed and 575 got shorter; see `reports/beam_vs_greedy_step14500.md`.
