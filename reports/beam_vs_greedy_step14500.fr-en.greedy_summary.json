@@ -1,0 +1,27 @@
+{
+  "beam_size": 1,
+  "benchmark": "data/prepared/newstest2014/newstest2014.fr-en.jsonl",
+  "comparisons": {},
+  "direction": "fr-en",
+  "length_penalty": 1.0,
+  "models": {
+    "candidate": {
+      "bleu": 10.683,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp": 37.54,
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 495,
+      "step": 14500
+    }
+  },
+  "n": 495,
+  "signatures": {
+    "bleu": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+    "chrfpp": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1"
+  },
+  "skipped_overlength": 5,
+  "source_copy": {
+    "bleu": 2.403,
+    "chrfpp": 23.107
+  }
+}

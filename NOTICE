@@ -1,0 +1,42 @@
+NOTICES AND RIGHTS
+==================
+
+This repository separates three kinds of material.
+
+1. Source code (`nmt/`, `java/`, `scripts/`, `configs/`, `tests/`)
+   Copyright 2026 the project authors. Released under the MIT licence
+   (see LICENSE). This licence covers the code only.
+
+2. Fixture corpus (`data/fixtures/en-fr-fixtures.tsv`)
+   Hand-authored for this repository and released under CC0-1.0
+   (https://creativecommons.org/publicdomain/zero/1.0/). No third-party text.
+
+3. Corpora, evaluation sets and trained artifacts
+   The training corpora are Europarl v7 (European Parliament, distributed by
+   statmt.org) and News Commentary v9 (WMT14). Neither carries a standard
+   permissive licence in this project's assessment:
+     * statmt.org distributes Europarl v7 for research use; OPUS lists the
+       licence as unknown.
+     * WMT14 distribution does not grant blanket commercial or redistribution
+       rights; the underlying news articles remain their publishers' copyright.
+   The newstest2014 evaluation set is WMT14 task data and is used for scoring
+   only.
+
+   Therefore:
+     * raw corpora are NOT redistributed here; they are downloaded by
+       `python -m nmt.cli prepare` and are git-ignored;
+     * trained model weights derived from those corpora inherit their unresolved
+       status and are published as research artifacts only, not for commercial
+       redistribution;
+     * no permission to redistribute the raw text is claimed.
+
+   If you need a commercially redistributable translator, you must re-run this
+   pipeline on data whose terms allow it. The code supports that; the data
+   choice does not.
+
+Third-party software
+--------------------
+PyTorch, ONNX, ONNX Runtime, SacreBLEU, NumPy, PyYAML and Gson are used under
+their own licences. ONNX Runtime is distributed by Microsoft under the MIT
+licence. No pretrained translation, language-model, embedding or tokenizer
+artifact is included or downloaded by this project.

@@ -1,0 +1,19 @@
+{
+  "model_id": "existing_accelerator@step9500#d4dcaa8d",
+  "java_version": "21.0.13",
+  "os": "Windows 11 amd64",
+  "available_processors": 16,
+  "max_heap_bytes": 4219469824,
+  "used_heap_bytes": 19382496,
+  "cold_load_ms": 1464.403,
+  "first_translation_ms": 445.493,
+  "first_translation_text": "La formation est en train de se détourner.",
+  "first_termination": "eos",
+  "warm_runs": 20,
+  "warm_median_ms": 290.718,
+  "warm_p95_ms": 417.356,
+  "warm_min_ms": 217.255,
+  "warm_max_ms": 483.803,
+  "batch_5_inputs_ms": 1417.488,
+  "batch_inputs_per_second": 3.527
+}

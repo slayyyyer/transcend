@@ -1,0 +1,172 @@
+{
+  "review_type": "AI-assisted bilingual review",
+  "not_human_evaluation": true,
+  "reviewer": "Buffy (AI coding agent)",
+  "date": "2026-11-07",
+  "human_evaluation": "pending",
+  "packet": {
+    "en-fr": {
+      "population": 2959,
+      "sample": 100,
+      "documents": 176,
+      "seed": 20261107
+    },
+    "fr-en": {
+      "population": 2922,
+      "sample": 100,
+      "documents": 176,
+      "seed": 20261107
+    }
+  },
+  "sample_method": "Deterministic SHA-256 ranking with seed 20261107; 25 diagnostic-marker rows plus 75 general rows per direction.",
+  "reviewer_inputs": [
+    "source",
+    "reference",
+    "system_output",
+    "diagnostic_flags"
+  ],
+  "blinding": "The packet did not display system identity, but the reviewer knows the project and model; this was not a blinded human review.",
+  "rubric": {
+    "OK": "Meaning preserved; differences are stylistic or equally acceptable wording.",
+    "MINOR": "Localized error(s); the main meaning remains recoverable without the reference.",
+    "MAJOR": "Material meaning loss or distortion, or broken syntax; unreliable without repair.",
+    "CRITICAL": "No coherent proposition, unrelated/degenerate output, or a critical detail (negation, number, name) destroyed.",
+    "acceptable": "OK + MINOR."
+  },
+  "totals": {
+    "n": 200,
+    "counts": {
+      "OK": 2,
+      "MINOR": 31,
+      "MAJOR": 142,
+      "CRITICAL": 25
+    },
+    "acceptable": 33,
+    "acceptable_rate": 0.165,
+    "major_or_critical": 167
+  },
+  "by_direction": {
+    "en-fr": {
+      "n": 100,
+      "counts": {
+        "OK": 1,
+        "MINOR": 14,
+        "MAJOR": 68,
+        "CRITICAL": 17
+      },
+      "acceptable": 15,
+      "acceptable_rate": 0.15,
+      "error_categories": {
+        "mistranslation": 85,
+        "grammar": 59,
+        "terminology": 52,
+        "omission": 36,
+        "repetition": 24,
+        "agreement": 4,
+        "punctuation": 3
+      }
+    },
+    "fr-en": {
+      "n": 100,
+      "counts": {
+        "OK": 1,
+        "MINOR": 17,
+        "MAJOR": 74,
+        "CRITICAL": 8
+      },
+      "acceptable": 18,
+      "acceptable_rate": 0.18,
+      "error_categories": {
+        "mistranslation": 87,
+        "terminology": 65,
+        "omission": 36,
+        "grammar": 26,
+        "repetition": 13,
+        "agreement": 3,
+        "addition": 1
+      }
+    }
+  },
+  "error_categories": {
+    "mistranslation": {
+      "rows": 172,
+      "percent_of_sample": 86.0
+    },
+    "terminology": {
+      "rows": 117,
+      "percent_of_sample": 58.5
+    },
+    "grammar": {
+      "rows": 85,
+      "percent_of_sample": 42.5
+    },
+    "omission": {
+      "rows": 72,
+      "percent_of_sample": 36.0
+    },
+    "repetition": {
+      "rows": 37,
+      "percent_of_sample": 18.5
+    },
+    "agreement": {
+      "rows": 7,
+      "percent_of_sample": 3.5
+    },
+    "punctuation": {
+      "rows": 3,
+      "percent_of_sample": 1.5
+    },
+    "addition": {
+      "rows": 1,
+      "percent_of_sample": 0.5
+    }
+  },
+  "primary_error_categories": {
+    "mistranslation": 131,
+    "terminology": 48,
+    "omission": 11,
+    "grammar": 5,
+    "repetition": 2,
+    "none (OK)": 2,
+    "agreement": 1
+  },
+  "diagnostic_flags": {
+    "flagged": {
+      "rows": 50,
+      "counts": {
+        "OK": 0,
+        "MINOR": 3,
+        "MAJOR": 43,
+        "CRITICAL": 4
+      },
+      "acceptable": 3,
+      "acceptable_rate": 0.06
+    },
+    "unflagged": {
+      "rows": 150,
+      "counts": {
+        "OK": 2,
+        "MINOR": 28,
+        "MAJOR": 99,
+        "CRITICAL": 21
+      },
+      "acceptable": 30,
+      "acceptable_rate": 0.2
+    }
+  },
+  "files": {
+    "en-fr_reviewed": "reports/review_packet_enfr/review_en-fr_reviewed.tsv",
+    "fr-en_reviewed": "reports/review_packet_fren/review_fr-en_reviewed.tsv",
+    "en-fr_annotations": "reports/review_packet_enfr/annotations.psv",
+    "fr-en_annotations": "reports/review_packet_fren/annotations.psv",
+    "summary_markdown": "reports/review_summary.md",
+    "summary_json": "reports/review_summary.json"
+  },
+  "limitations": [
+    "Single AI reviewer; no inter-annotator agreement and no qualified human judgments.",
+    "The packet is a deterministic stratified sample, not a random quality audit; percentages are descriptive.",
+    "Each reference is one human translation; other valid translations were not enumerated.",
+    "The review is not a safety, legal, bias, or domain-suitability audit.",
+    "A qualified bilingual human review remains pending."
+  ]
+}

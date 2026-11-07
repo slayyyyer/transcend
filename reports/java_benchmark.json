@@ -1,0 +1,19 @@
+{
+  "model_id": "existing_accelerator@step14500#49a5b975",
+  "java_version": "21.0.13",
+  "os": "Windows 11 amd64",
+  "available_processors": 16,
+  "max_heap_bytes": 4219469824,
+  "used_heap_bytes": 38918920,
+  "cold_load_ms": 1297.043,
+  "first_translation_ms": 379.855,
+  "first_translation_text": "La formation à huit dans le mort.",
+  "first_termination": "eos",
+  "warm_runs": 20,
+  "warm_median_ms": 233.31,
+  "warm_p95_ms": 443.033,
+  "warm_min_ms": 167.93,
+  "warm_max_ms": 470.595,
+  "batch_5_inputs_ms": 1219.387,
+  "batch_inputs_per_second": 4.1
+}

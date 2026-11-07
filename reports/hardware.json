@@ -1,0 +1,43 @@
+{
+  "captured_at_utc": "2026-11-07T04:16:24Z",
+  "captured_on": "savannah-laptop",
+  "cpu": {
+    "high_precision_bf16_cpu": true,
+    "logical_threads": 16,
+    "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "disk": {
+    "free_bytes": 84072075264,
+    "path": "C:\\Users\\justin\\projects\\transcend",
+    "total_bytes": 510745636864
+  },
+  "gpus": [
+    {
+      "backend": "cuda",
+      "compute_capability": "8.6",
+      "free_memory_bytes": 3455791924,
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+      "torch_bf16_supported": true,
+      "total_memory_bytes": 4294443008
+    }
+  ],
+  "memory": {
+    "available_ram_bytes": 8907444224,
+    "total_ram_bytes": 16869548032
+  },
+  "os": {
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "release": "11",
+    "system": "Windows",
+    "version": "10.0.26300"
+  },
+  "python": {
+    "default_threads": 12,
+    "executable": "C:\\Users\\justin\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "torch": "2.14.1+cu130",
+    "torch_cuda_build": "13.0",
+    "version": "3.14.6"
+  }
+}

@@ -1,0 +1,12 @@
+# Pinned training/export/evaluation environment (CPython 3.14, Windows x64).
+# torch is pinned separately because the local wheel is the CUDA 13.0 build;
+# a CPU-only wheel of the same version also satisfies every code path.
+torch==2.14.1
+numpy==2.4.6
+PyYAML==6.0.3
+sentencepiece==0.2.1
+onnx==1.20.0
+onnxruntime==1.31.1
+sacrebleu==2.5.1
+protobuf==6.32.1
+pytest==8.4.2

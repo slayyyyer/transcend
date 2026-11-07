@@ -1,0 +1,150 @@
+{
+  "checkpoint": "models/accel_pilot/best.pt",
+  "step": 14500,
+  "decoder": {
+    "beam_size": 4,
+    "length_penalty": 1.2,
+    "min_new_tokens": 16
+  },
+  "baseline": "greedy",
+  "directions": {
+    "en-fr": {
+      "n": 2959,
+      "documents": 176,
+      "greedy": {
+        "bleu": 11.031,
+        "chrfpp": 38.667,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2959,
+        "mean_words": 26.088,
+        "median_words": 24,
+        "short_5_words": 32,
+        "short_8_words": 158,
+        "empty": 0
+      },
+      "beam": {
+        "bleu": 13.417,
+        "chrfpp": 40.817,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2959,
+        "mean_words": 24.918,
+        "median_words": 24,
+        "short_5_words": 8,
+        "short_8_words": 168,
+        "empty": 0
+      },
+      "delta": {
+        "bleu": 2.386,
+        "chrfpp": 2.15,
+        "mean_words": -1.17
+      },
+      "paired_bootstrap": {
+        "chrfpp": {
+          "metric": "chrfpp",
+          "observed_delta": 2.15,
+          "bootstrap_mean_delta": 2.151,
+          "ci95": [
+            1.961,
+            2.337
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        },
+        "bleu": {
+          "metric": "bleu",
+          "observed_delta": 2.387,
+          "bootstrap_mean_delta": 2.386,
+          "ci95": [
+            2.153,
+            2.633
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        }
+      },
+      "sentence_chrfpp": {
+        "beam_wins": 1835,
+        "greedy_wins": 1017,
+        "ties": 107
+      },
+      "changed_outputs": 2856,
+      "shorter_outputs": 1519,
+      "longer_outputs": 926
+    },
+    "fr-en": {
+      "n": 2922,
+      "documents": 176,
+      "greedy": {
+        "bleu": 11.278,
+        "chrfpp": 38.855,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2922,
+        "mean_words": 23.863,
+        "median_words": 22.0,
+        "short_5_words": 40,
+        "short_8_words": 174,
+        "empty": 0
+      },
+      "beam": {
+        "bleu": 13.147,
+        "chrfpp": 40.881,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2922,
+        "mean_words": 23.184,
+        "median_words": 22.0,
+        "short_5_words": 4,
+        "short_8_words": 182,
+        "empty": 0
+      },
+      "delta": {
+        "bleu": 1.869,
+        "chrfpp": 2.026,
+        "mean_words": -0.68
+      },
+      "paired_bootstrap": {
+        "chrfpp": {
+          "metric": "chrfpp",
+          "observed_delta": 2.026,
+          "bootstrap_mean_delta": 2.025,
+          "ci95": [
+            1.805,
+            2.263
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        },
+        "bleu": {
+          "metric": "bleu",
+          "observed_delta": 1.869,
+          "bootstrap_mean_delta": 1.87,
+          "ci95": [
+            1.593,
+            2.13
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        }
+      },
+      "sentence_chrfpp": {
+        "beam_wins": 1797,
+        "greedy_wins": 984,
+        "ties": 141
+      },
+      "changed_outputs": 2784,
+      "shorter_outputs": 1365,
+      "longer_outputs": 964
+    }
+  }
+}

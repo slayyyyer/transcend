@@ -1,0 +1,24 @@
+# Toolchains installed locally for this project (not source)
+.tools/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Large data and model artifacts (see artifacts/README.md for hashes)
+data/raw/
+data/prepared/
+models/
+artifacts/
+reports/*.json.tmp
+
+# Java build output
+java/target/
+java/.mvn/
+
+# Local scratch
+*.log
+/tmp/

@@ -1,0 +1,252 @@
+{
+  "en-fr": {
+    "n": 495,
+    "documents": 22,
+    "greedy": {
+      "bleu": 10.364,
+      "chrfpp": 37.127,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 495
+    },
+    "beam4": {
+      "bleu": 13.153,
+      "chrfpp": 38.666,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 495
+    },
+    "delta": {
+      "bleu": 2.789,
+      "chrfpp": 1.539
+    },
+    "bootstrap": {
+      "chrfpp": {
+        "metric": "chrfpp",
+        "observed_delta": 1.539,
+        "bootstrap_mean_delta": 1.548,
+        "ci95": [
+          0.928,
+          2.119
+        ],
+        "p_value_one_sided": 0.0,
+        "samples": 1000,
+        "resampling_unit": "document",
+        "unit_count": 22
+      },
+      "bleu": {
+        "metric": "bleu",
+        "observed_delta": 2.789,
+        "bootstrap_mean_delta": 2.768,
+        "ci95": [
+          2.204,
+          3.393
+        ],
+        "p_value_one_sided": 0.0,
+        "samples": 1000,
+        "resampling_unit": "document",
+        "unit_count": 22
+      }
+    },
+    "changed": 477,
+    "identical": 18,
+    "sentences": {
+      "improved": 301,
+      "regressed": 176,
+      "tied": 18,
+      "mean_chrfpp_delta": 1.64
+    },
+    "words": {
+      "greedy_mean": 24.84,
+      "beam4_mean": 22.37,
+      "greedy_median": 23,
+      "beam4_median": 21,
+      "beam_shorter": 306,
+      "equal": 75,
+      "beam_longer": 114,
+      "beam_le_5": 15,
+      "greedy_le_5": 7
+    },
+    "examples": [
+      {
+        "index": 45,
+        "sentence_chrfpp_delta": 55.022,
+        "greedy": "Il ne s'agit pas de personnes qui ont été wanés.",
+        "beam4": "Ce n'est pas quelque chose que les personnes ont été wanés.",
+        "reference": "Ce n'est pas quelque chose que les gens veulent.",
+        "greedy_words": 10,
+        "beam4_words": 11
+      },
+      {
+        "index": 253,
+        "sentence_chrfpp_delta": 40.082,
+        "greedy": "Déceptre de mon mur.",
+        "beam4": "Déceptre de ma femme.",
+        "reference": "Sauf à ma femme.",
+        "greedy_words": 4,
+        "beam4_words": 4
+      },
+      {
+        "index": 3,
+        "sentence_chrfpp_delta": 33.406,
+        "greedy": "Une boise de votre carte ?",
+        "beam4": "Un bout de votre voiture dans votre voiture ?",
+        "reference": "Une boîte noire dans votre voiture ?",
+        "greedy_words": 6,
+        "beam4_words": 9
+      },
+      {
+        "index": 448,
+        "sentence_chrfpp_delta": -31.584,
+        "greedy": "Je ne quitterai pas ce fossé dans le monde et nous avons été heureux et sa vie spiritue ici avec moi.",
+        "beam4": "Je ne serais pas quitter ce fossé dans le monde.",
+        "reference": "Pour rien au monde je ne quitterais cette maison où nous avons été heureux et ou son esprit vit avec moi.",
+        "greedy_words": 21,
+        "beam4_words": 10
+      },
+      {
+        "index": 61,
+        "sentence_chrfpp_delta": -34.111,
+        "greedy": "En New York City, les fonctionnaires cherchent à développer un dévice de vice-verbal qui serait également équipé à payer des mènes de mès, fournir des frais de remboursement des frais de remboursement des données et de créer une pointe de vendre de données sur le trafic de personnaires.",
+        "beam4": "En New York City, les",
+        "reference": "Dans la ville de New York, les responsables des transports cherchent à développer un dispositif de taxation qui serait également équipé pour payer les frais de stationnement, fournir une assurance « paiement à la conduite » et créer un ensemble de données sur la vitesse en temps réel en provenance des autres conducteurs que les automobilistes pourraient utiliser pour éviter les embouteillages.",
+        "greedy_words": 48,
+        "beam4_words": 5
+      },
+      {
+        "index": 195,
+        "sentence_chrfpp_delta": -36.781,
+        "greedy": "Beaucoup de Wall Street se sont considérés comme un signe de bagage de bagage comme un signe que les compagnies aériennes sont chargés de se cacher suffisamment de l'argent des voyagnes après les années de dépargence.",
+        "beam4": "Beaucoup de Wall Street",
+        "reference": "Bon nombre de personnes à Wall Street considèrent l'ajout de frais de bagages comme un signe qui prouve que les compagnies aériennes font payer assez cher pour couvrir le coût du voyage aérien après des années de pertes.",
+        "greedy_words": 36,
+        "beam4_words": 4
+      }
+    ]
+  },
+  "fr-en": {
+    "n": 495,
+    "documents": 22,
+    "greedy": {
+      "bleu": 10.683,
+      "chrfpp": 37.54,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 495
+    },
+    "beam4": {
+      "bleu": 13.126,
+      "chrfpp": 39.627,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 495
+    },
+    "delta": {
+      "bleu": 2.443,
+      "chrfpp": 2.087
+    },
+    "bootstrap": {
+      "chrfpp": {
+        "metric": "chrfpp",
+        "observed_delta": 2.087,
+        "bootstrap_mean_delta": 2.07,
+        "ci95": [
+          1.221,
+          2.801
+        ],
+        "p_value_one_sided": 0.0,
+        "samples": 1000,
+        "resampling_unit": "document",
+        "unit_count": 22
+      },
+      "bleu": {
+        "metric": "bleu",
+        "observed_delta": 2.443,
+        "bootstrap_mean_delta": 2.428,
+        "ci95": [
+          1.707,
+          3.265
+        ],
+        "p_value_one_sided": 0.0,
+        "samples": 1000,
+        "resampling_unit": "document",
+        "unit_count": 22
+      }
+    },
+    "changed": 455,
+    "identical": 40,
+    "sentences": {
+      "improved": 289,
+      "regressed": 165,
+      "tied": 41,
+      "mean_chrfpp_delta": 2.028
+    },
+    "words": {
+      "greedy_mean": 23.51,
+      "beam4_mean": 21.51,
+      "greedy_median": 22,
+      "beam4_median": 21,
+      "beam_shorter": 269,
+      "equal": 111,
+      "beam_longer": 115,
+      "beam_le_5": 10,
+      "greedy_le_5": 6
+    },
+    "examples": [
+      {
+        "index": 255,
+        "sentence_chrfpp_delta": 36.754,
+        "greedy": "Will you do you to do this?",
+        "beam4": "Is the truth of the truth of you?",
+        "reference": "Does the truth offend you?",
+        "greedy_words": 7,
+        "beam4_words": 8
+      },
+      {
+        "index": 403,
+        "sentence_chrfpp_delta": 26.851,
+        "greedy": "A parad to the parallel was in the mid-day he was in the case of a parallel to Cuba.",
+        "beam4": "A year before, it was in travel with my family to Cuba.",
+        "reference": "One year previously, she had travelled with my family to Cuba.",
+        "greedy_words": 19,
+        "beam4_words": 12
+      },
+      {
+        "index": 420,
+        "sentence_chrfpp_delta": 23.705,
+        "greedy": "My mother took part of my visit and it is regarded by all the matin in my miray.",
+        "beam4": "My mother has taken a session of my visa and she looked at all the morning in my mother.",
+        "reference": "My mother has taken possession of my face, and every morning she looks back at me in the mirror.",
+        "greedy_words": 18,
+        "beam4_words": 19
+      },
+      {
+        "index": 489,
+        "sentence_chrfpp_delta": -16.359,
+        "greedy": "But this is all far beyond ordinary limits of a law and its client relationship.",
+        "beam4": "But this is far beyond ordinary limits of a law between a law and its custom.",
+        "reference": "But this went way beyond the ordinary confines of a lawyer-client relationship.",
+        "greedy_words": 15,
+        "beam4_words": 16
+      },
+      {
+        "index": 319,
+        "sentence_chrfpp_delta": -22.242,
+        "greedy": "Twologues of 23 and 27 years were disappeared in a gorgorous gap under the Ref of the Reft on Thursday even we have learned to the Speo in the Island.",
+        "beam4": "Twologues of 23 and 27 years",
+        "reference": "Two potholders aged 23 and 27 went missing in a cave under the Dent de Crolles on Thursday evening, according to a report from the Isère cave rescue organization on Friday.",
+        "greedy_words": 30,
+        "beam4_words": 6
+      },
+      {
+        "index": 79,
+        "sentence_chrfpp_delta": -33.087,
+        "greedy": "The Next Day Extratra-Fay will be held at the total ten additional titres in the original bubble of the original bubble of the Delel Delu Del five years of specify the opportunity for the opportunity, and both reminent remixed.",
+        "beam4": "The Next Day",
+        "reference": "The Next Day Extra had a total of ten additional tracks compared to the original album: the three songs from the Deluxe edition, five songs specially unveiled for the occasion, and two remixes.",
+        "greedy_words": 39,
+        "beam4_words": 3
+      }
+    ]
+  }
+}

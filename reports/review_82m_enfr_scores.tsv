@@ -1,0 +1,100 @@
+en-fr	23	MAJOR	mistranslation;terminology;omission	Tracking devices and pay-by-mile are garbled; 500 cars and a payment test are partly retained.
+en-fr	38	CRITICAL	mistranslation;omission;grammar	Nevada and pilot are lost; the output does not form a coherent proposition.
+en-fr	40	MAJOR	mistranslation;omission;grammar	Illinois and trucks are omitted; the limited-basis clause is broken.
+en-fr	90	MAJOR	mistranslation;terminology;grammar	Space Oddity and solemn are degraded; invented words distort the comparison.
+en-fr	204	MAJOR	mistranslation;omission;terminology;repetition	Frontier, Spirit and the drink list are lost; charge and two dollars are repeated and garbled.
+en-fr	206	MINOR	mistranslation;grammar	The main action is clear, but give away becomes simply donner une eau and the free nuance is lost.
+en-fr	295	MAJOR	terminology;mistranslation;grammar	403 and 15 are retained; customers become customs officers and orders is untranslated.
+en-fr	361	CRITICAL	omission;mistranslation;grammar	Father, death and five years are lost; the output is a vague ungrammatical fragment.
+en-fr	406	MAJOR	mistranslation;omission;repetition	Goodbyes are lost and rapidement is repeated; the mourning sense is not recoverable.
+en-fr	413	MINOR	grammar;agreement;mistranslation	Eyes and gaze are clear; sur le me and singular eye are grammatical errors.
+en-fr	441	CRITICAL	mistranslation;omission;grammar	Husband, death and the thirty-year frame are corrupted; 33 survives but the proposition is broken.
+en-fr	450	MAJOR	mistranslation;terminology;omission	Bloodiest is lost and Bloodi Month is left in English; the headline is damaged.
+en-fr	501	MAJOR	mistranslation;terminology;grammar	Scarborough and the drug-conspiracy details are garbled; 14 years is partly retained.
+en-fr	532	MINOR	repetition;grammar	The support meaning is clear; stable is repeated four times.
+en-fr	539	CRITICAL	mistranslation;grammar;terminology	Holy Cross Brothers and the claim are lost; the headline is mostly nonwords.
+en-fr	549	CRITICAL	mistranslation;omission;grammar	Fire, shop and serious damage are lost; the place and time fragments are incoherent.
+en-fr	601	MAJOR	omission;mistranslation;grammar	The pharmacist quote is partly clear; a missing subject and repeated pharmaciste break the syntax.
+en-fr	639	MAJOR	mistranslation;omission;terminology	Air raid becomes aide de Raid and installations are lost.
+en-fr	719	MAJOR	mistranslation;terminology;grammar	APHP and the closure contrast are garbled; repeated fermer obscures the preference.
+en-fr	800	CRITICAL	mistranslation;omission;grammar	Children, myths, legends and the author are lost; the output is word salad.
+en-fr	804	MAJOR	mistranslation;terminology	Advocating becomes worried about; the plan and twenty years are partly retained.
+en-fr	826	MAJOR	mistranslation;omission;terminology	181 million and January survive; items, metadata and media are garbled.
+en-fr	828	MINOR	grammar;agreement	Meaning is clear; deni should be nie.
+en-fr	884	CRITICAL	mistranslation;terminology;grammar	The house and engulfed headline is reduced to nonwords; Old Quebec survives only as fragments.
+en-fr	885	MAJOR	mistranslation;terminology;grammar	Fire, time and control are partly clear; Old Friday is duplicated and the location is lost.
+en-fr	891	MAJOR	mistranslation;omission;grammar	Alarms and buildings are partly retained; France Loiselle and the quote are lost.
+en-fr	1061	MAJOR	mistranslation;omission;terminology	The Vatican poll and homosexuality survive as fragments; contraception and divorce are lost.
+en-fr	1112	MINOR	terminology;mistranslation	200 artists and project movement are clear; artistees and the missing destination phrase are local errors.
+en-fr	1120	CRITICAL	mistranslation;grammar;omission	Musicals and gap are lost; the output is unintelligible.
+en-fr	1133	MAJOR	mistranslation;omission;grammar	Disneyland and Paris survive; the injured child and the ride are lost.
+en-fr	1134	MAJOR	mistranslation;omission;grammar	Child and accident are partly clear; age five and the ride details are lost.
+en-fr	1169	MINOR	grammar;terminology	Scepticism is clear; Business is untranslated and ce point is awkward.
+en-fr	1182	OK		Meaning is preserved; pris place a la place is slightly awkward but acceptable.
+en-fr	1215	MINOR	grammar;repetition;agreement	Questions, answer and confirm are clear; attribution is repeated and agreement is wrong.
+en-fr	1403	MAJOR	mistranslation;terminology;omission	Stats becomes Etats and black sheep is lost; Halloween is truncated.
+en-fr	1411	CRITICAL	mistranslation;grammar;omission	Nothing wrong is reversed; the output does not form a coherent proposition.
+en-fr	1421	MAJOR	terminology;mistranslation	9 billion survives; kernels and corn are nonwords and the proposition is barely recoverable.
+en-fr	1439	MINOR	terminology;mistranslation;grammar	The option list mostly survives; upgraded, mechanics and some details are garbled.
+en-fr	1453	CRITICAL	mistranslation;omission;grammar	Dog walker, Ruby, ledge and quarry are lost; the 50 ft detail is a fragment.
+en-fr	1470	CRITICAL	mistranslation;omission;grammar	Daring is lost; the output means it was true that it was the case.
+en-fr	1497	CRITICAL	mistranslation;terminology;grammar	Non-story and then are lost; the output is nonsensical.
+en-fr	1532	MAJOR	mistranslation;omission;grammar	The first clause is clear; telling Berlin and Brussels where to get off is lost.
+en-fr	1535	MAJOR	mistranslation;terminology;grammar	Emulating becomes reducing; economic independence is otherwise clear.
+en-fr	1540	CRITICAL	mistranslation;grammar;omission	The negation and puberty are lost; donors and demarches distort the claim.
+en-fr	1548	MAJOR	mistranslation;omission;grammar	The development-signs list is garbled; breasts, hair and odor are lost.
+en-fr	1570	MAJOR	mistranslation;grammar;omission	The support/conclusion relation is lost; facteur de contribution is awkward.
+en-fr	1572	MINOR	terminology;grammar	Varying explanations is clear despite the nonword vares.
+en-fr	1629	MAJOR	mistranslation;grammar;omission	The elliptical reply is rendered ungrammatical and unclear.
+en-fr	1636	CRITICAL	mistranslation;terminology;omission	Boeing, 777X and 406 are lost; the seat details are garbled.
+en-fr	1657	MAJOR	mistranslation;terminology;grammar	The unit-cost gain and blunting are lost; the output is word salad.
+en-fr	1663	MAJOR	mistranslation;omission;grammar	Comfort and low-cost are lost; the high-density layout is garbled.
+en-fr	1688	MAJOR	mistranslation;terminology;grammar	Far lower is reversed to loin d etre bas; liver and antibody are lost.
+en-fr	1744	MAJOR	mistranslation;terminology;grammar	The good-news meaning is partly clear; Carmichael and Scotland are garbled.
+en-fr	1787	MAJOR	mistranslation;omission;grammar	Consumer debt and Thailand are partly clear; narrowly emerged is lost.
+en-fr	1812	MAJOR	mistranslation;omission;grammar	The Nazi uniform and supermarket are partly clear; swastika, complaints and police are garbled.
+en-fr	1827	MAJOR	mistranslation;terminology;omission	2600 survives; orthopedics, cataract and backlog are garbled.
+en-fr	1863	MAJOR	mistranslation;omission;grammar	Assad and Safira are lost; rebels, Qaida and weeks survive; battling is reversed.
+en-fr	1888	MINOR	terminology;mistranslation;grammar	The negation and family relation are partly clear; grands enfants and daughters are wrong.
+en-fr	1909	CRITICAL	mistranslation;terminology;grammar	FAA and plans survive; airlines, devices and planes are garbled.
+en-fr	1927	MINOR	mistranslation;terminology;grammar	The cell-phone risk claim is clear; NTSB, the name and CBS are corrupted.
+en-fr	1936	MAJOR	mistranslation;omission;repetition	Airlines, Wi-Fi and years are clear; passengers and altitudes are lost and Wi-Fi is repeated.
+en-fr	1983	MAJOR	mistranslation;grammar;omission	Relaxed is lost; only cool remains in a fragment.
+en-fr	2054	CRITICAL	mistranslation;grammar;omission	The double negative reverses nobody was ready; the name and age are garbled.
+en-fr	2061	MINOR	grammar;terminology	The mother, quote and double act are mostly clear; Toffee and grammar are wrong.
+en-fr	2089	MAJOR	mistranslation;terminology;grammar	Did this and hankered are garbled; money and fame are partly retained.
+en-fr	2091	MAJOR	mistranslation;omission;terminology	The Chen and New Express apology is garbled; the reports check is partly retained.
+en-fr	2103	CRITICAL	mistranslation;omission;repetition	Cast off and mid-October are lost; Toulon and training are repeated.
+en-fr	2110	MAJOR	mistranslation;omission;grammar	Forcible taxation and impoverishment are lost; income reduction is partly clear.
+en-fr	2147	MAJOR	mistranslation;omission;grammar	US and Japan researchers and biometrics are partly clear; French is lost.
+en-fr	2156	MINOR	grammar;terminology	Meaning is clear; chaque de is ungrammatical.
+en-fr	2185	MAJOR	mistranslation;omission;grammar	Three ways and biometrics are clear; appealing to the public is lost.
+en-fr	2193	CRITICAL	mistranslation;terminology;omission	The speeding and fine headline is destroyed; 130 and 1000 survive as fragments.
+en-fr	2211	MAJOR	mistranslation;omission;grammar	Dogs and researchers are partly retained; tail, mood and films are lost.
+en-fr	2236	MAJOR	terminology;mistranslation;omission	Tickets become krags; shows are omitted.
+en-fr	2258	CRITICAL	mistranslation;omission;terminology	GM becomes GMOs; recalls, pickups and seatbacks are lost.
+en-fr	2268	CRITICAL	mistranslation;terminology;omission	GM, October and 42,660 are partly clear; 16,503 becomes 16,350 and the models are garbled.
+en-fr	2270	CRITICAL	mistranslation;terminology;grammar	The headline is an unrelated fragment; worker, buried and concrete are lost.
+en-fr	2292	CRITICAL	mistranslation;omission;grammar	Patient write-ups, book, politics and speeches are lost; the output is incoherent.
+en-fr	2347	MINOR	terminology;grammar	The public-office/service idea is clear; bureau public est sur is awkward.
+en-fr	2368	MAJOR	mistranslation;grammar;omission	The why-rare question is lost; species is repeated and declare is added.
+en-fr	2376	MINOR	terminology;mistranslation	RBS and two traders are clear; forex becomes trages.
+en-fr	2404	MAJOR	mistranslation;omission;grammar	Police and suspicious transactions are partly clear; Ford, mayor, search and warrant are lost.
+en-fr	2437	CRITICAL	mistranslation;omission;grammar	Attack, tunnel and Palestinians are lost; the output is unrelated.
+en-fr	2471	MAJOR	mistranslation;terminology;grammar	Sound and energy discharge are partly clear; deafening and numbing are lost.
+en-fr	2475	MAJOR	mistranslation;omission;grammar	The Michaux work is partly retained; choreographer, mannerisms and search are lost.
+en-fr	2486	CRITICAL	mistranslation;omission;grammar	Clowns, red noses and lovers are lost; Chouinard and the parade are garbled.
+en-fr	2496	MAJOR	terminology;mistranslation	Rockstar, Apple and Sony are partly clear; ownership and Blackberry/Ericsson are garbled.
+en-fr	2536	MAJOR	mistranslation;terminology;grammar	Morsi, Tahrir and populist gestures are garbled; only the speech fragment remains.
+en-fr	2590	MINOR	grammar;terminology;omission	Changes, subjects and next year are clear; core is omitted and the syntax is broken.
+en-fr	2598	CRITICAL	mistranslation;omission;terminology	Octogenarian, Le Muy and the greeting are lost; the headline is word salad.
+en-fr	2619	CRITICAL	mistranslation;omission;grammar	Pamela Anderson and the haircut story are lost; the output is nonwords.
+en-fr	2694	MAJOR	mistranslation;omission;terminology	ASCOVIME becomes PME; the help clause is repeated but partly clear.
+en-fr	2710	OK		Meaning is preserved in natural French.
+en-fr	2756	MAJOR	mistranslation;omission;grammar	Beirut and on the ground are lost; the question becomes a reason fragment.
+en-fr	2766	CRITICAL	mistranslation;omission;grammar	The one-hour bath is lost; the output is unrelated.
+en-fr	2800	MAJOR	mistranslation;repetition;grammar	Listening to self and repetition distort the claim.
+en-fr	2824	CRITICAL	mistranslation;repetition;grammar	Liar and traitor are corrupted into repeated fragments; Sisi is garbled.
+en-fr	2829	MINOR	grammar;repetition;omission	The without-cards health and shop meaning is partly clear; code-mixing and repetition remain.
+en-fr	2874	MAJOR	mistranslation;terminology;omission	Vettel, helmet and Abu Dhabi are largely destroyed; fragments are repeated.
+en-fr	2932	MAJOR	mistranslation;omission;repetition;grammar	Worry, hope and Tunks are partly retained; the quote is garbled and repeated.

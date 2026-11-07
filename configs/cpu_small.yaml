@@ -1,0 +1,46 @@
+# CPU development preset. Default first real experiment on this machine.
+name: cpu_small
+seed: 1337
+
+model:
+  vocab_size: auto
+  d_model: 128
+  encoder_layers: 2
+  decoder_layers: 2
+  attention_heads: 4
+  ffn_dim: 512
+  dropout: 0.1
+  max_positions: 512
+
+tokenizer:
+  target_vocab_size: 8000
+  min_pair_frequency: 2
+
+data:
+  source: europarl_nc           # Europarl v7 FR-EN + WMT14 News Commentary v9
+  train_pairs: 50000            # deterministic subset of the prepared train split
+  max_source_tokens: 96         # grown from 64 after measuring coverage (see reports/)
+  max_target_tokens: 104
+  max_char_ratio: 3.0
+  min_chars: 1
+  block_size: 200               # opaque contiguous block; not a claimed document id
+
+train:
+  device: cpu
+  precision: fp32
+  num_threads: 8
+  peak_lr: 5.0e-4
+  warmup_updates: 200
+  token_budget: 2048
+  max_micro_batch: 32
+  max_steps: 4000
+  max_train_tokens: 8000000
+  max_walltime_s: 1800
+  checkpoint_every: 250
+  validate_every: 250
+  patience: 6
+
+eval:
+  max_new_tokens: 104
+  beam_size: 1
+  dev_limit: 200

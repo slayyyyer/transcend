@@ -1,0 +1,258 @@
+{
+  "review_type": "AI-assisted bilingual review",
+  "not_human_evaluation": true,
+  "reviewer": "Buffy (AI coding agent)",
+  "date": "2026-11-07",
+  "human_evaluation": "pending",
+  "model": {
+    "checkpoint": "models/accel_pilot/best.pt",
+    "step": 14500,
+    "checkpoint_sha256": "cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231"
+  },
+  "packets": {
+    "en-fr": {
+      "path": "reports\\review_packet_82m_enfr\\review_en-fr.tsv",
+      "reviewed": "reports\\review_packet_82m_enfr\\review_en-fr_reviewed.tsv"
+    },
+    "fr-en": {
+      "path": "reports\\review_packet_82m_fren\\review_fr-en.tsv",
+      "reviewed": "reports\\review_packet_82m_fren\\review_fr-en_reviewed.tsv"
+    }
+  },
+  "sample_method": "Deterministic SHA-256 ranking with seed 20261107; 25 diagnostic-marker rows plus 75 general rows per direction.",
+  "reviewer_inputs": [
+    "source",
+    "reference",
+    "system_output",
+    "diagnostic_flags"
+  ],
+  "blinding": "The packet did not display system identity, but the reviewer knows the project and model; this was not a blinded human review.",
+  "rubric": {
+    "OK": "Meaning preserved; differences are stylistic or equally acceptable wording.",
+    "MINOR": "Localized error(s); the main meaning remains recoverable without the reference.",
+    "MAJOR": "Material meaning loss or distortion, or broken syntax; unreliable without repair.",
+    "CRITICAL": "No coherent proposition, unrelated/degenerate output, or a critical detail (negation, number, name) destroyed.",
+    "acceptable": "OK + MINOR."
+  },
+  "totals": {
+    "n": 200,
+    "counts": {
+      "OK": 3,
+      "MINOR": 40,
+      "MAJOR": 107,
+      "CRITICAL": 50
+    },
+    "acceptable": 43,
+    "acceptable_rate": 0.215,
+    "major_or_critical": 157
+  },
+  "by_direction": {
+    "en-fr": {
+      "population": 2959,
+      "documents": 176,
+      "sample": 100,
+      "counts": {
+        "OK": 2,
+        "MINOR": 17,
+        "MAJOR": 53,
+        "CRITICAL": 28
+      },
+      "acceptable": 19,
+      "acceptable_rate": 0.19,
+      "major_or_critical": 81,
+      "error_categories": {
+        "mistranslation": 88,
+        "terminology": 48,
+        "omission": 61,
+        "grammar": 73,
+        "repetition": 10,
+        "agreement": 3
+      },
+      "diagnostic_marker_slice": {
+        "flagged_rows": 25,
+        "flagged_acceptable": 2,
+        "unflagged_rows": 75,
+        "unflagged_acceptable": 17
+      },
+      "reviewed_file": "reports\\review_packet_82m_enfr\\review_en-fr_reviewed.tsv"
+    },
+    "fr-en": {
+      "population": 2922,
+      "documents": 176,
+      "sample": 100,
+      "counts": {
+        "OK": 1,
+        "MINOR": 23,
+        "MAJOR": 54,
+        "CRITICAL": 22
+      },
+      "acceptable": 24,
+      "acceptable_rate": 0.24,
+      "major_or_critical": 76,
+      "error_categories": {
+        "mistranslation": 91,
+        "grammar": 54,
+        "terminology": 71,
+        "omission": 61,
+        "agreement": 1,
+        "addition": 1,
+        "repetition": 9
+      },
+      "diagnostic_marker_slice": {
+        "flagged_rows": 25,
+        "flagged_acceptable": 6,
+        "unflagged_rows": 75,
+        "unflagged_acceptable": 18
+      },
+      "reviewed_file": "reports\\review_packet_82m_fren\\review_fr-en_reviewed.tsv"
+    }
+  },
+  "error_categories": {
+    "mistranslation": 179,
+    "terminology": 119,
+    "omission": 122,
+    "grammar": 127,
+    "repetition": 19,
+    "agreement": 4,
+    "addition": 1
+  },
+  "diagnostic_marker_slice": {
+    "flagged_rows": 50,
+    "flagged_acceptable": 8,
+    "unflagged_rows": 150,
+    "unflagged_acceptable": 35
+  },
+  "comparison_to_step9500": {
+    "same_sample_ids": true,
+    "archived_review": "reports/review_summary.md",
+    "archived_totals": {
+      "n": 200,
+      "counts": {
+        "OK": 2,
+        "MINOR": 31,
+        "MAJOR": 142,
+        "CRITICAL": 25
+      },
+      "acceptable": 33,
+      "acceptable_rate": 0.165
+    },
+    "archived_by_direction": {
+      "en-fr": {
+        "counts": {
+          "OK": 1,
+          "MINOR": 14,
+          "MAJOR": 68,
+          "CRITICAL": 17
+        },
+        "acceptable": 15
+      },
+      "fr-en": {
+        "counts": {
+          "OK": 1,
+          "MINOR": 17,
+          "MAJOR": 74,
+          "CRITICAL": 8
+        },
+        "acceptable": 18
+      }
+    },
+    "acceptable_delta": 10,
+    "newly_acceptable": 19,
+    "no_longer_acceptable": 9,
+    "ordinal_shifts": {
+      "less_severe": 26,
+      "more_severe": 41,
+      "same": 133
+    },
+    "caveat": "Same deterministic sample and rubric, but a fresh single-AI review, not an inter-annotator replicate. The distribution shifted toward both more MINOR and more CRITICAL labels, so the net acceptable count is not a uniform quality gain."
+  },
+  "examples": [
+    {
+      "direction": "en-fr",
+      "id": "1182",
+      "label": "OK",
+      "source": "It has always taken place.",
+      "reference": "Il y en a toujours eu.",
+      "system_output": "Il a toujours pris place à la place.",
+      "note": "Meaning is preserved; pris place a la place is slightly awkward but acceptable."
+    },
+    {
+      "direction": "fr-en",
+      "id": "2368",
+      "label": "OK",
+      "source": "La banque a rapidement informé les autorités compétentes et a coopéré avec les régulateurs.",
+      "reference": "The bank promptly notified the relevant authorities and has been co-operating with its regulators.",
+      "system_output": "The bank quickly informed the competent authorities and cooperated with the regulators.",
+      "note": "Meaning is preserved in natural English."
+    },
+    {
+      "direction": "en-fr",
+      "id": "413",
+      "label": "MINOR",
+      "source": "I see her eyes resting on me.",
+      "reference": "Je vois ses yeux se poser sur moi.",
+      "system_output": "Je vois son eye sur le me.",
+      "note": "Eyes and gaze are clear; sur le me and singular eye are grammatical errors."
+    },
+    {
+      "direction": "fr-en",
+      "id": "16",
+      "label": "MINOR",
+      "source": "La technologie est là pour le faire.",
+      "reference": "The technology is there to do it.",
+      "system_output": "The technology is to do so.",
+      "note": "Technology and do-it meaning is clear; is there is weakened to is to do so."
+    },
+    {
+      "direction": "en-fr",
+      "id": "1688",
+      "label": "MAJOR",
+      "source": "But the cost of the new vaccine is likely to be far lower, because it turns liver cells into antibody factories.",
+      "reference": "Mais le coût du nouveau vaccin devrait être bien inférieur car il transforme les cellules du foie en usines à anticorps.",
+      "system_output": "Mais le coût du nouveau vaccin est probablement loin d'être bas, car elle se tourne dans les facteurs antipollent dans les facteurs.",
+      "note": "Far lower is reversed to loin d etre bas; liver and antibody are lost."
+    },
+    {
+      "direction": "fr-en",
+      "id": "1727",
+      "label": "MAJOR",
+      "source": "Cela doit inclure la possibilité de durées de voyage entre Glasgow et Édimbourg de trois heures au plus.",
+      "reference": "This is to include the possibility of eventual journey times from Glasgow and Edinburgh to London of three hours or less.",
+      "system_output": "This must include the possibility of sustainable travel between Glasw and Edimbour and Edimbour of three hours.",
+      "note": "Glasgow, Edinburgh and the time are partial; London is omitted and journey time is garbled."
+    },
+    {
+      "direction": "en-fr",
+      "id": "539",
+      "label": "CRITICAL",
+      "source": "New Class Action Claim Against Holy Cross Brothers",
+      "reference": "Nouvelle demande de recours collectif contre les frères Sainte-Croix",
+      "system_output": "La nouvelle Class Action Cla Holy Reft Walla Fond Frier.",
+      "note": "Holy Cross Brothers and the claim are lost; the headline is mostly nonwords."
+    },
+    {
+      "direction": "fr-en",
+      "id": "2570",
+      "label": "CRITICAL",
+      "source": "L'ex-chef de la Gestapo enterré dans un cimetière juif",
+      "reference": "Former Gestapo Chief Buried in Jewish Cemetery",
+      "system_output": "The Gisis Chape of the judge in a judge ciprocal cim of the Caporeatical Home Caper.",
+      "note": "Gestapo chief, Jewish cemetery and buried are lost; the output is word salad."
+    }
+  ],
+  "files": {
+    "labels": "reports/review_82m_labels.json",
+    "combined_summary": "reports/review_summary_82m.md",
+    "combined_summary_json": "reports/review_summary_82m.json",
+    "en_fr_results": "reports/review_packet_82m_enfr/REVIEW_RESULTS.md",
+    "fr_en_results": "reports/review_packet_82m_fren/REVIEW_RESULTS.md"
+  },
+  "limitations": [
+    "Single AI reviewer; no human judgments or inter-annotator agreement.",
+    "The packet is a deterministic stratified sample, not a random population audit.",
+    "One reference translation per row; other acceptable wordings were not enumerated.",
+    "The reviewer was not blinded to the model identity.",
+    "Not a safety, legal, bias, or domain-suitability audit.",
+    "Qualified bilingual human review remains pending."
+  ]
+}

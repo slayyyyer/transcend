@@ -1,0 +1,101 @@
+id|acceptability|categories|notes
+23|MAJOR|mistranslation;terminology;grammar|tracking devices and pay-by-mile lost; "cars" and "payeur" wrong
+38|CRITICAL|mistranslation;grammar;omission|Nevada and pilot lost; negation added; output unintelligible
+40|MAJOR|mistranslation;omission;grammar|Illinois and trucks omitted; limited-basis clause garbled
+90|MAJOR|mistranslation;terminology;grammar|solemn rendered as degrade; title and syntax corrupted
+204|MAJOR|mistranslation;omission;repetition|coffee/tea/soda and Spirit lost; charge repeated; output garbled
+206|MAJOR|mistranslation;grammar|"give away water" becomes "faire de l'eau"
+295|MAJOR|mistranslation;terminology|403 orders lost; customers rendered as customs officers
+361|CRITICAL|mistranslation;grammar;repetition|father's death and five years lost; degenerates into repetition
+406|MAJOR|omission;repetition;grammar|goodbyes omitted; "tres rapidement" repeated
+413|MINOR|grammar;agreement|core meaning clear; "sur le me" is ungrammatical
+441|CRITICAL|mistranslation;grammar;terminology|husband, death and age 33 corrupted
+450|MAJOR|omission;terminology;repetition|"bloodiest" lost; 2008 duplicated; headline garbled
+501|MAJOR|mistranslation;terminology;grammar|Scarborough and drugs garbled; 14 years and conspiracy partly retained
+532|MINOR|repetition;grammar|support meaning clear; "stable et stable" repeated
+539|CRITICAL|mistranslation;grammar;terminology|headline replaced by unrelated word salad
+549|MAJOR|mistranslation;omission;grammar|fire, shop and ledge details lost; place and time partly retained
+601|CRITICAL|mistranslation;grammar;terminology|pharmacist quote reduced to nonwords
+639|MAJOR|mistranslation;terminology;grammar|"installations" and "raid" garbled; Syria duplicated
+719|MAJOR|repetition;mistranslation;grammar|APHP terms partly retained; degenerates into repeated "fermeture"
+800|CRITICAL|mistranslation;grammar;omission|children, myths, legends and author lost; word salad
+804|MAJOR|mistranslation;terminology|advocating becomes worried; twenty years becomes two
+826|MAJOR|mistranslation;terminology;grammar|181 million items become people; metadata and media garbled
+828|MINOR|terminology;grammar|meaning clear; Yahoo misspelled and "deni" should be "nie"
+884|CRITICAL|mistranslation;grammar;terminology|headline is unrelated word salad
+885|MAJOR|mistranslation;omission;grammar|fire, started and control partly lost; time and place retained
+891|MAJOR|mistranslation;terminology;grammar|alarms, buildings and France Loiselle partly retained; syntax broken
+1061|MAJOR|mistranslation;terminology;grammar|contraception and divorce lost; homosexuality garbled
+1112|MAJOR|omission;mistranslation;repetition|talented and move-from-project lost; "projet" repeated
+1120|CRITICAL|mistranslation;grammar|three-word sentence rendered unintelligible
+1133|CRITICAL|mistranslation;grammar;terminology|"child" becomes "Chaque Serb"; ride and Disneyland garbled
+1134|MAJOR|mistranslation;grammar;agreement|child, five and accident retained; syntax and agreement broken
+1169|MINOR|terminology;grammar|meaning clear; "Business" left untranslated
+1182|OK||meaning preserved; acceptable French
+1215|MINOR|agreement;punctuation|questions, answer and confirm clear; agreement and quote attribution wrong
+1403|MAJOR|mistranslation;terminology;omission|stats becomes States; black sheep lost; Halloween truncated
+1411|MAJOR|mistranslation;grammar;omission|"nothing wrong with" reversed; tradition repeated
+1421|MAJOR|mistranslation;terminology;repetition|kernels of corn become people; 9 billion repeated
+1439|MAJOR|mistranslation;omission;terminology|brakes become brains; mechanics, logistics and storage lost
+1453|MAJOR|mistranslation;omission;repetition|dog walker, Ruby, ledge and quarry lost; time and 50 ft partly retained
+1470|MAJOR|mistranslation;grammar|daring lost; output means "it was true that..."
+1497|CRITICAL|mistranslation;grammar|non-story and "then" lost; output unintelligible
+1532|MAJOR|omission;mistranslation;grammar|"telling Berlin and Brussels where to get off" lost; first clause retained
+1535|MINOR|mistranslation|"emulating" becomes "envisager"; otherwise clear
+1540|MAJOR|mistranslation;terminology;grammar|puberty becomes donors; negation misplaced
+1548|MAJOR|mistranslation;omission;repetition|development signs repeated; breasts, hair and odor lost
+1570|MAJOR|omission;grammar;mistranslation|support/conclusion relation lost; factors garbled
+1572|MINOR|mistranslation|varying becomes "vaines"; sentence structure intact
+1629|MAJOR|mistranslation;grammar|short reply rendered ungrammatical and unclear
+1636|MAJOR|terminology;mistranslation;omission|Boeing, 406 and 777X lost; seat dimensions partly retained
+1657|MAJOR|mistranslation;omission;grammar|unit-cost gain and blunting lost; word salad
+1663|MAJOR|mistranslation;terminology;repetition|comfort and low-cost lost; jets become boats; repetition
+1688|MAJOR|mistranslation;terminology|far lower reversed to "loin d'etre bas"; liver and antibody lost
+1744|MAJOR|terminology;punctuation;omission|Carmichael and Scotland garbled; quote and good-news meaning damaged
+1787|MAJOR|mistranslation;repetition;grammar|consumer-debt levels repeated; narrowly emerged lost
+1812|MAJOR|mistranslation;omission;terminology|swastika, uniform and customers lost; police and Friday partly retained
+1827|MAJOR|terminology;mistranslation|2600 becomes 26; orthopedics, cataract and backlog garbled
+1863|MAJOR|mistranslation;terminology;grammar|Assad and Safira lost; rebels, Qaida and weeks partly retained
+1888|MINOR|terminology;grammar|meaning clear; grandchildren and daughters rendered poorly
+1909|MAJOR|mistranslation;omission;terminology|portable devices and planes lost; resignation and performances wrong
+1927|MAJOR|mistranslation;terminology;repetition|cell phones become phenomena; board and name garbled; repetition
+1936|MAJOR|mistranslation;omission;repetition|passengers and altitudes lost; Wi-Fi repeated
+1983|MAJOR|mistranslation;grammar|relaxed lost; "coolite" is not a word
+2054|MAJOR|mistranslation;agreement|double negation reverses "nobody was ready"; name garbled
+2061|MAJOR|terminology;mistranslation;grammar|mother, Toffee and double act garbled
+2089|MAJOR|mistranslation;omission;grammar|"did this", hankered, money and fame lost; syntax broken
+2091|CRITICAL|mistranslation;grammar;repetition|Chen, apology and reports reduced to word salad
+2103|MAJOR|mistranslation;omission;repetition|cast off and mid-October lost; Toulon and training repeated
+2110|MAJOR|mistranslation;omission;terminology|forcibly raised money and impoverishment lost
+2147|MAJOR|mistranslation;terminology;grammar|computers become obligations; prediction syntax broken
+2156|MINOR|grammar|meaning clear; "chaque des" is ungrammatical
+2185|MAJOR|mistranslation;omission|appealing to the general public lost; "publicite" wrong
+2193|CRITICAL|mistranslation;terminology;repetition|headline numbers and meaning destroyed; fragments repeated
+2211|MAJOR|mistranslation;terminology;grammar|dog, tail and mood lost; researchers and monitored garbled
+2236|MINOR|terminology;grammar|meaning clear; "kets" for tickets is a nonword
+2258|MAJOR|terminology;mistranslation;omission|GM becomes GMOs; pickup trucks and seatbacks lost
+2268|MAJOR|terminology;mistranslation;repetition|sold, numbers and models garbled; October retained
+2270|CRITICAL|mistranslation;grammar;terminology|headline replaced by unrelated fragment
+2292|MAJOR|mistranslation;omission;grammar|patient write-ups, bed and book lost; time and politics partly retained
+2347|MINOR|grammar;terminology|meaning clear; "bureau public est sur" is awkward
+2368|MAJOR|mistranslation;omission|marine mammal species lost; only "marine" repeated
+2376|MAJOR|terminology;mistranslation|RBS lost; forex traders become forecasts of states
+2404|MAJOR|mistranslation;omission;terminology|Ford, mayor and warrant lost; police and search partly retained
+2437|MAJOR|omission;mistranslation;repetition|attack and dug lost; "Palestiniens" repeated
+2471|MAJOR|mistranslation;omission;grammar|deafening and numbing lost; output degenerates
+2475|MAJOR|mistranslation;omission;repetition|choreographer and mannerisms lost; "pouvoir" repeated
+2486|MAJOR|mistranslation;terminology;grammar|clowns, red noses and lovers lost; names garbled
+2496|MAJOR|terminology;mistranslation|Rockstar, Blackberry and Ericsson garbled; ownership partly retained
+2536|MAJOR|terminology;mistranslation;grammar|Morsi, Tahrir and populist gestures garbled
+2590|MINOR|mistranslation;grammar|"core" omitted and modality changed; meaning close
+2598|CRITICAL|mistranslation;terminology;grammar|headline names and objects all corrupted
+2619|CRITICAL|mistranslation;terminology;grammar|Pamela Anderson and haircut story replaced by nonwords
+2694|MAJOR|terminology;mistranslation;repetition|ASCOVIME becomes ASICOV; help clause repeated and garbled
+2710|MINOR|grammar;terminology|meaning clear; "l'unity national" is wrong
+2756|MAJOR|omission;mistranslation|Beirut omitted; question changed to "instead of saying..."
+2766|MAJOR|mistranslation;omission|one-hour bath becomes "la parole unique"
+2800|MINOR|mistranslation;grammar|listening to what is said becomes listening to what we said
+2824|CRITICAL|mistranslation;repetition;grammar|liar and traitor replaced by repeated "tra"
+2829|MAJOR|mistranslation;terminology;grammar|cards, take advantage, healthcare and shops partly lost; code-mixing
+2874|CRITICAL|terminology;mistranslation;repetition|Vettel, helmet and Abu Dhabi story destroyed; fragments repeated
+2932|MAJOR|omission;repetition;punctuation|quote meaning partly retained; fragments repeated; Tunks retained

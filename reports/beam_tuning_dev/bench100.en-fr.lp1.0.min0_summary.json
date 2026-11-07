@@ -1,0 +1,28 @@
+{
+  "beam_size": 4,
+  "benchmark": "data/prepared/europarl_nc/dev.en-fr.jsonl",
+  "comparisons": {},
+  "direction": "en-fr",
+  "length_penalty": 1.0,
+  "min_new_tokens": 0,
+  "models": {
+    "candidate": {
+      "bleu": 20.561,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp": 48.371,
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 96,
+      "step": 14500
+    }
+  },
+  "n": 96,
+  "signatures": {
+    "bleu": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+    "chrfpp": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1"
+  },
+  "skipped_overlength": 4,
+  "source_copy": {
+    "bleu": 0.186,
+    "chrfpp": 20.731
+  }
+}

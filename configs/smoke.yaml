@@ -1,0 +1,44 @@
+# Smoke preset: proves the whole path on original fixtures. Never a translator.
+name: smoke
+seed: 1337
+
+model:
+  vocab_size: auto            # derived from the frozen tokenizer artifact
+  d_model: 128
+  encoder_layers: 2
+  decoder_layers: 2
+  attention_heads: 4
+  ffn_dim: 512
+  dropout: 0.1
+  max_positions: 256
+
+tokenizer:
+  target_vocab_size: 2000
+  min_pair_frequency: 2
+
+data:
+  # Hand-authored, CC0 fixtures only. No corpus download.
+  source: fixtures
+  train_pairs: 0              # 0 = all
+  max_source_tokens: 64       # includes control token + EOS
+  max_target_tokens: 72
+  block_size: 8
+
+train:
+  device: cpu
+  precision: fp32
+  num_threads: 4
+  peak_lr: 5.0e-4
+  warmup_updates: 20
+  token_budget: 512           # non-padding target tokens per optimizer update
+  max_steps: 400
+  max_train_tokens: 400000
+  max_walltime_s: 600
+  checkpoint_every: 100
+  validate_every: 100
+  patience: 8
+
+eval:
+  max_new_tokens: 72
+  beam_size: 1
+  dev_limit: 64

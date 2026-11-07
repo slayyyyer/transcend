@@ -1,0 +1,1402 @@
+[
+  {
+    "direction": "en-fr",
+    "id": "23",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Tracking devices and pay-by-mile are garbled; 500 cars and a payment test are partly retained."
+  },
+  {
+    "direction": "en-fr",
+    "id": "38",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Nevada and pilot are lost; the output does not form a coherent proposition."
+  },
+  {
+    "direction": "en-fr",
+    "id": "40",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Illinois and trucks are omitted; the limited-basis clause is broken."
+  },
+  {
+    "direction": "en-fr",
+    "id": "90",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Space Oddity and solemn are degraded; invented words distort the comparison."
+  },
+  {
+    "direction": "en-fr",
+    "id": "204",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology;repetition",
+    "note": "Frontier, Spirit and the drink list are lost; charge and two dollars are repeated and garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "206",
+    "label": "MINOR",
+    "categories": "mistranslation;grammar",
+    "note": "The main action is clear, but give away becomes simply donner une eau and the free nuance is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "295",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "403 and 15 are retained; customers become customs officers and orders is untranslated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "361",
+    "label": "CRITICAL",
+    "categories": "omission;mistranslation;grammar",
+    "note": "Father, death and five years are lost; the output is a vague ungrammatical fragment."
+  },
+  {
+    "direction": "en-fr",
+    "id": "406",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Goodbyes are lost and rapidement is repeated; the mourning sense is not recoverable."
+  },
+  {
+    "direction": "en-fr",
+    "id": "413",
+    "label": "MINOR",
+    "categories": "grammar;agreement;mistranslation",
+    "note": "Eyes and gaze are clear; sur le me and singular eye are grammatical errors."
+  },
+  {
+    "direction": "en-fr",
+    "id": "441",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Husband, death and the thirty-year frame are corrupted; 33 survives but the proposition is broken."
+  },
+  {
+    "direction": "en-fr",
+    "id": "450",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Bloodiest is lost and Bloodi Month is left in English; the headline is damaged."
+  },
+  {
+    "direction": "en-fr",
+    "id": "501",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Scarborough and the drug-conspiracy details are garbled; 14 years is partly retained."
+  },
+  {
+    "direction": "en-fr",
+    "id": "532",
+    "label": "MINOR",
+    "categories": "repetition;grammar",
+    "note": "The support meaning is clear; stable is repeated four times."
+  },
+  {
+    "direction": "en-fr",
+    "id": "539",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;terminology",
+    "note": "Holy Cross Brothers and the claim are lost; the headline is mostly nonwords."
+  },
+  {
+    "direction": "en-fr",
+    "id": "549",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Fire, shop and serious damage are lost; the place and time fragments are incoherent."
+  },
+  {
+    "direction": "en-fr",
+    "id": "601",
+    "label": "MAJOR",
+    "categories": "omission;mistranslation;grammar",
+    "note": "The pharmacist quote is partly clear; a missing subject and repeated pharmaciste break the syntax."
+  },
+  {
+    "direction": "en-fr",
+    "id": "639",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Air raid becomes aide de Raid and installations are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "719",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "APHP and the closure contrast are garbled; repeated fermer obscures the preference."
+  },
+  {
+    "direction": "en-fr",
+    "id": "800",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Children, myths, legends and the author are lost; the output is word salad."
+  },
+  {
+    "direction": "en-fr",
+    "id": "804",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology",
+    "note": "Advocating becomes worried about; the plan and twenty years are partly retained."
+  },
+  {
+    "direction": "en-fr",
+    "id": "826",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "181 million and January survive; items, metadata and media are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "828",
+    "label": "MINOR",
+    "categories": "grammar;agreement",
+    "note": "Meaning is clear; deni should be nie."
+  },
+  {
+    "direction": "en-fr",
+    "id": "884",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The house and engulfed headline is reduced to nonwords; Old Quebec survives only as fragments."
+  },
+  {
+    "direction": "en-fr",
+    "id": "885",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Fire, time and control are partly clear; Old Friday is duplicated and the location is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "891",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Alarms and buildings are partly retained; France Loiselle and the quote are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1061",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "The Vatican poll and homosexuality survive as fragments; contraception and divorce are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1112",
+    "label": "MINOR",
+    "categories": "terminology;mistranslation",
+    "note": "200 artists and project movement are clear; artistees and the missing destination phrase are local errors."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1120",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Musicals and gap are lost; the output is unintelligible."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1133",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Disneyland and Paris survive; the injured child and the ride are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1134",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Child and accident are partly clear; age five and the ride details are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1169",
+    "label": "MINOR",
+    "categories": "grammar;terminology",
+    "note": "Scepticism is clear; Business is untranslated and ce point is awkward."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1182",
+    "label": "OK",
+    "categories": "",
+    "note": "Meaning is preserved; pris place a la place is slightly awkward but acceptable."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1215",
+    "label": "MINOR",
+    "categories": "grammar;repetition;agreement",
+    "note": "Questions, answer and confirm are clear; attribution is repeated and agreement is wrong."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1403",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Stats becomes Etats and black sheep is lost; Halloween is truncated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1411",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Nothing wrong is reversed; the output does not form a coherent proposition."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1421",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation",
+    "note": "9 billion survives; kernels and corn are nonwords and the proposition is barely recoverable."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1439",
+    "label": "MINOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "The option list mostly survives; upgraded, mechanics and some details are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1453",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Dog walker, Ruby, ledge and quarry are lost; the 50 ft detail is a fragment."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1470",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Daring is lost; the output means it was true that it was the case."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1497",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Non-story and then are lost; the output is nonsensical."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1532",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "The first clause is clear; telling Berlin and Brussels where to get off is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1535",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Emulating becomes reducing; economic independence is otherwise clear."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1540",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The negation and puberty are lost; donors and demarches distort the claim."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1548",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "The development-signs list is garbled; breasts, hair and odor are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1570",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The support/conclusion relation is lost; facteur de contribution is awkward."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1572",
+    "label": "MINOR",
+    "categories": "terminology;grammar",
+    "note": "Varying explanations is clear despite the nonword vares."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1629",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The elliptical reply is rendered ungrammatical and unclear."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1636",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Boeing, 777X and 406 are lost; the seat details are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1657",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The unit-cost gain and blunting are lost; the output is word salad."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1663",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Comfort and low-cost are lost; the high-density layout is garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1688",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Far lower is reversed to loin d etre bas; liver and antibody are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1744",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The good-news meaning is partly clear; Carmichael and Scotland are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1787",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Consumer debt and Thailand are partly clear; narrowly emerged is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1812",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "The Nazi uniform and supermarket are partly clear; swastika, complaints and police are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1827",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "2600 survives; orthopedics, cataract and backlog are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1863",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Assad and Safira are lost; rebels, Qaida and weeks survive; battling is reversed."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1888",
+    "label": "MINOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "The negation and family relation are partly clear; grands enfants and daughters are wrong."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1909",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "FAA and plans survive; airlines, devices and planes are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1927",
+    "label": "MINOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The cell-phone risk claim is clear; NTSB, the name and CBS are corrupted."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1936",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Airlines, Wi-Fi and years are clear; passengers and altitudes are lost and Wi-Fi is repeated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "1983",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Relaxed is lost; only cool remains in a fragment."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2054",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The double negative reverses nobody was ready; the name and age are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2061",
+    "label": "MINOR",
+    "categories": "grammar;terminology",
+    "note": "The mother, quote and double act are mostly clear; Toffee and grammar are wrong."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2089",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Did this and hankered are garbled; money and fame are partly retained."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2091",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "The Chen and New Express apology is garbled; the reports check is partly retained."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2103",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Cast off and mid-October are lost; Toulon and training are repeated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2110",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Forcible taxation and impoverishment are lost; income reduction is partly clear."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2147",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "US and Japan researchers and biometrics are partly clear; French is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2156",
+    "label": "MINOR",
+    "categories": "grammar;terminology",
+    "note": "Meaning is clear; chaque de is ungrammatical."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2185",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Three ways and biometrics are clear; appealing to the public is lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2193",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "The speeding and fine headline is destroyed; 130 and 1000 survive as fragments."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2211",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Dogs and researchers are partly retained; tail, mood and films are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2236",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;omission",
+    "note": "Tickets become krags; shows are omitted."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2258",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "GM becomes GMOs; recalls, pickups and seatbacks are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2268",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "GM, October and 42,660 are partly clear; 16,503 becomes 16,350 and the models are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2270",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The headline is an unrelated fragment; worker, buried and concrete are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2292",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Patient write-ups, book, politics and speeches are lost; the output is incoherent."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2347",
+    "label": "MINOR",
+    "categories": "terminology;grammar",
+    "note": "The public-office/service idea is clear; bureau public est sur is awkward."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2368",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The why-rare question is lost; species is repeated and declare is added."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2376",
+    "label": "MINOR",
+    "categories": "terminology;mistranslation",
+    "note": "RBS and two traders are clear; forex becomes trages."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2404",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Police and suspicious transactions are partly clear; Ford, mayor, search and warrant are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2437",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Attack, tunnel and Palestinians are lost; the output is unrelated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2471",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Sound and energy discharge are partly clear; deafening and numbing are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2475",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "The Michaux work is partly retained; choreographer, mannerisms and search are lost."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2486",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Clowns, red noses and lovers are lost; Chouinard and the parade are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2496",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation",
+    "note": "Rockstar, Apple and Sony are partly clear; ownership and Blackberry/Ericsson are garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2536",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Morsi, Tahrir and populist gestures are garbled; only the speech fragment remains."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2590",
+    "label": "MINOR",
+    "categories": "grammar;terminology;omission",
+    "note": "Changes, subjects and next year are clear; core is omitted and the syntax is broken."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2598",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Octogenarian, Le Muy and the greeting are lost; the headline is word salad."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2619",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Pamela Anderson and the haircut story are lost; the output is nonwords."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2694",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "ASCOVIME becomes PME; the help clause is repeated but partly clear."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2710",
+    "label": "OK",
+    "categories": "",
+    "note": "Meaning is preserved in natural French."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2756",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Beirut and on the ground are lost; the question becomes a reason fragment."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2766",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "The one-hour bath is lost; the output is unrelated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2800",
+    "label": "MAJOR",
+    "categories": "mistranslation;repetition;grammar",
+    "note": "Listening to self and repetition distort the claim."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2824",
+    "label": "CRITICAL",
+    "categories": "mistranslation;repetition;grammar",
+    "note": "Liar and traitor are corrupted into repeated fragments; Sisi is garbled."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2829",
+    "label": "MINOR",
+    "categories": "grammar;repetition;omission",
+    "note": "The without-cards health and shop meaning is partly clear; code-mixing and repetition remain."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2874",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Vettel, helmet and Abu Dhabi are largely destroyed; fragments are repeated."
+  },
+  {
+    "direction": "en-fr",
+    "id": "2932",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition;grammar",
+    "note": "Worry, hope and Tunks are partly retained; the quote is garbled and repeated."
+  },
+  {
+    "direction": "fr-en",
+    "id": "16",
+    "label": "MINOR",
+    "categories": "mistranslation;grammar",
+    "note": "Technology and do-it meaning is clear; is there is weakened to is to do so."
+  },
+  {
+    "direction": "fr-en",
+    "id": "23",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;omission",
+    "note": "Tracking devices and pay-by-mile are lost; Son is untranslated and payment is repeated."
+  },
+  {
+    "direction": "fr-en",
+    "id": "38",
+    "label": "MAJOR",
+    "categories": "grammar;mistranslation",
+    "note": "Nevada and pilot are partly recognizable; the syntax does not form a clear proposition."
+  },
+  {
+    "direction": "fr-en",
+    "id": "49",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "Khan, citizens and comfort are mostly clear; aise is untranslated and attribution is awkward."
+  },
+  {
+    "direction": "fr-en",
+    "id": "76",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;omission",
+    "note": "Thin White Duke and re-release are garbled; the date is partly retained."
+  },
+  {
+    "direction": "fr-en",
+    "id": "112",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Nine episodes, title, site and apps are garbled; date and phones are partly clear."
+  },
+  {
+    "direction": "fr-en",
+    "id": "254",
+    "label": "MINOR",
+    "categories": "omission;agreement",
+    "note": "Also is omitted and the plural is flattened; meaning is clear."
+  },
+  {
+    "direction": "fr-en",
+    "id": "309",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;addition",
+    "note": "26 and 83 survive; tombed and avions obscure the fall and first year is added."
+  },
+  {
+    "direction": "fr-en",
+    "id": "331",
+    "label": "MINOR",
+    "categories": "mistranslation;terminology",
+    "note": "Journalists and fleeing Google/Yahoo are clear; urged to shun is weakened and Google is repeated."
+  },
+  {
+    "direction": "fr-en",
+    "id": "367",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Mother becomes mountain; the death and cancer relation is lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "375",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Detour, life and unexpected are lost; demographic path and inattended are wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "400",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Boy and pregnancy become paper and won; the core meaning is lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "439",
+    "label": "MINOR",
+    "categories": "grammar;mistranslation",
+    "note": "Presence and pleased are clear; its and pleased to do so distort the cause."
+  },
+  {
+    "direction": "fr-en",
+    "id": "450",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "October and bloodiest are lost; only Iraq and 2008 are clear."
+  },
+  {
+    "direction": "fr-en",
+    "id": "501",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Scarborough, prison and drug details are garbled; 14 years is partly retained."
+  },
+  {
+    "direction": "fr-en",
+    "id": "537",
+    "label": "MAJOR",
+    "categories": "omission;mistranslation;grammar",
+    "note": "Omar and detention are clear; court and Friday become short selling and repetition."
+  },
+  {
+    "direction": "fr-en",
+    "id": "549",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Fire, restaurant and Dollard are partly clear; emergency, basement and intersection are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "600",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;omission",
+    "note": "Seven and three survive; pharmacists become pharmaceutical and maternity leave is flattened."
+  },
+  {
+    "direction": "fr-en",
+    "id": "601",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Fill gaps and departures become combine our past year."
+  },
+  {
+    "direction": "fr-en",
+    "id": "635",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "1653 survives; Quebec and border agents are partial and narcotics seizures become seed studies."
+  },
+  {
+    "direction": "fr-en",
+    "id": "719",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Internal-medicine beds and the programme are replaced by nonwords."
+  },
+  {
+    "direction": "fr-en",
+    "id": "810",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "NSA, US, too far and Kerry are partly clear; advised and repetition damage the claim."
+  },
+  {
+    "direction": "fr-en",
+    "id": "826",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "NSA, Merkel and the countries are partly retained; interception and Germany are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "859",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Masters of ceremonies become map of celebrated; reconverted is garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "868",
+    "label": "MINOR",
+    "categories": "grammar;repetition;mistranslation",
+    "note": "Case, exaggeration and director are clear; the attribution and syntax are awkward."
+  },
+  {
+    "direction": "fr-en",
+    "id": "871",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "64 interventions survive; the end of last winter becomes the final Green Paper."
+  },
+  {
+    "direction": "fr-en",
+    "id": "885",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Tenants become loans; fire and absence are partly clear but the proposition is wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "891",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Fay and the New York festival are partly retained; Comedy and innovation are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "920",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "The admitting-privilege definition is reduced to incoherent fragments."
+  },
+  {
+    "direction": "fr-en",
+    "id": "957",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Clear message and vote are partial; by going to vote becomes to us to vote."
+  },
+  {
+    "direction": "fr-en",
+    "id": "958",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Change things in the city becomes the vague do something with the Villeg."
+  },
+  {
+    "direction": "fr-en",
+    "id": "995",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;repetition",
+    "note": "Rise and fall are partial; increcy, wine fall and repetition obscure the meaning."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1061",
+    "label": "MINOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "News, National Catholic and US are clear; Thursday and the reporter name are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1089",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Cabaret survives; Les Miserables and the mystery aura are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1121",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "Show, France and Paris are mostly clear; designed and as in Paris are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1131",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Boy, father and Pirates are lost; paper and the place names are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1133",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "New assault becomes new assets of the Nations; army and DRC are partial."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1182",
+    "label": "MINOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Prepaid phones and thrown are clear; away is weakened and nonwords remain."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1215",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Guidelines and US children are partial; food allergies become food gold and flu."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1250",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Patchwork, doctors, bruised and scarred are corrupted beyond recovery."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1318",
+    "label": "MINOR",
+    "categories": "grammar;terminology;omission",
+    "note": "Tests, understanding and male-female are mostly clear; them and syntax are weakened."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1397",
+    "label": "CRITICAL",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Costumes, NRF and the numbers are garbled; 1.2 and 6.9 billion are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1404",
+    "label": "CRITICAL",
+    "categories": "terminology;mistranslation;omission",
+    "note": "330 survives; million and pet costumes are lost and 30 dollars is invented."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1451",
+    "label": "MINOR",
+    "categories": "terminology;grammar",
+    "note": "The unusual-call meaning is clear; inhabitual is a nonword."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1453",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Peter Lau and specialist are partial; Ruby and lucky escape are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1462",
+    "label": "MINOR",
+    "categories": "grammar;mistranslation;omission",
+    "note": "The grateful/tremendous sentiment is clear; their grasp garbles the object."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1470",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Jagger and Katy Perry are partial; denial and categorically are lost and names repeat."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1508",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Revolt and France are partial; main cheerleader becomes large EU men."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1540",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "12.5, 12.75 and 1970 are mostly clear; down from and the phrasing are wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1548",
+    "label": "MINOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Psychosocial is narrowed to social; the importance is clear."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1557",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Boys, girls, puberty and earlier are replaced by word salad."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1572",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Homage, folk and the Coen brothers are lost; the output is unrelated."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1580",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Documentary-style becomes document of Tour; the title meaning is damaged."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1657",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Oracle, Larry Ellison and the vote are partial; shareholders and remuneration are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1660",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Ellison and the negative vote are clear; last year and remuneration are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1669",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Vaccine, virus and modified are partial; genetic, antibodies and anti-nicotine are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1684",
+    "label": "MINOR",
+    "categories": "terminology;grammar",
+    "note": "Death, announcement and prior occasions are clear; the name is misspelled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1688",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "The negation is lost: denies being influenced becomes is influencing."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1727",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Glasgow, Edinburgh and the time are partial; London is omitted and journey time is garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1787",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Customers become customs; all walks of life is lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1795",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Pastor, released and conditions are lost; the output is a repeated fragment."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1812",
+    "label": "MAJOR",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Government, emergency plan and state are partial; rescue and unique challenges are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1909",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "FCC and not FAA are clear; the syntax is broken."
+  },
+  {
+    "direction": "fr-en",
+    "id": "1917",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Third and passengers are partial; turn off and deliberately are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2037",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Pair and height are partial; names and contest details are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2089",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Siphoning and pockets are lost; the output is an unrelated conditional."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2091",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Money, taxpayers and consumption are partial; forcible and impoverishment are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2124",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Embassy, comment and police notice are partial; declined is reversed and garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2144",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "UK, Netherlands and posts are partial; passport and facial recognition are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2181",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Tax, foreign owners and London are partial; burst bubble is lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2185",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Scientists, dog, tail and mood are garbled into nonwords."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2211",
+    "label": "MINOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Alex Turner, regret and cannot perform are clear; laryngitis becomes larger."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2213",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;terminology",
+    "note": "Tickets and valid are reversed; the output says remain the wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2214",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Apology, ticket holders and inconvenience are replaced by repeated nonwords."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2236",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Pickups, front seats, defect and reclining are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2244",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "GM, sold, the numbers and models are destroyed; the output is fragments."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2268",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Patient write-ups, book, politics and speeches are lost; repetition dominates."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2292",
+    "label": "MINOR",
+    "categories": "grammar;terminology",
+    "note": "Obama, 2012, vote and candidacy are clear; enthusiastic by is minor."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2294",
+    "label": "MAJOR",
+    "categories": "mistranslation;omission;repetition",
+    "note": "Second term, future elections and hope are lost; election is repeated."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2332",
+    "label": "MAJOR",
+    "categories": "terminology;mistranslation;grammar",
+    "note": "Classifications and genetics become class and generation; the question is partial."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2333",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Species, morphology and genetics become speeches and generation."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2352",
+    "label": "MINOR",
+    "categories": "terminology;grammar",
+    "note": "RBS, two traders and forex are clear; the grammar is awkward."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2368",
+    "label": "OK",
+    "categories": "",
+    "note": "Meaning is preserved in natural English."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2403",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Four fighters killed and five injured are partial; four is lost and the clash is garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2404",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Power plant stopped is reversed to has been able to work; the authority is garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2437",
+    "label": "MINOR",
+    "categories": "terminology;grammar;omission",
+    "note": "Same principle and PowerPoint are clear; giant version is omitted."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2457",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Clowns, Chouinard, red noses and lovers are lost; the output is word salad."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2475",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Rockstar, damages and Google are partial; patent and willful are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2563",
+    "label": "MINOR",
+    "categories": "terminology;grammar;omission",
+    "note": "Real-world problems and financial focus are partial; mathematics becomes map."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2570",
+    "label": "CRITICAL",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Gestapo chief, Jewish cemetery and buried are lost; the output is word salad."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2598",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "Vote, here and mobile are clear; apparent and to your view are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2694",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "American familiarity and ownness are distorted; cous cine and at all are wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2754",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Hardest part becomes most sustainable; the meaning is lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2756",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;grammar",
+    "note": "Readaptation, life, months and vacation are partial; douan and vie are garbled."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2757",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;terminology",
+    "note": "Medical exams, debriefing and DGSE are lost; the output is a fragment."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2761",
+    "label": "MINOR",
+    "categories": "grammar;terminology;mistranslation",
+    "note": "The part-of-procedure meaning is preserved; the wording is tautological."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2780",
+    "label": "CRITICAL",
+    "categories": "mistranslation;grammar;omission",
+    "note": "Heard-but-not-listened and shock are lost; negation and pronouns are wrong."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2810",
+    "label": "CRITICAL",
+    "categories": "mistranslation;omission;grammar",
+    "note": "Rob Ford and cannabis are partial; denial, crack and admission are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2829",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Obama, insurance and market are partial; flurry and cancellations are lost."
+  },
+  {
+    "direction": "fr-en",
+    "id": "2874",
+    "label": "MAJOR",
+    "categories": "mistranslation;terminology;omission",
+    "note": "Murphy, Connecticut, Parliament and NSA are partial; repetition and sitting damage the claim."
+  }
+]

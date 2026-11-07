@@ -1,0 +1,154 @@
+# Original hand-authored English/French parallel fixtures.
+# Copyright waived (CC0-1.0) by this project. These sentences were written for
+# this repository; they are not copied from Europarl, Tatoeba or any other corpus.
+# Format: pair_id <TAB> en <TAB> fr
+f001	Good morning, how are you?	Bonjour, comment allez-vous ?
+f002	I am fine, thank you.	Je vais bien, merci.
+f003	My name is Claire and I live in Lyon.	Je m'appelle Claire et j'habite à Lyon.
+f004	Where is the train station?	Où se trouve la gare ?
+f005	The train leaves at eight in the morning.	Le train part à huit heures du matin.
+f006	I would like a coffee with milk, please.	Je voudrais un café avec du lait, s'il vous plaît.
+f007	The restaurant is closed on Sundays.	Le restaurant est fermé le dimanche.
+f008	We need two tickets for the concert.	Nous avons besoin de deux billets pour le concert.
+f009	She works in a small bookshop near the river.	Elle travaille dans une petite librairie près de la rivière.
+f010	He has lived in Paris for ten years.	Il habite à Paris depuis dix ans.
+f011	The weather is cold and it is raining.	Il fait froid et il pleut.
+f012	Tomorrow the sun will shine all day.	Demain, le soleil brillera toute la journée.
+f013	I do not understand this word.	Je ne comprends pas ce mot.
+f014	Could you speak more slowly, please?	Pourriez-vous parler plus lentement, s'il vous plaît ?
+f015	There are three chairs around the table.	Il y a trois chaises autour de la table.
+f016	The meeting starts in fifteen minutes.	La réunion commence dans quinze minutes.
+f017	My brother is a doctor at the hospital.	Mon frère est médecin à l'hôpital.
+f018	Her sister studies mathematics at the university.	Sa sœur étudie les mathématiques à l'université.
+f019	This book is more interesting than the other one.	Ce livre est plus intéressant que l'autre.
+f020	We walked along the beach until sunset.	Nous avons marché le long de la plage jusqu'au coucher du soleil.
+f021	The children are playing in the garden.	Les enfants jouent dans le jardin.
+f022	Please close the window, it is drafty.	Veuillez fermer la fenêtre, il y a un courant d'air.
+f023	I have never visited that museum.	Je n'ai jamais visité ce musée.
+f024	He did not answer my question.	Il n'a pas répondu à ma question.
+f025	They will arrive next Thursday morning.	Ils arriveront jeudi matin prochain.
+f026	The shop sells bread, cheese and wine.	La boutique vend du pain, du fromage et du vin.
+f027	How much does this jacket cost?	Combien coûte cette veste ?
+f028	It costs forty euros.	Elle coûte quarante euros.
+f029	I am learning French because I work in Belgium.	J'apprends le français parce que je travaille en Belgique.
+f030	She speaks English better than I do.	Elle parle anglais mieux que moi.
+f031	The keys are on the kitchen table.	Les clés sont sur la table de la cuisine.
+f032	We must leave before six o'clock.	Nous devons partir avant six heures.
+f033	It is the first time that I travel by plane.	C'est la première fois que je voyage en avion.
+f034	The airport is far from the city centre.	L'aéroport est loin du centre-ville.
+f035	My phone has no battery left.	Mon téléphone n'a plus de batterie.
+f036	Can you help me carry these boxes?	Pouvez-vous m'aider à porter ces cartons ?
+f037	The doctor told him to rest for a week.	Le médecin lui a dit de se reposer pendant une semaine.
+f038	She has a headache and a slight fever.	Elle a mal à la tête et une légère fièvre.
+f039	The museum opens at ten and closes at six.	Le musée ouvre à dix heures et ferme à six heures.
+f040	I lost my umbrella on the bus.	J'ai perdu mon parapluie dans le bus.
+f041	He forgot his passport at home.	Il a oublié son passeport à la maison.
+f042	The meeting was postponed until Monday.	La réunion a été reportée à lundi.
+f043	We are looking for a flat with two bedrooms.	Nous cherchons un appartement avec deux chambres.
+f044	The rent is too high for our budget.	Le loyer est trop élevé pour notre budget.
+f045	My grandmother makes excellent jam.	Ma grand-mère fait une excellente confiture.
+f046	The soup needs a little more salt.	La soupe a besoin d'un peu plus de sel.
+f047	This cheese comes from the mountains.	Ce fromage vient de la montagne.
+f048	I prefer tea to coffee in the evening.	Je préfère le thé au café le soir.
+f049	The dog is sleeping under the desk.	Le chien dort sous le bureau.
+f050	Our neighbours have a very old cat.	Nos voisins ont un chat très vieux.
+f051	He runs five kilometres every morning.	Il court cinq kilomètres chaque matin.
+f052	The team won the match by two goals.	L'équipe a gagné le match par deux buts.
+f053	She plays the piano and the violin.	Elle joue du piano et du violon.
+f054	The film begins at half past seven.	Le film commence à sept heures et demie.
+f055	I found the answer in an old dictionary.	J'ai trouvé la réponse dans un vieux dictionnaire.
+f056	The letter arrived three days late.	La lettre est arrivée avec trois jours de retard.
+f057	Please send me the document by email.	Veuillez m'envoyer le document par courriel.
+f058	The computer does not start anymore.	L'ordinateur ne démarre plus.
+f059	We have installed a new program on the server.	Nous avons installé un nouveau programme sur le serveur.
+f060	The password must contain at least eight characters.	Le mot de passe doit contenir au moins huit caractères.
+f061	The office is on the fourth floor.	Le bureau se trouve au quatrième étage.
+f062	She works from home on Wednesdays.	Elle travaille à la maison le mercredi.
+f063	The report is due at the end of the month.	Le rapport doit être rendu à la fin du mois.
+f064	Our manager will call you this afternoon.	Notre responsable vous appellera cet après-midi.
+f065	The price includes breakfast and Wi-Fi.	Le prix comprend le petit-déjeuner et le Wi-Fi.
+f066	I would like to book a room for three nights.	Je voudrais réserver une chambre pour trois nuits.
+f067	The hotel is fully booked in August.	L'hôtel est complet au mois d'août.
+f068	There is a market every Saturday morning.	Il y a un marché tous les samedis matins.
+f069	The baker gets up before dawn.	Le boulanger se lève avant l'aube.
+f070	These apples are sweeter than those pears.	Ces pommes sont plus sucrées que ces poires.
+f071	He paid with a bank card.	Il a payé avec une carte bancaire.
+f072	The bank closes at four thirty.	La banque ferme à seize heures trente.
+f073	I need to change some money.	J'ai besoin de changer de l'argent.
+f074	The exchange rate has fallen since yesterday.	Le taux de change a baissé depuis hier.
+f075	She is older than her brother but younger than me.	Elle est plus âgée que son frère mais plus jeune que moi.
+f076	My parents live in a village in the south.	Mes parents habitent dans un village du sud.
+f077	The road is blocked by snow.	La route est bloquée par la neige.
+f078	We stayed at home because of the storm.	Nous sommes restés à la maison à cause de la tempête.
+f079	The river is deeper than it looks.	La rivière est plus profonde qu'elle n'en a l'air.
+f080	Do not touch the painting.	Ne touchez pas au tableau.
+f081	Nobody knew the answer.	Personne ne connaissait la réponse.
+f082	Everything is ready for the party.	Tout est prêt pour la fête.
+f083	Some people arrived late.	Certaines personnes sont arrivées en retard.
+f084	I have nothing to add.	Je n'ai rien à ajouter.
+f085	She never eats meat.	Elle ne mange jamais de viande.
+f086	We are still waiting for the results.	Nous attendons encore les résultats.
+f087	He has already finished his homework.	Il a déjà fini ses devoirs.
+f088	The shop is not open yet.	La boutique n'est pas encore ouverte.
+f089	I will call you as soon as I arrive.	Je vous appellerai dès que j'arriverai.
+f090	If it rains, we will stay inside.	S'il pleut, nous resterons à l'intérieur.
+f091	She would have come if you had asked her.	Elle serait venue si vous le lui aviez demandé.
+f092	The project has been delayed by two weeks.	Le projet a été retardé de deux semaines.
+f093	We should have taken the earlier train.	Nous aurions dû prendre le train précédent.
+f094	He said that he would send the file tomorrow.	Il a dit qu'il enverrait le fichier demain.
+f095	The students asked many questions.	Les étudiants ont posé beaucoup de questions.
+f096	The teacher explained the rule twice.	L'enseignante a expliqué la règle deux fois.
+f097	This exercise is easier than the last one.	Cet exercice est plus facile que le précédent.
+f098	I read the newspaper every morning.	Je lis le journal chaque matin.
+f099	The journalist interviewed the mayor.	Le journaliste a interviewé le maire.
+f100	The election will take place in May.	L'élection aura lieu en mai.
+f101	The government announced a new measure.	Le gouvernement a annoncé une nouvelle mesure.
+f102	Prices have increased by five percent.	Les prix ont augmenté de cinq pour cent.
+f103	The factory employs three hundred workers.	L'usine emploie trois cents ouvriers.
+f104	The union rejected the proposal.	Le syndicat a rejeté la proposition.
+f105	The train was delayed because of an accident.	Le train a été retardé à cause d'un accident.
+f106	Two passengers were slightly injured.	Deux passagers ont été légèrement blessés.
+f107	The ambulance arrived within ten minutes.	L'ambulance est arrivée en dix minutes.
+f108	The police closed the street.	La police a fermé la rue.
+f109	The fire destroyed the old barn.	L'incendie a détruit la vieille grange.
+f110	The volunteers helped clean the beach.	Les bénévoles ont aidé à nettoyer la plage.
+f111	The climate is changing faster than expected.	Le climat change plus vite que prévu.
+f112	Scientists are studying the effects of the drought.	Les scientifiques étudient les effets de la sécheresse.
+f113	The forest covers a third of the region.	La forêt couvre un tiers de la région.
+f114	We must reduce our energy consumption.	Nous devons réduire notre consommation d'énergie.
+f115	The solar panels produce enough electricity.	Les panneaux solaires produisent assez d'électricité.
+f116	The water is not safe to drink.	L'eau n'est pas potable.
+f117	The village has no doctor anymore.	Le village n'a plus de médecin.
+f118	The bus comes every twenty minutes.	Le bus passe toutes les vingt minutes.
+f119	I have an appointment at the dentist.	J'ai un rendez-vous chez le dentiste.
+f120	She forgot to take her medicine.	Elle a oublié de prendre son médicament.
+f121	The pharmacy is next to the bakery.	La pharmacie est à côté de la boulangerie.
+f122	He is allergic to nuts.	Il est allergique aux fruits à coque.
+f123	The baby is sleeping, please be quiet.	Le bébé dort, veuillez faire silence.
+f124	They moved to a bigger house last year.	Ils ont déménagé dans une maison plus grande l'année dernière.
+f125	The garden is full of flowers in spring.	Le jardin est plein de fleurs au printemps.
+f126	We painted the kitchen blue and white.	Nous avons peint la cuisine en bleu et blanc.
+f127	The roof needs to be repaired before winter.	Le toit doit être réparé avant l'hiver.
+f128	My cousin repaired the bicycle himself.	Mon cousin a réparé le vélo lui-même.
+f129	The parcel will arrive within three days.	Le colis arrivera dans les trois jours.
+f130	Please sign here and write the date.	Veuillez signer ici et écrire la date.
+f131	The form must be filled in black ink.	Le formulaire doit être rempli à l'encre noire.
+f132	She thanked us for our help.	Elle nous a remerciés pour notre aide.
+f133	We apologise for the delay.	Nous nous excusons pour le retard.
+f134	Congratulations on your new job!	Félicitations pour ton nouveau poste !
+f135	See you tomorrow at the usual place.	À demain au lieu habituel.
+f136	Take care of yourself.	Prends soin de toi.
+f137	It was a pleasure to meet you.	Ce fut un plaisir de vous rencontrer.
+f138	I hope you have a good trip.	J'espère que vous ferez un bon voyage.
+f139	Thank you very much for your patience.	Merci beaucoup pour votre patience.
+f140	Good evening and welcome to our home.	Bonsoir et bienvenue chez nous.
+f141	The invoice totals one hundred and twenty euros.	La facture s'élève à cent vingt euros.
+f142	The delivery is scheduled for Friday morning.	La livraison est prévue vendredi matin.
+f143	Our opening hours are from nine to five.	Nos heures d'ouverture vont de neuf heures à dix-sept heures.
+f144	He speaks three languages fluently.	Il parle trois langues couramment.
+f145	The translation is accurate but a little formal.	La traduction est exacte mais un peu formelle.
+f146	She sent a short message to her colleague.	Elle a envoyé un message court à sa collègue.
+f147	The printer is out of paper again.	L'imprimante n'a de nouveau plus de papier.
+f148	We need to update the software this week.	Nous devons mettre à jour le logiciel cette semaine.
+f149	The data is stored on two servers.	Les données sont stockées sur deux serveurs.
+f150	The test passed without any error.	Le test a réussi sans aucune erreur.
