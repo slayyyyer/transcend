@@ -227,8 +227,9 @@ artifact terms; see `NOTICE`.
 
 Engineering criteria (must pass): export/parity, deterministic mask/cache
 behaviour, bounded generation, resume, Java/Python token and output equality.
-These pass: 33 Python tests, 10 Java tests, ONNX parity with a worst logit
-absolute difference of 8.58e-6, and identical greedy generation.
+These pass: 33 Python tests, 10 Java tests against both the step-14,500 and
+step-15,897 packages, ONNX parity with worst logit absolute differences of
+8.58e-6 and 6.44e-6, and identical greedy generation.
 
 Quality criteria for this hardware budget (expected, not guaranteed): the
 accelerator pilot should beat source-copy on chrF++ in both directions and show

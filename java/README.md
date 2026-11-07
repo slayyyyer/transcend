@@ -103,13 +103,18 @@ All sequence axes are dynamic; the step graph takes exactly one new token.
 
 ## Verification
 
-* Full Maven suite: **10 tests, 0 failures** (2 cache-reorder, 3 preprocessor,
-  2 tokenizer-golden, 3 model-package integration).
+* Full Maven suite: **10 tests, 0 failures, 0 skipped** (2 cache-reorder, 3
+  preprocessor, 2 tokenizer-golden, 3 model-package integration) against both
+  the step-14,500 and step-15,897 packages.
 * Token ids match Python token-for-token on golden fixtures.
-* Greedy output matches Python's greedy output token-for-token on the exported
-  step-14,500 package (`TranslatorParityTest`, run with `-Dtranscend.model.dir`).
+* Greedy output matches Python's greedy output token-for-token on both the
+  step-14,500 and step-15,897 packages (`TranslatorParityTest`, run with
+  `-Dtranscend.model.dir`).
 * Beam search reorders the KV cache with the surviving hypotheses
   (`CacheReorderTest`).
 * Benchmark on the step-14,500 package: cold load 1,297 ms, first translation
   380 ms, warm median 233 ms, p95 443 ms, batch of 5 inputs 1,219 ms (4.10
   inputs/s). See `reports/java_benchmark.json`.
+* Benchmark on the step-15,897 package: cold load 1,189 ms, first translation
+  405 ms, warm median 262 ms, p95 331 ms, batch of 5 inputs 1,436 ms (3.48
+  inputs/s). See `reports/java_benchmark_step15897.json`.

@@ -75,6 +75,7 @@ refuses to exceed the configured download/storage caps.
 
 Reports include `hardware.json`, `parity.json`, `java_benchmark.json`,
 `parity_step9500.json`, `java_benchmark_step9500.json`,
+`parity_step15897.json`, `java_benchmark_step15897.json`,
 `newstest2014.82m.{en-fr,fr-en}.full.json` and their `_summary.json`
 companions, `newstest2014.82m.comparisons.json`, the earlier
 `newstest2014.{en-fr,fr-en}.full.json` and `newstest2014.comparisons.json`, the
@@ -100,9 +101,11 @@ source-copy and checkpoint comparisons. The per-direction evaluation JSON is
 written by the commands named in `README.md`;
 `newstest2014.82m.comparisons.json` is a combined view assembled from the two
 `_summary.json` files. Training history and checkpoints are under
-`models/accel_pilot/`;
-the final training report records `stop_reason = max_train_tokens`, with the
-continuation log in `reports/train_continue_82m.log`.
+`models/accel_pilot/`; exported packages are under `models/accel_export/`
+(default step 14,500), `models/accel_export_step9500/`, and
+`models/accel_export_step15897/` (final verification). The final training report
+records `stop_reason = max_train_tokens`, with the continuation log in
+`reports/train_continue_82m.log`.
 
 ## Terms
 

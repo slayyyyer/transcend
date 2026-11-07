@@ -8,8 +8,9 @@
 | Checkpoint | `models/accel_pilot/best.pt`, optimizer step 14,500 |
 | Checkpoint SHA-256 | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
 | Latest checkpoint | `models/accel_pilot/checkpoint.pt`, step 15,897 (evaluated on newstest2014 after selection; last validation at 15,500) |
-| Exported package | `models/accel_export` (11 files, 120 MB; rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
-| Export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
+| Exported package | `models/accel_export` (11 files, 120 MB; default, rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
+| Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
+| Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
 | Training code version | repository state at 2026-11-07 |
 
@@ -157,6 +158,20 @@ uniform quality gain. This is not a human evaluation: no qualified bilingual
 reviewer has scored the packet, no inter-annotator agreement exists, and no
 human judgment is reported. Round-trip similarity is not used.
 
+## Runtime verification
+
+The default export is step 14,500. The final step-15,897 checkpoint was exported
+separately to `models/accel_export_step15897` and checked without replacing the
+default package:
+
+- Python↔ONNX Runtime parity: worst max-absolute logit difference 6.44e-6 and
+  token-for-token identical greedy generation (`reports/parity_step15897.json`).
+- Java Maven suite: 10 tests, 0 failures, 0 skipped against the final package,
+  including the Python↔Java greedy parity vectors.
+- Java benchmark: cold load 1,189 ms; first translation 405 ms; warm median
+  262 ms, p95 331 ms; batch of 5 inputs 1,436 ms (3.48 inputs/s). See
+  `reports/java_benchmark_step15897.json`.
+
 ## Intended use and out-of-scope use
 
 - Intended: research and engineering demonstration of a fully reproducible,
@@ -173,9 +188,11 @@ human judgment is reported. Round-trip similarity is not used.
 
 - The run reached the 82M-token cap at 15,897 updates but not the 20,000-update
   target; only 150,000 of 565,475 prepared pairs were sampled.
-- Greedy external BLEU is 11.03/11.28, and corpus chrF++ is 38.67/38.86. The
-  tuned beam improves these automatic scores but remains non-production quality.
-  Outputs can be fluent-looking but wrong. BLEU/chrF++ are not "percent correct".
+- Greedy external BLEU is 11.03/11.28 for the default step-14,500 package, and
+  corpus chrF++ is 38.67/38.86. The final checkpoint measured 12.11/12.17 and
+  39.46/39.53. The tuned beam improves these automatic scores but remains
+  non-production quality. Outputs can be fluent-looking but wrong. BLEU/chrF++
+  are not "percent correct".
 - Development chrF++ (47.18 at step 14,500) is in-domain and above the external
   result; it was used for checkpoint selection and is not a general-quality
   claim.

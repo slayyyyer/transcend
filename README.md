@@ -114,6 +114,13 @@ $PY -m nmt.cli export --config configs/existing_accelerator.yaml \
   --out models/accel_export --provenance data/prepared/europarl_nc/manifest.json
 $PY -m nmt.cli parity --model-dir models/accel_export --out reports/parity.json
 
+# Export the final step-15,897 checkpoint separately for verification.
+$PY -m nmt.cli export --config configs/existing_accelerator.yaml \
+  --checkpoint models/accel_pilot/checkpoint.pt --tokenizer models/cpu_small/tokenizer \
+  --out models/accel_export_step15897 --provenance data/prepared/europarl_nc/manifest.json
+$PY -m nmt.cli parity --model-dir models/accel_export_step15897 \
+  --out reports/parity_step15897.json
+
 # 8. Build blind bilingual review packets from the step-14,500 reports.
 #    These create packets; they do not add human review results.
 $PY -m nmt.cli review-packet --report reports/newstest2014.82m.en-fr.full.json \
@@ -152,8 +159,10 @@ The exported package (`manifest.json`, `model_config.json`, `generation.json`,
 downloads, training, subprocess calls or fallback. The local
 `models/accel_export/` package was rebuilt from the step-14,500 checkpoint; the
 previous step-9,500 package is archived at
-`models/accel_export_step9500/`. The rebuilt package has new checksums, and
-ONNX parity and the Java suite were rerun against it.
+`models/accel_export_step9500/`. The final step-15,897 checkpoint is exported
+separately at `models/accel_export_step15897/` for evaluation and runtime
+verification; it is not the default package. Each package has new checksums,
+and ONNX parity and the Java suite were rerun against it.
 
 ## Architecture and training recipe
 
@@ -328,11 +337,19 @@ constraints recorded in the model card.
   output, and report alignment.
 - `mvn -B package -Dtranscend.model.dir=../models/accel_export`: **10 tests, 0
   failures**, including the Java↔Python greedy parity tests.
-- Python↔ONNX parity on three cases: worst max-absolute logit difference
-  **8.58e-6**, generation token-for-token identical (`reports/parity.json`).
+- The same 10-test suite passed against
+  `../models/accel_export_step15897` with **0 failures and 0 skipped**,
+  including the final package's Python↔Java greedy parity test.
+- Python↔ONNX parity on three cases: step-14,500 worst max-absolute logit
+  difference **8.58e-6** (`reports/parity.json`); step-15,897 **6.44e-6**
+  (`reports/parity_step15897.json`). Generation is token-for-token identical in
+  both packages.
 - Java benchmark on the step-14,500 package: cold load 1,297 ms; first
   translation 380 ms; warm median 233 ms, p95 443 ms; batch of 5 inputs
   1,219 ms (4.10 inputs/s). See `reports/java_benchmark.json`.
+- Java benchmark on the step-15,897 package: cold load 1,189 ms; first
+  translation 405 ms; warm median 262 ms, p95 331 ms; batch of 5 inputs
+  1,436 ms (3.48 inputs/s). See `reports/java_benchmark_step15897.json`.
 - Full newstest2014 evaluation in both directions for the step-15,897,
   step-14,500 and step-9,500 checkpoints, using 1,000-sample document bootstrap
   intervals. The final-checkpoint and source-copy comparisons are in
