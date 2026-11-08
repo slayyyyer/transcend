@@ -11,6 +11,8 @@ run the tests on fixtures.
 | --- | --- | --- | --- |
 | Accelerator candidate, best checkpoint (step 14,500) | `models/accel_pilot/best.pt` | 113,348,627 B | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
 | Accelerator candidate, latest checkpoint (step 15,897) | `models/accel_pilot/checkpoint.pt` | 113,357,499 B | `89b7780af3aec778efb5fb690f4ed3e27548d3fea243aa1d4fa3cce504e6f85a` |
+| Scaled experiment, best checkpoint (step 14,000) | `models/scaled_pilot/best.pt` | 238,265,169 B | `199e2f4ffb58584f08b5a0ff06b69ef02863ed61cd466b0e8f600d4bf43d7b8f` |
+| Scaled experiment, latest checkpoint (step 14,218) | `models/scaled_pilot/checkpoint.pt` | 238,271,961 B | `2902bda38ae8ad53bc4dcf14210d24f646ae30d646adff7efb6898ee36ffe75a` |
 | Archived step-9,500 best | `models/accel_pilot/best_step9500.pt` | 113,328,147 B | `c48eb33b6346e54ddded7a1511f7e515975ae8ce7a29749a54c5f2a9fc0d9376` |
 | Archived step-9,635 latest | `models/accel_pilot/checkpoint_step9635.pt` | 113,332,923 B | `4a0bf94cc4b3aa08f950a3102b4d04a6b4ca5b866cf501a4720c7df7aaa37d70` |
 | Archived step-2,000 best | `models/accel_pilot/best_step2000.pt` | 113,296,275 B | `a0a1229523f80de9badc0b740ee1c853908fa69e0fbb7379585169a058094268` |
@@ -22,8 +24,10 @@ run the tests on fixtures.
 The CPU pilot is the `cpu_small` architecture (1,950,208 parameters); the
 accelerator candidate is `existing_accelerator` (9,421,824 parameters). They use
 the same tokenizer, so their scores are comparable, but they are different runs.
-The step-2,000 and step-9,500 accelerator artifacts are kept for the paired
-comparisons in `reports/newstest2014.comparisons.json` and
+The scaled experiment is `scaled_accelerator` (19,825,920 parameters); it is an
+evaluation-only model and has not been exported to ONNX/Java. The step-2,000 and
+step-9,500 accelerator artifacts are kept for the paired comparisons in
+`reports/newstest2014.comparisons.json` and
 `reports/newstest2014.82m.comparisons.json`.
 
 ## Exported Java package — `models/accel_export/`
@@ -101,15 +105,26 @@ comparison remains under `reports/review_api_google_82m_enfr/` and
 `reports/gtx_final_step15897_inputs/`. The final-checkpoint reports are
 `reports/newstest2014.82m.final.{en-fr,fr-en}.full.json` with summaries, plus
 `reports/newstest2014.82m.final.comparisons.json` and `.md` for the combined
-source-copy and checkpoint comparisons. The per-direction evaluation JSON is
-written by the commands named in `README.md`;
+source-copy and checkpoint comparisons. The full final-beam reports are
+`reports/newstest2014.82m.final_beam4.{en-fr,fr-en}.full.json` with summaries,
+plus `reports/newstest2014.82m.final_beam4.comparisons.json` and `.md`.
+
+The scaling experiment is configured by `configs/scaled_accelerator.yaml` and
+launched by `scripts/run_scaled_pilot.sh`; it writes under
+`models/scaled_pilot/`. Its step-14,000 best checkpoint and step-14,218 latest
+checkpoint are the two scaled rows above. The scaled full-set reports are
+`reports/newstest2014.scaled.{greedy,beam4}.{en-fr,fr-en}.full.json` with
+summaries, plus `reports/newstest2014.scaled.comparisons.{json,md}`. The
+per-direction evaluation JSON is written by the commands named in `README.md`;
 `newstest2014.82m.comparisons.json` is a combined view assembled from the two
 `_summary.json` files. Training history and checkpoints are under
 `models/accel_pilot/`; exported packages are under `models/accel_export/`
 (default step 14,500), `models/accel_export_step9500/`, and
-`models/accel_export_step15897/` (final verification). The final training report
-records `stop_reason = max_train_tokens`, with the continuation log in
-`reports/train_continue_82m.log`.
+`models/accel_export_step15897/` (final verification).
+
+The small final training report records `stop_reason = max_train_tokens`, with
+the continuation log in `reports/train_continue_82m.log`; the scaled report
+records `stop_reason = max_walltime` at step 14,218.
 
 ## Terms
 

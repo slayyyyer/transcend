@@ -1,0 +1,54 @@
+# Controlled scaling experiment for the RTX 3050 Ti (4 GiB).
+#
+# This keeps the data preparation, tokenizer, directions and sequence limits
+# fixed while scaling two things relative to existing_accelerator:
+#   * all 565,475 prepared training pairs instead of a 150,000-pair sample
+#   * 19.9M parameters instead of 9.4M (6 layers, d_model=320, ffn=1280)
+#
+# The token budget is 164M target tokens (20,000 updates at 8,192 tokens),
+# roughly twice the previous run. Micro-batch size is deliberately lower than
+# existing_accelerator; calibrate before a full run on a 4 GiB card.
+name: scaled_accelerator
+seed: 1337
+
+model:
+  vocab_size: auto
+  d_model: 320
+  encoder_layers: 6
+  decoder_layers: 6
+  attention_heads: 5
+  ffn_dim: 1280
+  dropout: 0.1
+  max_positions: 512
+
+tokenizer:
+  target_vocab_size: 8000
+  min_pair_frequency: 2
+
+data:
+  source: europarl_nc
+  train_pairs: 0              # 0 = all 565,475 prepared pairs
+  max_source_tokens: 128
+  max_target_tokens: 136
+  max_char_ratio: 3.0
+  block_size: 200
+
+train:
+  device: auto
+  precision: auto
+  num_threads: 8
+  peak_lr: 4.0e-4
+  warmup_updates: 800
+  token_budget: 8192
+  max_micro_batch: 16
+  max_steps: 20000
+  max_train_tokens: 164000000
+  max_walltime_s: 14400
+  checkpoint_every: 1000
+  validate_every: 1000
+  patience: 10
+
+eval:
+  max_new_tokens: 136
+  beam_size: 1
+  dev_limit: 300

@@ -39,12 +39,13 @@ Presets (layer counts are encoder+decoder):
 | smoke | 2+2 | 128 | 4 | 512 | 1,015 (fixture-limited) | 1,056,128 |
 | cpu_small | 2+2 | 128 | 4 | 512 | 8,000 | 1,950,208 |
 | existing_accelerator | 4+4 | 256 | 4 | 1024 | 8,000 | 9,421,824 |
+| scaled_accelerator | 6+6 | 320 | 5 | 1280 | 8,000 | 19,825,920 |
 | compact | 4+4 | 384 | 6 | 1536 | (would need 32k vocab) | not run |
 
 The 16k/32k vocabularies were not trained. Tokenizer training on the full train
 split took 2m40s for 8,000 entries; spending several more minutes on a larger
 vocabulary would have taken time away from optimizer updates. The same
-8,000-entry artifact is used by both trained models, which also makes their
+8,000-entry artifact is used by all trained models, which also makes their
 results directly comparable.
 
 ## Tokenizer
@@ -163,6 +164,15 @@ artifact terms; see `NOTICE`.
   non-padding target tokens per update, so the 82M-token cap arrives first.
   Batching was not changed mid-run. The unused 20,000-step headroom is not a
   quality guarantee.
+* Scaled run: `configs/scaled_accelerator.yaml`, 19,825,920 parameters, the full
+  565,475-pair prepared train split (no 150k sample), 8,192-token update budget,
+  and fresh 164M-token / 20,000-update / 4-hour caps. It stopped on
+  `max_walltime` at step 14,218 / 123,987,566 target tokens / 14,400.24 s. The
+  best development checkpoint was step 14,000 at 51.7783 mean chrF++; `best.pt`
+  is that checkpoint and `checkpoint.pt` is step 14,218. Actual throughput was
+  8,610.1 target tokens/s and 1,026.9 ms per update. It did not reach the step
+  or token cap, so the scaled budget is a walltime result, not a completed
+  20k/164M schedule.
 
 ## Evaluation protocol
 
@@ -178,7 +188,10 @@ artifact terms; see `NOTICE`.
   compared directly with step 9,500 (`reports/newstest2014.82m.comparisons.json`).
   The final step-15,897 checkpoint was evaluated after selection against the
   step-14,500 candidate and source-copy
-  (`reports/newstest2014.82m.final.comparisons.json`).
+  (`reports/newstest2014.82m.final.comparisons.json`). The scaled step-14,000
+  checkpoint was evaluated after its walltime stop against the final small
+  greedy and beam-4 runs on exactly the same retained newstest2014 segments
+  (`reports/newstest2014.scaled.comparisons.json`).
 * Metrics: SacreBLEU (`13a`, cased) and chrF++ (`word_order=2`), with signatures.
 * A documented 564-row EN→FR subset retains random-initialized, CPU-pilot and
   accelerator baselines (`reports/subset600.en-fr*`). The full-set baselines are
@@ -209,7 +222,18 @@ artifact terms; see `NOTICE`.
   1,797/984/141. This is mixed at sentence level, not a human evaluation; greedy
   remains the default. See `reports/beam_tuning_dev.md` and
   `reports/beam_tuned_step14500.md`; the earlier untuned 495-row sample is in
-  `reports/beam_vs_greedy_step14500.md`.
+  `reports/beam_vs_greedy_step14500.md`. The same settings on the final
+  step-15,897 checkpoint give 14.455/41.365 EN→FR and 14.113/41.452 FR→EN,
+  versus final greedy 12.110/39.459 and 12.169/39.528. Paired chrF++ gains are
+  +1.907 [1.684, 2.125] and +1.924 [1.734, 2.117]; sentence W/L/T is
+  1,786/1,045/128 and 1,729/1,033/160. See
+  `reports/newstest2014.82m.final_beam4.comparisons.md`. The scaled step-14,000
+  checkpoint scores 18.924/45.729 EN→FR and 17.858/45.415 FR→EN greedy, and
+  20.670/47.216 and 19.414/46.915 beam 4. Against the final small model, beam
+  gains are +6.215/+5.301 BLEU and +5.851/+5.463 chrF++ (95% CIs [5.564, 6.143]
+  and [5.231, 5.694]); on the scaled model, beam over greedy adds +1.487/+1.500
+  chrF++ ([1.294, 1.671] and [1.315, 1.689]). See
+  `reports/newstest2014.scaled.comparisons.md`. This is automatic metrics only.
 * API-assisted review (`nmt/review_api.py`): the current deterministic
   25-row-per-direction sample uses the final step-15,897 checkpoint for both
   greedy and beam-4 decoding (the same dev-selected settings as step 14,500).
@@ -231,7 +255,7 @@ artifact terms; see `NOTICE`.
 
 Engineering criteria (must pass): export/parity, deterministic mask/cache
 behaviour, bounded generation, resume, Java/Python token and output equality.
-These pass: 33 Python tests, 10 Java tests against both the step-14,500 and
+These pass: 34 Python tests, 10 Java tests against both the step-14,500 and
 step-15,897 packages, ONNX parity with worst logit absolute differences of
 8.58e-6 and 6.44e-6, and identical greedy generation.
 
@@ -242,10 +266,15 @@ checkpoint beat source-copy (+13.69 EN→FR, +12.22 FR→EN chrF++, with 95%
 document-bootstrap intervals excluding zero); the step-14,500 checkpoint then
 beat step 9,500 by +3.10/+2.92 chrF++ and source-copy by +16.79/+15.13. The
 final step-15,897 checkpoint improved on the candidate by +0.79/+0.67 chrF++
-and on source-copy by +17.58/+15.81; all intervals exclude zero.
+and on source-copy by +17.58/+15.81; all intervals exclude zero. The scaled
+step-14,000 checkpoint then improved on the final small model by +6.27/+5.89
+chrF++ greedy and +5.85/+5.46 chrF++ beam 4; those paired intervals also exclude
+zero.
+
 General-purpose translation quality is explicitly **not** claimed; BLEU is
-11.03/11.28 for the candidate and 12.11/12.17 for the final checkpoint, and
-sample sentences are frequently wrong. The AI-assisted sentence review of the
+11.03/11.28 for the candidate, 12.11/12.17 for the final small checkpoint, and
+18.92/17.86 for the scaled greedy checkpoint, and sample sentences are
+frequently wrong. The AI-assisted sentence review of the
 step-14,500 packet found 21.5% acceptable; the fresh review's distribution is
 not uniformly better (50 CRITICAL rows vs 25 archived). Qualified human review
 was not performed; this proof of concept uses machine-assisted comparisons only.

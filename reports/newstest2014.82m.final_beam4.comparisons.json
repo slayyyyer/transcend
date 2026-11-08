@@ -1,0 +1,146 @@
+{
+  "checkpoint": "models/accel_pilot/checkpoint.pt",
+  "step": 15897,
+  "decoder": {
+    "beam_size": 4,
+    "length_penalty": 1.2,
+    "min_new_tokens": 16
+  },
+  "baseline": "greedy",
+  "directions": {
+    "en-fr": {
+      "n": 2959,
+      "documents": 176,
+      "greedy": {
+        "bleu": 12.11,
+        "chrfpp": 39.459,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2959,
+        "mean_words": 24.731,
+        "short_5_words": 38,
+        "short_8_words": 191,
+        "empty": 0
+      },
+      "beam": {
+        "bleu": 14.455,
+        "chrfpp": 41.365,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2959,
+        "mean_words": 23.906,
+        "short_5_words": 10,
+        "short_8_words": 189,
+        "empty": 0
+      },
+      "delta": {
+        "bleu": 2.345,
+        "chrfpp": 1.906,
+        "mean_words": -0.825
+      },
+      "paired_bootstrap": {
+        "chrfpp": {
+          "metric": "chrfpp",
+          "observed_delta": 1.907,
+          "bootstrap_mean_delta": 1.906,
+          "ci95": [
+            1.684,
+            2.125
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        },
+        "bleu": {
+          "metric": "bleu",
+          "observed_delta": 2.345,
+          "bootstrap_mean_delta": 2.342,
+          "ci95": [
+            2.076,
+            2.612
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        }
+      },
+      "sentence_chrfpp": {
+        "beam_wins": 1786,
+        "greedy_wins": 1045,
+        "ties": 128
+      },
+      "changed_outputs": 2834,
+      "shorter_outputs": 1386,
+      "longer_outputs": 970
+    },
+    "fr-en": {
+      "n": 2922,
+      "documents": 176,
+      "greedy": {
+        "bleu": 12.169,
+        "chrfpp": 39.528,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2922,
+        "mean_words": 22.854,
+        "short_5_words": 58,
+        "short_8_words": 212,
+        "empty": 0
+      },
+      "beam": {
+        "bleu": 14.113,
+        "chrfpp": 41.452,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 2922,
+        "mean_words": 22.328,
+        "short_5_words": 7,
+        "short_8_words": 206,
+        "empty": 0
+      },
+      "delta": {
+        "bleu": 1.944,
+        "chrfpp": 1.924,
+        "mean_words": -0.526
+      },
+      "paired_bootstrap": {
+        "chrfpp": {
+          "metric": "chrfpp",
+          "observed_delta": 1.924,
+          "bootstrap_mean_delta": 1.924,
+          "ci95": [
+            1.734,
+            2.117
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        },
+        "bleu": {
+          "metric": "bleu",
+          "observed_delta": 1.944,
+          "bootstrap_mean_delta": 1.946,
+          "ci95": [
+            1.691,
+            2.223
+          ],
+          "p_value_one_sided": 0.0,
+          "samples": 1000,
+          "resampling_unit": "document",
+          "unit_count": 176
+        }
+      },
+      "sentence_chrfpp": {
+        "beam_wins": 1729,
+        "greedy_wins": 1033,
+        "ties": 160
+      },
+      "changed_outputs": 2764,
+      "shorter_outputs": 1300,
+      "longer_outputs": 975
+    }
+  }
+}

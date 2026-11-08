@@ -8,6 +8,8 @@
 | Checkpoint | `models/accel_pilot/best.pt`, optimizer step 14,500 |
 | Checkpoint SHA-256 | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
 | Latest checkpoint | `models/accel_pilot/checkpoint.pt`, step 15,897 (evaluated on newstest2014 after selection; last validation at 15,500) |
+| Scaled experiment checkpoint | `models/scaled_pilot/best.pt`, step 14,000 (19,825,920 parameters; evaluation-only, not exported) |
+| Scaled checkpoint SHA-256 | `199e2f4ffb58584f08b5a0ff06b69ef02863ed61cd466b0e8f600d4bf43d7b8f` |
 | Exported package | `models/accel_export` (11 files, 120 MB; default, rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
 | Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
 | Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
@@ -33,6 +35,12 @@ point.
 - Limits: 128 source tokens and 136 generated tokens including controls. Inputs
   beyond the source limit are rejected, never truncated.
 
+A separate scaled experiment uses 6 encoder + 6 decoder layers, `d_model` 320,
+5 heads, FFN 1,280 and **19,825,920 trainable parameters**, with the same 8,000
+byte-BPE tokenizer, positions, normalization and sequence limits. It is an
+evaluation-only model; the default deployable package remains the 9.4M
+step-14,500 model.
+
 ## Training
 
 | Field | Value |
@@ -52,8 +60,34 @@ clip norm 1.0, peak LR 5e-4, 400 warmup updates, inverse-sqrt decay, 500-update
 validation interval, checkpoint every 500 updates. Gradients were normalized by
 non-padding target tokens, including the final partial accumulation group.
 
+### Scaled experiment
+
+The scaled run used the full 565,475-pair prepared train split (not the 150,000
+pair sample), an 8,192-token update budget, peak LR 4e-4, 800 warmup updates and
+1,000-update validation/checkpoint intervals under a fresh 4-hour / 164M-token /
+20,000-update budget. It stopped on `max_walltime`, not either step/token cap.
+
+| Field | Value |
+| --- | --- |
+| Parameters | 19,825,920 (6+6 layers, `d_model` 320, 5 heads, FFN 1,280) |
+| Data | all 565,475 prepared train pairs configured; same tokenizer and limits |
+| Target tokens seen | 123,987,566 |
+| Optimizer updates | 14,218 |
+| Best development checkpoint | step 14,000, mean chrF++ 51.7783 |
+| Wall clock | 14,400.24 s (4-hour cap) |
+| Stop | `max_walltime` at step 14,218 |
+| Throughput | 8,610.1 target tokens/s; 1,026.9 ms mean update |
+
+The best checkpoint is `models/scaled_pilot/best.pt` (step 14,000); the latest is
+`models/scaled_pilot/checkpoint.pt` (step 14,218). The best validation was
+52.4234 chrF++ EN→FR and 51.1332 FR→EN at step 14,000. The scaled run changes
+both model size and data exposure relative to the small pilot, so it is not a
+single-factor ablation.
+
 Development metric (mean chrF++ over the two directions, 300 rows per direction
-from the held-out block split; full history in `models/accel_pilot/history.json`):
+from the held-out block split; small-model history in
+`models/accel_pilot/history.json`, scaled history in
+`models/scaled_pilot/history.json`):
 
 | Step | Mean chrF++ | EN→FR | FR→EN |
 | --- | --- | --- | --- |
@@ -94,16 +128,37 @@ FR→EN: n = 2,922, 81 skipped.
 | Step 14,500 candidate (82M-token run), greedy | **11.03** | **38.67** | **11.28** | **38.86** |
 | Step 15,897 final (not dev-selected), greedy | 12.11 | 39.46 | 12.17 | 39.53 |
 | Step 14,500 tuned beam 4 (LP 1.2, min 16) | 13.42 | 40.82 | 13.15 | 40.88 |
+| Step 15,897 final, tuned beam 4 (LP 1.2, min 16) | 14.46 | 41.37 | 14.11 | 41.45 |
+| Scaled 19.8M step 14,000, greedy | **18.92** | **45.73** | **17.86** | **45.42** |
+| Scaled 19.8M step 14,000, tuned beam 4 (LP 1.2, min 16) | **20.67** | **47.22** | **19.41** | **46.92** |
 
-The tuned beam row uses beam 4, length penalty 1.2 and a minimum of 16 new
-target tokens, selected on dev only. Paired chrF++ gains versus greedy are +2.15
-[1.96, 2.34] EN→FR and +2.03 [1.81, 2.26] FR→EN; BLEU gains are +2.39/+1.87.
-Sentence-level chrF++ still regresses on 1,017 EN→FR and 984 FR→EN sentences,
-and 1,519/1,365 outputs are shorter. These are automatic metrics, not a human
-evaluation; default decoding remains greedy. The final step-15,897 checkpoint
+The tuned beam rows use beam 4, length penalty 1.2 and a minimum of 16 new
+target tokens, selected on dev only. For the step-14,500 row, paired chrF++
+gains versus greedy are +2.15 [1.96, 2.34] EN→FR and +2.03 [1.81, 2.26] FR→EN;
+BLEU gains are +2.39/+1.87. Sentence-level chrF++ there still regresses on
+1,017 EN→FR and 984 FR→EN sentences, and 1,519/1,365 outputs are shorter. These
+are automatic metrics, not a human evaluation; default decoding remains greedy. The final step-15,897 checkpoint
 was evaluated after selection and improves on the step-14,500 candidate by
 +0.79/+0.67 chrF++ (95% CIs [0.58, 1.01] and [0.47, 0.88]); it was not used to
 choose the exported model.
+
+With the same beam settings, the final checkpoint scores 14.455/41.365 EN→FR and
+14.113/41.452 FR→EN, improving on final greedy by +2.345/+1.944 BLEU and
++1.906/+1.924 chrF++ (95% CIs [1.684, 2.125] and [1.734, 2.117]). Sentence
+chrF++ W/L/T is 1,786/1,045/128 and 1,729/1,033/160; 2,834/2,764 outputs changed.
+See `reports/newstest2014.82m.final_beam4.comparisons.md`. This is an automatic
+metric comparison, not a human evaluation.
+
+The scaled 19.8M checkpoint was evaluated on the same full retained segments
+with the same greedy and beam-4 settings. Greedy: 18.924/45.729 EN→FR and
+17.858/45.415 FR→EN. Beam 4: 20.670/47.216 and 19.414/46.915. Versus the final
+small model, greedy gains are +6.814/+6.270 BLEU and +5.689/+5.887 chrF++ (95%
+CIs [5.961, 6.581] and [5.589, 6.185]); beam gains are +6.215/+5.851 BLEU and
++5.301/+5.463 chrF++ ([5.564, 6.143] and [5.231, 5.694]). On the scaled model,
+beam 4 improves over greedy by +1.746/+1.487 BLEU and +1.556/+1.500 chrF++
+([1.294, 1.671] and [1.315, 1.689]). Sentence chrF++ W/L/T for scaled beam vs
+final beam is 2,301/639/19 EN→FR and 2,254/641/27 FR→EN. These are automatic
+metrics, not human evaluation; see `reports/newstest2014.scaled.comparisons.md`.
 
 ### API-assisted spot check
 
@@ -142,18 +197,24 @@ Paired document bootstrap, 1,000 resamples over 176 documents:
 | Step 14,500 vs source-copy | +16.79 [15.99, 17.64] | +15.13 [14.35, 15.93] |
 | Step 15,897 vs step 14,500 | +0.79 [0.58, 1.01] | +0.67 [0.47, 0.88] |
 | Step 15,897 vs source-copy | +17.58 [16.87, 18.34] | +15.81 [15.04, 16.61] |
+| Scaled step 14,000 vs final step 15,897, greedy | +6.27 [5.96, 6.58] | +5.89 [5.59, 6.19] |
+| Scaled step 14,000 vs final step 15,897, beam 4 | +5.85 [5.56, 6.14] | +5.46 [5.23, 5.69] |
+| Scaled beam 4 vs scaled greedy | +1.49 [1.29, 1.67] | +1.50 [1.32, 1.69] |
 
 The step-9,500 checkpoint beat both baselines on chrF++ in both directions; the
 step-14,500 candidate then improved on step 9,500 by +3.10/+2.92 chrF++ and beat
 source-copy by +16.79/+15.13. The final step-15,897 checkpoint improved on the
 candidate by +0.79/+0.67 chrF++ and on source-copy by +17.58/+15.81; all
-intervals exclude zero. These are measured improvements within the pilot, not
-evidence of usable translation quality.
+intervals exclude zero. The scaled step-14,000 checkpoint further improves on
+the final small model by +6.27/+5.89 chrF++ greedy and +5.85/+5.46 chrF++ beam
+4; those paired intervals also exclude zero. These are measured improvements
+within the pilot, not evidence of usable translation quality.
 
 Human evaluation: **not performed.** This proof of concept uses machine-assisted
-comparisons only. An AI-assisted review of all 200 packet rows from
-the step-14,500 checkpoint found 43/200 acceptable (3 OK, 40 MINOR), 107 MAJOR
-and 50 CRITICAL; the per-row record is in
+comparisons only. The scaled checkpoint received automatic metrics only; it was
+not included in the packet review or the Google `gtx` spot check. An AI-assisted
+review of all 200 packet rows from the step-14,500 checkpoint found 43/200
+acceptable (3 OK, 40 MINOR), 107 MAJOR and 50 CRITICAL; the per-row record is in
 `reports/review_packet_82m_enfr/review_en-fr_reviewed.tsv` and
 `reports/review_packet_82m_fren/review_fr-en_reviewed.tsv`, with aggregate results
 in `reports/review_summary_82m.md`. The same deterministic 200 IDs were reviewed
@@ -165,9 +226,10 @@ human judgment is reported. Round-trip similarity is not used.
 
 ## Runtime verification
 
-The default export is step 14,500. The final step-15,897 checkpoint was exported
-separately to `models/accel_export_step15897` and checked without replacing the
-default package:
+The default export is step 14,500. The scaled 19.8M checkpoint has **not** been
+exported or Java-verified; it is an evaluation artifact only. The final
+step-15,897 checkpoint was exported separately to
+`models/accel_export_step15897` and checked without replacing the default package:
 
 - Python↔ONNX Runtime parity: worst max-absolute logit difference 6.44e-6 and
   token-for-token identical greedy generation (`reports/parity_step15897.json`).
@@ -191,11 +253,12 @@ default package:
 
 ## Limitations and risks
 
-- The run reached the 82M-token cap at 15,897 updates but not the 20,000-update
-  target; only 150,000 of 565,475 prepared pairs were sampled.
+- The small run reached the 82M-token cap at 15,897 updates but not the
+  20,000-update target; only 150,000 of 565,475 prepared pairs were sampled.
 - Greedy external BLEU is 11.03/11.28 for the default step-14,500 package, and
-  corpus chrF++ is 38.67/38.86. The final checkpoint measured 12.11/12.17 and
-  39.46/39.53. The tuned beam improves these automatic scores but remains
+  corpus chrF++ is 38.67/38.86. The final small checkpoint measured 12.11/12.17
+  and 39.46/39.53; the scaled step-14,000 checkpoint measured 18.92/17.86 and
+  45.73/45.42. Tuned beam improves these automatic scores further but remains
   non-production quality. Outputs can be fluent-looking but wrong. BLEU/chrF++
   are not "percent correct".
 - Development chrF++ (47.18 at step 14,500) is in-domain and above the external
@@ -213,6 +276,11 @@ default package:
   rows and 1,519/1,365 outputs are shorter. See
   `reports/beam_tuned_step14500.md` and the earlier untuned sample in
   `reports/beam_vs_greedy_step14500.md`. This is not a human evaluation.
+- The scaled run stopped at the 4-hour walltime cap after 14,218 updates /
+  123,987,566 target tokens, not at the 20,000-update or 164M-token cap. It used
+  the full prepared split and 19.8M parameters, changing both size and data
+  exposure. Its automatic scores are stronger, but it has no human review and no
+  ONNX/Java export.
 - No quantified bias, toxicity, or privacy audit was performed. Parliamentary
   proceedings contain personal names and political content inherited from the
   source corpora.
