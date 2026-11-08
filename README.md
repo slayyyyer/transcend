@@ -4,28 +4,27 @@ A reproducible EN↔FR translation project whose tokenizer and translation model
 both trained from scratch, plus an offline Java 17 inference
 library that runs the exported ONNX package without Python or network access.
 
-**Status: proof of concept; pipeline complete, pilot reached the 82M-token cap
-at 15,897 updates, quality measured — still not a usable translator.** Every
-stage below actually ran end to end. The step-14,500 checkpoint improves on step
-9,500 on newstest2014 in both directions: BLEU 11.03/11.28 and chrF++
-38.67/38.86, with paired chrF++ gains of +3.10 EN→FR and +2.92 FR→EN (95% CIs
-exclude zero). The final step-15,897 checkpoint, evaluated after selection,
-raises the greedy scores to BLEU 12.11/12.17 and chrF++ 39.46/39.53. A dev-tuned
-beam-4 decoder (length penalty 1.2, minimum 16 tokens) raises the full-set
-automatic scores to BLEU 13.42/13.15 and chrF++ 40.82/40.88; greedy remains the
-default. A fresh AI-assisted sentence-level review of the step-14,500 packet
-found 43/200 acceptable, but 157/200 MAJOR or CRITICAL,
-and ordinary sentences are frequently mistranslated (see [Measured
+**Status: proof of concept; both pipelines are complete, but quality is still
+pilot-level.** Every stage below actually ran end to end. The default 9.4M
+small model reached the 82M-token cap at 15,897 updates; its step-14,500
+checkpoint scores BLEU 11.03/11.28 and chrF++ 38.67/38.86 greedy, and the final
+step-15,897 checkpoint raises those to 12.11/12.17 and 39.46/39.53. The same
+dev-tuned beam-4 decoder (length penalty 1.2, minimum 16 tokens) lifts the
+final full-set automatic scores to 14.46/14.11 BLEU and 41.37/41.45 chrF++;
+greedy remains the default. A fresh AI-assisted sentence-level review of the
+step-14,500 packet found 43/200 acceptable and 157/200 MAJOR or CRITICAL, and
+ordinary sentences are frequently mistranslated (see [Measured
 results](#measured-results)). This demonstrates a working, auditable training → export → Java pipeline, not translation quality.
 
-**Scaled follow-up:** a separate 19,825,920-parameter 6+6-layer model, trained on
-the full prepared train split with a 164M-token / 20,000-update / 4-hour budget,
-stopped at the walltime cap after 14,218 updates (123,987,566 target tokens). Its
-step-14,000 checkpoint scores 18.92/17.86 BLEU and 45.73/45.42 chrF++ greedy, and
-20.67/19.41 BLEU and 47.22/46.92 chrF++ with the same beam-4 settings. That is
-+6.81/+5.69 BLEU over final small-model greedy and +6.22/+5.30 over final
-small-model beam-4; every paired 95% interval excludes zero. It remains a pilot,
-not a usable translator, and no human evaluation was performed.
+**Scaled follow-up:** the separate 19,825,920-parameter 6+6-layer model resumed
+past its first 4-hour walltime stop and finished at the 164M-token cap after
+18,799 updates (164,002,778 target tokens; 18,343.24 s cumulative). Its best
+dev checkpoint is step 18,000. Full newstest2014 scores are 20.01/19.02 BLEU and
+47.04/46.70 chrF++ greedy, and 21.24/20.30 BLEU and 48.44/48.15 chrF++ with
+beam 4. Versus the final small model that is +7.90/+6.85 BLEU greedy and
++6.79/+6.19 beam 4; every paired 95% interval excludes zero. The step-18,000
+checkpoint also has a verified `models/scaled_export` ONNX/Java package. It
+remains a pilot, not a usable translator, and no human evaluation was performed.
 
 ## What "from scratch" means here
 
@@ -101,14 +100,25 @@ $PY -m nmt.cli train --config configs/existing_accelerator.yaml \
   --max-steps 20000 --max-train-tokens 82000000 --max-walltime 2400
 
 # 5b. Scaled experiment (19.8M; full train split; 4-hour / 164M-token / 20k-update caps).
-#     This is a separate evaluation-only model and does not replace models/accel_pilot.
+#     This is a separate model and does not replace models/accel_pilot. The resumed
+#     run finished at the token cap; its best checkpoint is step 18,000.
 $PY -m nmt.cli train --config configs/scaled_accelerator.yaml \
   --prepared data/prepared/europarl_nc --tokenizer models/cpu_small/tokenizer \
   --out models/scaled_pilot --device cuda
-# After models/scaled_pilot/training_report.json exists, run all four full-set
-# evaluations sequentially (greedy + beam-4, both directions).
-PYTHON="$PY" bash scripts/evaluate_scaled.sh
-$PY scripts/compare_scaled_full.py
+# After the new training report exists, run all four full-set evaluations
+# sequentially (greedy + beam-4, both directions).
+TAG=scaled_resumed PYTHON="$PY" bash scripts/evaluate_scaled.sh
+$PY scripts/compare_scaled_full.py \
+  --tag scaled_resumed --checkpoint models/scaled_pilot/best.pt \
+  --title "Resumed scaled checkpoint on full newstest2014" \
+  --out reports/newstest2014.scaled_resumed.comparisons.json \
+  --markdown reports/newstest2014.scaled_resumed.comparisons.md
+# Export and verify the scaled package separately; it is not the default.
+$PY -m nmt.cli export --config configs/scaled_accelerator.yaml \
+  --checkpoint models/scaled_pilot/best.pt --tokenizer models/cpu_small/tokenizer \
+  --out models/scaled_export --provenance data/prepared/europarl_nc/manifest.json
+$PY -m nmt.cli parity --model-dir models/scaled_export \
+  --out reports/parity_scaled.json
 
 # 6. Evaluate both directions on the pinned external benchmark, comparing the
 #    archived step-9,500 checkpoint with the current candidate.
@@ -180,12 +190,14 @@ downloads, training, subprocess calls or fallback. The local
 previous step-9,500 package is archived at
 `models/accel_export_step9500/`. The final step-15,897 checkpoint is exported
 separately at `models/accel_export_step15897/` for evaluation and runtime
-verification; it is not the default package. Each package has new checksums,
-and ONNX parity and the Java suite were rerun against it.
+verification; it is not the default package. The scaled step-18,000 checkpoint
+is exported at `models/scaled_export/`; it is also not the default package.
+Each package has new checksums, and ONNX parity and the Java suite were rerun
+against it.
 
 ## Architecture and training recipe
 
-| Item | `existing_accelerator` (main small run) | `cpu_small` (pilot only) | `scaled_accelerator` (evaluation-only) |
+| Item | `existing_accelerator` (main small run) | `cpu_small` (pilot only) | `scaled_accelerator` (follow-up) |
 | --- | --- | --- | --- |
 | Layers (enc+dec) | 4 + 4 | 2 + 2 | 6 + 6 |
 | `d_model` / heads / FFN | 256 / 4 / 1024 | 128 / 4 / 512 | 320 / 5 / 1,280 |
@@ -222,12 +234,15 @@ exactly 4,096; batching was not changed mid-run.
 The scaled run used the same tokenizer and sequence limits but a 6+6-layer,
 `d_model` 320 model (19,825,920 parameters), the full prepared train split rather
 than a 150,000-pair sample, an 8,192-token update budget, and a fresh 4-hour /
-164M-token / 20,000-update budget. It stopped on `max_walltime` at step 14,218 /
-123,987,566 target tokens in 14,400.24 s, not at the step or token cap. Actual
-throughput was 8,610.1 target tokens/s and 1,026.9 ms per update; the best
-development checkpoint was step 14,000 at 51.7783 mean chrF++ (52.4234 EN→FR,
-51.1332 FR→EN, 300 rows per direction). `best.pt` is therefore step 14,000;
-`checkpoint.pt` is the latest step 14,218.
+164M-token / 20,000-update budget. The first invocation stopped on `max_walltime`
+at step 14,218 / 123,987,566 target tokens / 14,400.24 s. Resuming from that
+checkpoint stopped on `max_train_tokens` at step 18,799 / 164,002,778 target
+tokens, with 3,943.0 s in the resumed invocation and 18,343.24 s cumulative.
+Resumed throughput was 10,148.42 target tokens/s and 935.21 ms per update. The
+best development checkpoint was step 18,000 at 52.6313 mean chrF++ (52.9095
+EN→FR, 52.3530 FR→EN, 300 rows per direction), so `best.pt` is step 18,000 and
+`checkpoint.pt` is the latest step 18,799. The step-14,000 and step-14,218
+artifacts are preserved with `_step14000` and `_step14218` suffixes.
 
 ## Measured results
 
@@ -246,8 +261,10 @@ truncated.
 | Step 15,897 final (not dev-selected), greedy | 12.11 | 39.46 | 12.17 | 39.53 |
 | Step 14,500 tuned beam 4 (LP 1.2, min 16) | 13.42 | 40.82 | 13.15 | 40.88 |
 | Step 15,897 final, tuned beam 4 (LP 1.2, min 16) | 14.46 | 41.37 | 14.11 | 41.45 |
-| Scaled 19.8M step 14,000 (4-hour run), greedy | **18.92** | **45.73** | **17.86** | **45.42** |
-| Scaled 19.8M step 14,000, tuned beam 4 | **20.67** | **47.22** | **19.41** | **46.92** |
+| Scaled 19.8M step 14,000 (archived), greedy | 18.92 | 45.73 | 17.86 | 45.42 |
+| Scaled 19.8M step 14,000, tuned beam 4 | 20.67 | 47.22 | 19.41 | 46.92 |
+| Scaled 19.8M step 18,000, greedy | 20.01 | 47.04 | 19.02 | 46.70 |
+| Scaled 19.8M step 18,000, tuned beam 4 | **21.24** | **48.44** | **20.30** | **48.15** |
 
 The step-14,500 tuned beam row is the full-set comparison from
 `reports/beam_tuned_step14500.md`: beam 4, length penalty 1.2, minimum 16 new
@@ -265,19 +282,19 @@ The same beam settings on the final step-15,897 checkpoint give full-set
 comparison, not a human evaluation. See
 `reports/newstest2014.82m.final_beam4.comparisons.md`.
 
-The scaled checkpoint (`models/scaled_pilot/best.pt`, step 14,000) is the
-strongest full-set result so far. Greedy scores 18.924/45.729 EN→FR and
-17.858/45.415 FR→EN; beam 4 scores 20.670/47.216 and 19.414/46.915. Relative to
-the final small model, greedy gains are +6.814/+6.270 BLEU and +5.689/+5.887
-chrF++ (95% CIs [5.961, 6.581] and [5.589, 6.185]); beam gains are
-+6.215/+5.851 BLEU and +5.301/+5.463 chrF++ ([5.564, 6.143] and [5.231, 5.694]).
-Beam 4 over scaled greedy adds +1.746/+1.487 BLEU and +1.556/+1.500 chrF++
-([1.294, 1.671] and [1.315, 1.689]). Sentence chrF++ W/L/T for scaled beam vs
-final beam is 2,301/639/19 EN→FR and 2,254/641/27 FR→EN; 2,940/1,463/1,004 and
-2,896/1,546/857 outputs changed/shorter/longer. This is a larger-model plus
-more-data experiment, not a clean single-factor ablation. It is automatic
+The scaled checkpoint (`models/scaled_pilot/best.pt`, step 18,000) is the
+strongest full-set result so far. Greedy scores 20.011/47.036 EN→FR and
+19.018/46.698 FR→EN; beam 4 scores 21.243/48.442 and 20.300/48.152. Relative to
+the final small model, greedy gains are +7.901/+6.849 BLEU and +7.577/+7.170
+chrF++ (95% CIs [7.264, 7.896] and [6.863, 7.490]); beam gains are
++6.788/+6.187 BLEU and +7.077/+6.700 chrF++ ([6.785, 7.373] and [6.424, 6.982]).
+Beam 4 over scaled greedy adds +1.232/+1.282 BLEU and +1.406/+1.454 chrF++
+([1.206, 1.610] and [1.280, 1.625]). The resumed step-18,000 checkpoint improves
+on archived step 14,000 by +1.087/+1.160 BLEU and +1.307/+1.283 chrF++ greedy,
+and +0.573/+0.886 BLEU and +1.226/+1.237 chrF++ beam 4. This is a larger-model
+plus more-data experiment, not a clean single-factor ablation. It is automatic
 metrics only; no human evaluation. See
-`reports/newstest2014.scaled.comparisons.md`.
+`reports/newstest2014.scaled_resumed.comparisons.md`.
 
 The final step-15,897 checkpoint was evaluated after selection; it improves on
 the step-14,500 candidate by +0.79/+0.67 chrF++ (95% CIs [0.58, 1.01] and
@@ -299,9 +316,9 @@ comparisons are archived in `reports/newstest2014.comparisons.json`:
 | Step 14,500 vs source-copy | +16.79 [15.99, 17.64] | +15.13 [14.35, 15.93] |
 | Step 15,897 vs step 14,500 | +0.79 [0.58, 1.01] | +0.67 [0.47, 0.88] |
 | Step 15,897 vs source-copy | +17.58 [16.87, 18.34] | +15.81 [15.04, 16.61] |
-| Scaled step 14,000 vs final step 15,897, greedy | +6.27 [5.96, 6.58] | +5.89 [5.59, 6.19] |
-| Scaled step 14,000 vs final step 15,897, beam 4 | +5.85 [5.56, 6.14] | +5.46 [5.23, 5.69] |
-| Scaled beam 4 vs scaled greedy | +1.49 [1.29, 1.67] | +1.50 [1.32, 1.69] |
+| Scaled step 18,000 vs final step 15,897, greedy | +7.58 [7.26, 7.90] | +7.17 [6.86, 7.49] |
+| Scaled step 18,000 vs final step 15,897, beam 4 | +7.08 [6.79, 7.37] | +6.70 [6.42, 6.98] |
+| Scaled step 18,000 beam 4 vs scaled greedy | +1.41 [1.21, 1.61] | +1.45 [1.28, 1.63] |
 
 A 200-example AI-assisted packet review (100 per direction) of the **step-14,500
 checkpoint** found **43/200 acceptable** (3 OK, 40 MINOR), 107 MAJOR and 50
@@ -381,17 +398,17 @@ constraints recorded in the model card.
 - Beam search is implemented and tested. The dev-tuned beam-4 setting (LP 1.2,
   min 16) raises full newstest2014 BLEU/chrF++ by +2.39/+2.15 EN→FR and
   +1.87/+2.03 FR→EN versus greedy on the small model, but 1,017/984 sentences
-  regress on sentence chrF++ and many outputs shorten. On the scaled checkpoint
-  it adds +1.746/+1.556 BLEU and +1.487/+1.500 chrF++ over scaled greedy. These
-  are automatic metric results, not human evaluations. Default decoding remains
-  greedy; see `reports/beam_tuned_step14500.md` and the earlier sample in
-  `reports/beam_vs_greedy_step14500.md`.
+  regress on sentence chrF++ and many outputs shorten. On the scaled step-18,000
+  checkpoint it adds +1.232/+1.282 BLEU and +1.406/+1.454 chrF++ over scaled
+  greedy. These are automatic metric results, not human evaluations. Default
+  decoding remains greedy; see `reports/beam_tuned_step14500.md` and the earlier
+  sample in `reports/beam_vs_greedy_step14500.md`.
 - The scaled 19.8M run is a larger-model plus more-data experiment, not a clean
-  single-factor ablation. It stopped at the 4-hour walltime cap at 14,218
-  updates / 123,987,566 target tokens, so it did not reach 20,000 updates or
-  164M tokens. Its best checkpoint (step 14,000) is stronger on automatic metrics
-  but remains a pilot; it is not exported for Java inference, and no human
-  evaluation was performed for it.
+  single-factor ablation. It stopped at the 164M-token cap after 18,799 updates
+  (step-18,000 best checkpoint), so it did not reach 20,000 updates. Its best
+  checkpoint is stronger on automatic metrics but remains a pilot; it is
+  exported separately for Java verification, and no human evaluation was
+  performed for it.
 - API-assisted review is a 25-row-per-direction spot check with an unofficial
   no-key Google endpoint. It is not a full benchmark, COMET, or human review.
 
@@ -406,18 +423,23 @@ constraints recorded in the model card.
 - `mvn -B package -Dtranscend.model.dir=../models/accel_export`: **10 tests, 0
   failures**, including the Java↔Python greedy parity tests.
 - The same 10-test suite passed against
-  `../models/accel_export_step15897` with **0 failures and 0 skipped**,
-  including the final package's Python↔Java greedy parity test.
+  `../models/accel_export_step15897` and `../models/scaled_export` with **0
+  failures and 0 skipped**, including each package's Python↔Java greedy parity
+  test.
 - Python↔ONNX parity on three cases: step-14,500 worst max-absolute logit
   difference **8.58e-6** (`reports/parity.json`); step-15,897 **6.44e-6**
-  (`reports/parity_step15897.json`). Generation is token-for-token identical in
-  both packages.
+  (`reports/parity_step15897.json`); scaled step-18,000 **6.44e-6**
+  (`reports/parity_scaled.json`). Generation is token-for-token identical in all
+  three packages.
 - Java benchmark on the step-14,500 package: cold load 1,297 ms; first
   translation 380 ms; warm median 233 ms, p95 443 ms; batch of 5 inputs
   1,219 ms (4.10 inputs/s). See `reports/java_benchmark.json`.
 - Java benchmark on the step-15,897 package: cold load 1,189 ms; first
   translation 405 ms; warm median 262 ms, p95 331 ms; batch of 5 inputs
   1,436 ms (3.48 inputs/s). See `reports/java_benchmark_step15897.json`.
+- Java benchmark on the scaled step-18,000 package: cold load 1,542 ms; first
+  translation 508 ms; warm median 354 ms, p95 562 ms; batch of 5 inputs
+  1,731 ms (2.89 inputs/s). See `reports/java_benchmark_scaled.json`.
 - Full newstest2014 evaluation in both directions for the step-15,897,
   step-14,500 and step-9,500 checkpoints, using 1,000-sample document bootstrap
   intervals. The final-checkpoint and source-copy comparisons are in
@@ -431,12 +453,16 @@ constraints recorded in the model card.
   retained): 14.455/41.365 EN→FR and 14.113/41.452 FR→EN; +2.345/+1.944 BLEU
   and +1.906/+1.924 chrF++ versus final greedy. See
   `reports/newstest2014.82m.final_beam4.comparisons.md`. Automatic metrics only.
-- Full newstest2014 scaled 19.8M evaluation, greedy and beam-4, both directions
-  (2,959/2,922 retained): greedy 18.924/45.729 EN→FR and 17.858/45.415 FR→EN;
-  beam 20.670/47.216 and 19.414/46.915. Versus the final small model, beam gains
-  are +6.215/+5.301 BLEU and +5.851/+5.463 chrF++ (all paired 95% intervals
-  exclude zero). See `reports/newstest2014.scaled.comparisons.md`. Automatic
-  metrics only; the scaled checkpoint has not been exported or Java-verified.
+- Full newstest2014 scaled 19.8M step-18,000 evaluation, greedy and beam-4, both
+  directions (2,959/2,922 retained): greedy 20.011/47.036 EN→FR and 19.018/46.698
+  FR→EN; beam 21.243/48.442 and 20.300/48.152. Versus the final small model,
+  beam gains are +6.788/+6.187 BLEU and +7.077/+6.700 chrF++ (all paired 95%
+  intervals exclude zero). See
+  `reports/newstest2014.scaled_resumed.comparisons.md`. Automatic metrics only.
+- The scaled step-18,000 package at `models/scaled_export` has 12 files /
+  237,211,722 B. Python↔ONNX parity passed with worst max-absolute logit
+  difference 6.44e-6 and identical greedy generation; the 10-test Java suite
+  passed against it.
 - Real API-assisted spot check: 25 rows per direction from the final step-15,897
   checkpoint with Google `gtx` (50 new requests; 50/50 usable), with per-row
   TSV, summary JSON and Markdown under
@@ -458,18 +484,19 @@ constraints recorded in the model card.
   remain unreliable: for example, "The train leaves at eight in the morning."
   becomes "La formation est en train de se détourner." That is a wrong
   translation.
-- The scaled run reached its 4-hour walltime cap at 14,218 updates /
-  123,987,566 target tokens (best step 14,000), not the 20,000/164M caps. It is a
-  larger model trained on the full prepared split, so model size and data
-  exposure both changed. Its automatic scores are much higher, but it has no
-  human review and no ONNX/Java export; do not treat the gain as production
-  readiness.
+- The scaled run stopped at its 164M-token cap after 18,799 updates (best
+  step 18,000), not the 20,000-update cap. It is a larger model trained on the
+  full prepared split, so model size and data exposure both changed. Its
+  automatic scores are much higher and it now has a verified Java package, but
+  it has no human review; do not treat the gain as production readiness.
 - Greedy BLEU is 11.03/11.28 and chrF++ 38.67/38.86 for the step-14,500
-  candidate, and 12.11/12.17 and 39.46/39.53 for the final checkpoint; both are
-  far from a useful translator. Outputs show omissions, invented morphology and
-  repeated phrases.
-- Dev chrF++ (47.18 at step 14,500) is in-domain and higher than the external
-  result; it is used for checkpoint selection, not as a quality claim.
+  candidate, 12.11/12.17 and 39.46/39.53 for the final small checkpoint, and
+  20.01/19.02 and 47.04/46.70 for scaled step 18,000; all remain far from a
+  useful translator. Outputs show omissions, invented morphology and repeated
+  phrases.
+- Dev chrF++ (47.18 at step 14,500 for the small model; 52.63 at scaled step
+  18,000) is in-domain and higher than the external result; it is used for
+  checkpoint selection, not as a quality claim.
 - No qualified human review was performed; this proof of concept uses
   machine-assisted comparisons only. A 50-row no-key Google `gtx` spot check was
   run; it is not a full-set comparator and its output is not a human judgment.
@@ -480,6 +507,6 @@ constraints recorded in the model card.
 - Splits are opaque 200-pair blocks, not verified document boundaries; leakage is
   checked per side but the limitation is documented in `docs/DATA_CARD.md`.
 - Changing the tokenizer or architecture requires a fresh run. The small run's
-  82M-token cap and the scaled run's 4-hour walltime budget are spent; further
-  gains would require a new training budget or recipe, not a trivial resume.
-  That is a plan, not a promise of useful quality.
+  82M-token cap and the scaled run's 164M-token cap are spent; further gains
+  would require a new training budget or recipe, not a trivial resume. That is
+  a plan, not a promise of useful quality.

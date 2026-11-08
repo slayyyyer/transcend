@@ -9,6 +9,7 @@ PY="${PYTHON:-/c/Users/justin/AppData/Local/Python/pythoncore-3.14-64/python.exe
 TRAIN_REPORT="${TRAIN_REPORT:-models/scaled_pilot/training_report.json}"
 BEST="${BEST:-models/scaled_pilot/best.pt}"
 LOG="${LOG:-reports/scaled_eval.log}"
+TAG="${TAG:-scaled}"
 DEADLINE_S="${DEADLINE_S:-14400}"
 
 mkdir -p reports
@@ -36,7 +37,7 @@ run_eval() {
   local name="$1"
   local direction="$2"
   shift 2
-  local out="reports/newstest2014.scaled.${name}.${direction}.full.json"
+  local out="reports/newstest2014.${TAG}.${name}.${direction}.full.json"
   log "starting ${name} ${direction} -> ${out}"
   PYTHONUNBUFFERED=1 PYTHONIOENCODING=utf-8 "$PY" -m nmt.cli evaluate \
     --config configs/scaled_accelerator.yaml \
@@ -56,6 +57,10 @@ log "waiting for scaled training"
 wait_for_training
 test -s "$TRAIN_REPORT"
 test -s "$BEST"
+if [ "$TRAIN_REPORT" -ot "$BEST" ]; then
+  log "refusing stale training report: $TRAIN_REPORT is older than $BEST"
+  exit 1
+fi
 log "scaled training finished; evaluating checkpoint $(realpath "$BEST")"
 
 run_eval greedy en-fr --beam-size 1

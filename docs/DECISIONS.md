@@ -166,13 +166,57 @@ artifact terms; see `NOTICE`.
   quality guarantee.
 * Scaled run: `configs/scaled_accelerator.yaml`, 19,825,920 parameters, the full
   565,475-pair prepared train split (no 150k sample), 8,192-token update budget,
-  and fresh 164M-token / 20,000-update / 4-hour caps. It stopped on
-  `max_walltime` at step 14,218 / 123,987,566 target tokens / 14,400.24 s. The
-  best development checkpoint was step 14,000 at 51.7783 mean chrF++; `best.pt`
-  is that checkpoint and `checkpoint.pt` is step 14,218. Actual throughput was
-  8,610.1 target tokens/s and 1,026.9 ms per update. It did not reach the step
-  or token cap, so the scaled budget is a walltime result, not a completed
-  20k/164M schedule.
+  and fresh 164M-token / 20,000-update / 4-hour caps. The first invocation
+  stopped on `max_walltime` at step 14,218 / 123,987,566 target tokens /
+  14,400.24 s. A resume stopped on `max_train_tokens` at step 18,799 /
+  164,002,778 target tokens, with 3,943.0 s this invocation and 18,343.24 s
+  cumulative. The best development checkpoint was step 18,000 at 52.6313 mean
+  chrF++; `best.pt` is that checkpoint and `checkpoint.pt` is step 18,799.
+  Resumed throughput was 10,148.42 target tokens/s and 935.21 ms per update.
+  The step-14,000 and step-14,218 artifacts are preserved as
+  `best_step14000.pt` and `checkpoint_step14218.pt`.
+
+## Next data expansion (planned, not run)
+
+The current prepared train split uses Europarl stride 5: 565,475 train pairs
+from 2,007,723 Europarl source lines plus 183,784 News Commentary lines. The
+Europarl archive already on disk therefore contains roughly 1.6M additional
+aligned pairs that have never been trained on. That is the cheapest,
+lowest-licensing-risk expansion, and it is the recommended first quality run.
+
+Phase 1, no new corpus download:
+
+* Re-prepare with all Europarl v7 pairs (stride 1) plus the existing News
+  Commentary v9 candidates, retaining exact deduplication, length-ratio
+  filtering and the existing opaque block split. Expect roughly 2.0-2.2M pairs
+  after cleaning.
+* Keep the frozen 8,000-entry tokenizer and the 128/136 sequence limits fixed,
+  so the first experiment changes data quantity only.
+* Train the 6+6 scaled architecture from scratch for about 350M target tokens
+  (about 43k updates at 8,192 tokens), keeping the same peak LR and a 12-hour
+  walltime cap. At the measured 10,148 target tokens/s this is about 9.6 hours
+  before validation.
+* A 350M-token pass draws roughly 1.2M pairs at the observed ~290 target
+  tokens/pair, more than doubling the unique-pair coverage of the 565k-pair
+  run even though it is not a full pass over 2.2M pairs.
+* Evaluate on the same full newstest2014 rows and 1,000-document bootstrap, and
+  report the comparison to step 18,000. This is automatic metrics only.
+
+Phase 2, only if phase 1 justifies more work:
+
+* DGT v2021 is available as a 315 MB EN-FR archive with about 5.7M pairs and
+  explicit EC re-use terms. Sample and deduplicate it (EU legal boilerplate
+  repeats heavily), and treat the domain shift separately from the Europarl
+  expansion.
+* WMT News Commentary v18.1 (46 MB, about 0.3M pairs) is available, but it is
+  the highest-risk source for newstest2014 contamination; it needs exact and
+  n-gram overlap filtering before use.
+* Do not start with ParaCrawl or OpenSubtitles at this scale. They are hundreds
+  of millions of noisy pairs, expensive to clean on this machine, and their
+  redistribution terms are unclear or incompatible with the artifact policy.
+* More data is not a guaranteed BLEU gain. The 4 GB card limits model capacity,
+  and the current run is still far below compute-optimal tokens per parameter;
+  the phase-1 experiment is designed to test the data constraint cleanly.
 
 ## Evaluation protocol
 
@@ -188,10 +232,12 @@ artifact terms; see `NOTICE`.
   compared directly with step 9,500 (`reports/newstest2014.82m.comparisons.json`).
   The final step-15,897 checkpoint was evaluated after selection against the
   step-14,500 candidate and source-copy
-  (`reports/newstest2014.82m.final.comparisons.json`). The scaled step-14,000
-  checkpoint was evaluated after its walltime stop against the final small
+  (`reports/newstest2014.82m.final.comparisons.json`). The scaled step-18,000
+  checkpoint was evaluated after its token-cap stop against the final small
   greedy and beam-4 runs on exactly the same retained newstest2014 segments
-  (`reports/newstest2014.scaled.comparisons.json`).
+  (`reports/newstest2014.scaled_resumed.comparisons.json`); the archived
+  step-14,000 comparison remains in
+  `reports/newstest2014.scaled.comparisons.json`.
 * Metrics: SacreBLEU (`13a`, cased) and chrF++ (`word_order=2`), with signatures.
 * A documented 564-row EN→FR subset retains random-initialized, CPU-pilot and
   accelerator baselines (`reports/subset600.en-fr*`). The full-set baselines are
@@ -227,13 +273,14 @@ artifact terms; see `NOTICE`.
   versus final greedy 12.110/39.459 and 12.169/39.528. Paired chrF++ gains are
   +1.907 [1.684, 2.125] and +1.924 [1.734, 2.117]; sentence W/L/T is
   1,786/1,045/128 and 1,729/1,033/160. See
-  `reports/newstest2014.82m.final_beam4.comparisons.md`. The scaled step-14,000
-  checkpoint scores 18.924/45.729 EN→FR and 17.858/45.415 FR→EN greedy, and
-  20.670/47.216 and 19.414/46.915 beam 4. Against the final small model, beam
-  gains are +6.215/+5.301 BLEU and +5.851/+5.463 chrF++ (95% CIs [5.564, 6.143]
-  and [5.231, 5.694]); on the scaled model, beam over greedy adds +1.487/+1.500
-  chrF++ ([1.294, 1.671] and [1.315, 1.689]). See
-  `reports/newstest2014.scaled.comparisons.md`. This is automatic metrics only.
+  `reports/newstest2014.82m.final_beam4.comparisons.md`. The scaled step-18,000
+  checkpoint scores 20.011/47.036 EN→FR and 19.018/46.698 FR→EN greedy, and
+  21.243/48.442 and 20.300/48.152 beam 4. Against the final small model, beam
+  gains are +6.788/+6.187 BLEU and +7.077/+6.700 chrF++ (95% CIs [6.785, 7.373]
+  and [6.424, 6.982]); on the scaled model, beam over greedy adds +1.406/+1.454
+  chrF++ ([1.206, 1.610] and [1.280, 1.625]). See
+  `reports/newstest2014.scaled_resumed.comparisons.md`. This is automatic metrics
+  only.
 * API-assisted review (`nmt/review_api.py`): the current deterministic
   25-row-per-direction sample uses the final step-15,897 checkpoint for both
   greedy and beam-4 decoding (the same dev-selected settings as step 14,500).
@@ -267,13 +314,13 @@ document-bootstrap intervals excluding zero); the step-14,500 checkpoint then
 beat step 9,500 by +3.10/+2.92 chrF++ and source-copy by +16.79/+15.13. The
 final step-15,897 checkpoint improved on the candidate by +0.79/+0.67 chrF++
 and on source-copy by +17.58/+15.81; all intervals exclude zero. The scaled
-step-14,000 checkpoint then improved on the final small model by +6.27/+5.89
-chrF++ greedy and +5.85/+5.46 chrF++ beam 4; those paired intervals also exclude
+step-18,000 checkpoint then improved on the final small model by +7.58/+7.17
+chrF++ greedy and +7.08/+6.70 chrF++ beam 4; those paired intervals also exclude
 zero.
 
 General-purpose translation quality is explicitly **not** claimed; BLEU is
 11.03/11.28 for the candidate, 12.11/12.17 for the final small checkpoint, and
-18.92/17.86 for the scaled greedy checkpoint, and sample sentences are
+20.01/19.02 for the scaled greedy checkpoint, and sample sentences are
 frequently wrong. The AI-assisted sentence review of the
 step-14,500 packet found 21.5% acceptable; the fresh review's distribution is
 not uniformly better (50 CRITICAL rows vs 25 archived). Qualified human review

@@ -125,12 +125,15 @@ def main() -> int:
     parser.add_argument("--out", default="reports/newstest2014.scaled.comparisons.json")
     parser.add_argument("--markdown", default="reports/newstest2014.scaled.comparisons.md")
     parser.add_argument("--samples", type=int, default=1000)
+    parser.add_argument("--tag", default="scaled")
+    parser.add_argument("--checkpoint", default="models/scaled_pilot/best.pt")
+    parser.add_argument("--title", default="Scaled checkpoint on full newstest2014")
     args = parser.parse_args()
 
     reports_dir = Path(args.reports_dir)
     chrf = CHRF(word_order=2, lowercase=False)
     result: dict = {
-        "checkpoint": "models/scaled_pilot/best.pt",
+        "checkpoint": args.checkpoint,
         "decoders": {
             "greedy": {"beam_size": 1, "length_penalty": 1.0, "min_new_tokens": 0},
             "beam4": {"beam_size": 4, "length_penalty": 1.2, "min_new_tokens": 16},
@@ -140,8 +143,8 @@ def main() -> int:
     }
 
     for direction in ("en-fr", "fr-en"):
-        scaled_greedy = load(reports_dir / f"newstest2014.scaled.greedy.{direction}.full.json")
-        scaled_beam = load(reports_dir / f"newstest2014.scaled.beam4.{direction}.full.json")
+        scaled_greedy = load(reports_dir / f"newstest2014.{args.tag}.greedy.{direction}.full.json")
+        scaled_beam = load(reports_dir / f"newstest2014.{args.tag}.beam4.{direction}.full.json")
         final_greedy = load(reports_dir / f"newstest2014.82m.final.{direction}.full.json")
         final_beam = load(reports_dir / f"newstest2014.82m.final_beam4.{direction}.full.json")
 
@@ -184,9 +187,9 @@ def main() -> int:
     Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
 
     lines = [
-        "# Scaled checkpoint on full newstest2014",
+        f"# {args.title}",
         "",
-        "Checkpoint: `models/scaled_pilot/best.pt`, selected by the 300-row-per-direction "
+        f"Checkpoint: `{args.checkpoint}`, selected by the 300-row-per-direction "
         "dev validation. Baseline: the final step-15,897 small model. Greedy and beam-4 "
         "(length penalty 1.2, minimum 16 generated target tokens). Both sides use the same "
         "retained newstest2014 segments and references.",

@@ -1,0 +1,19 @@
+{
+  "model_id": "scaled_accelerator@step18000#8937c77c",
+  "java_version": "21.0.13",
+  "os": "Windows 11 amd64",
+  "available_processors": 16,
+  "max_heap_bytes": 4219469824,
+  "used_heap_bytes": 50705392,
+  "cold_load_ms": 1542.167,
+  "first_translation_ms": 508.07,
+  "first_translation_text": "La train laisse à huit dans le matin du mort.",
+  "first_termination": "eos",
+  "warm_runs": 20,
+  "warm_median_ms": 354.169,
+  "warm_p95_ms": 561.633,
+  "warm_min_ms": 180.041,
+  "warm_max_ms": 644.605,
+  "batch_5_inputs_ms": 1731.284,
+  "batch_inputs_per_second": 2.888
+}

@@ -11,6 +11,26 @@
 
 SHA-256 of every archive is recorded in `data/prepared/*/manifest.json`.
 
+## Planned expansion (not acquired)
+
+The first expansion is a preparation change, not a new download: keep all
+2,007,723 Europarl v7 source lines instead of the current stride-5 sample, with
+the existing News Commentary v9 data and the same cleaning/deduplication. That
+yields roughly 2.0-2.2M train pairs and keeps the frozen 8,000-entry tokenizer,
+so the first run changes data quantity only.
+
+| Candidate | Role | Archive | Approx. EN-FR pairs | Terms / concern |
+| --- | --- | --- | --- | --- |
+| Europarl v7, stride 1 | Phase 1; already on disk | 202,718,517 B | ~2.0M (all source lines) | Same unresolved research-use terms as the current source |
+| DGT v2021 (`OPUS-DGT/v2021`) | Phase 2; new domain | 315 MB | 5,679,514 | EC re-use decision 2011/833/EU; deduplicate legal boilerplate |
+| WMT News Commentary v18.1 | Phase 2; optional | 46 MB | ~0.3M | Same publisher/WMT constraints; highest newstest contamination risk, so exact/n-gram filtering is mandatory |
+
+DGT: `https://object.pouta.csc.fi/OPUS-DGT/v2021/moses/en-fr.txt.zip`.
+News Commentary v18.1:
+`https://data.statmt.org/news-commentary/v18.1/training/news-commentary-v18.en-fr.tsv.gz`.
+Neither has been acquired or added to a manifest. Europarl v10 is not a useful
+first step: it substantially overlaps v7 and adds only the 2011 tail.
+
 ## Counts after cleaning
 
 | Stage | Pairs |

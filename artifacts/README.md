@@ -11,8 +11,10 @@ run the tests on fixtures.
 | --- | --- | --- | --- |
 | Accelerator candidate, best checkpoint (step 14,500) | `models/accel_pilot/best.pt` | 113,348,627 B | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
 | Accelerator candidate, latest checkpoint (step 15,897) | `models/accel_pilot/checkpoint.pt` | 113,357,499 B | `89b7780af3aec778efb5fb690f4ed3e27548d3fea243aa1d4fa3cce504e6f85a` |
-| Scaled experiment, best checkpoint (step 14,000) | `models/scaled_pilot/best.pt` | 238,265,169 B | `199e2f4ffb58584f08b5a0ff06b69ef02863ed61cd466b0e8f600d4bf43d7b8f` |
-| Scaled experiment, latest checkpoint (step 14,218) | `models/scaled_pilot/checkpoint.pt` | 238,271,961 B | `2902bda38ae8ad53bc4dcf14210d24f646ae30d646adff7efb6898ee36ffe75a` |
+| Scaled experiment, best checkpoint (step 18,000) | `models/scaled_pilot/best.pt` | 238,273,233 B | `2c2f518b1f3b015fdce0cff6ef762a4a0f081643add9ec6865856ba821f22c77` |
+| Scaled experiment, latest checkpoint (step 18,799) | `models/scaled_pilot/checkpoint.pt` | 238,280,025 B | `8e75f4dbc5fc77b11ff5c9b6f1f84d201534ebd15e7246b35f05f1c584f04f77` |
+| Archived scaled step-14,000 best | `models/scaled_pilot/best_step14000.pt` | 238,265,169 B | `199e2f4ffb58584f08b5a0ff06b69ef02863ed61cd466b0e8f600d4bf43d7b8f` |
+| Archived scaled step-14,218 latest | `models/scaled_pilot/checkpoint_step14218.pt` | 238,271,961 B | `2902bda38ae8ad53bc4dcf14210d24f646ae30d646adff7efb6898ee36ffe75a` |
 | Archived step-9,500 best | `models/accel_pilot/best_step9500.pt` | 113,328,147 B | `c48eb33b6346e54ddded7a1511f7e515975ae8ce7a29749a54c5f2a9fc0d9376` |
 | Archived step-9,635 latest | `models/accel_pilot/checkpoint_step9635.pt` | 113,332,923 B | `4a0bf94cc4b3aa08f950a3102b4d04a6b4ca5b866cf501a4720c7df7aaa37d70` |
 | Archived step-2,000 best | `models/accel_pilot/best_step2000.pt` | 113,296,275 B | `a0a1229523f80de9badc0b740ee1c853908fa69e0fbb7379585169a058094268` |
@@ -24,9 +26,11 @@ run the tests on fixtures.
 The CPU pilot is the `cpu_small` architecture (1,950,208 parameters); the
 accelerator candidate is `existing_accelerator` (9,421,824 parameters). They use
 the same tokenizer, so their scores are comparable, but they are different runs.
-The scaled experiment is `scaled_accelerator` (19,825,920 parameters); it is an
-evaluation-only model and has not been exported to ONNX/Java. The step-2,000 and
-step-9,500 accelerator artifacts are kept for the paired comparisons in
+The scaled experiment is `scaled_accelerator` (19,825,920 parameters); its
+step-18,000 checkpoint is exported separately to `models/scaled_export` and is
+not the default package. The step-14,000 and step-14,218 scaled checkpoints are
+preserved for the archived comparison. The step-2,000 and step-9,500 accelerator
+artifacts are kept for the paired comparisons in
 `reports/newstest2014.comparisons.json` and
 `reports/newstest2014.82m.comparisons.json`.
 
@@ -59,6 +63,39 @@ step-2,000 package remains at `models/accel_export_step2000/`. Their
 $PY -m nmt.cli export --config configs/existing_accelerator.yaml \
   --checkpoint models/accel_pilot/best.pt --tokenizer models/cpu_small/tokenizer \
   --out models/accel_export --provenance data/prepared/europarl_nc/manifest.json
+```
+
+## Exported Java package — `models/scaled_export/`
+
+12 files, 237,211,722 B, produced by `nmt.cli export` from the scaled step-18,000
+checkpoint. It is not the default package. `manifest.json` records every
+checksum below and is verified by `Translator.open` before inference.
+
+| File | SHA-256 |
+| --- | --- |
+| `onnx/encoder.onnx` | `8937c77c0caac9db4eba9502ebb3acf6c4414dfdea11dc42f2cf4047ed836b7f` |
+| `onnx/decoder_init.onnx` | `939a64fb1643ff815669ab6f92c1cc70c910b0d1927f44237af3f16e6f323328` |
+| `onnx/decoder_step.onnx` | `76a27a26775463b970346165dbfe7b346ea85d6ecac825564cf92bc16e01bc7e` |
+| `model_config.json` | `3eb10820fa8a6e408a53a8676b7205cb9fdfe592410f043893ce24cd148f86d0` |
+| `generation.json` | `2fb66e0d6c7d1d39bdf03f8a8368f2d70b52ac0b210d505a216798e14a29a0b1` |
+| `tokenizer/tokenizer.json` | `b17a0d6732e32c0c4815c36a0e13d9904c7b512be68e5e47f4c64255c5fc1ad6` |
+| `tokenizer/merges.txt` | `1b8eda9c55e92120056b2bb213a09899e677d488b1f444681ad508d6b838541e` |
+| `tokenizer/merges.sha256` | `54c5c90cdf9230ebec265a61970b12f82733ae53101e3ac5e62dd9c8aaf6dca7` |
+| `tokenizer/tokenizer_report.json` | `059fc82d38daceb5e8ce9766a048373ff7914a78d49dba1c8c37417b50dfe253` |
+| `parity_vectors.json` | `a632661604cd16a243f536d362ba822f184d2693b0ceff823677408ee24e3461` |
+| `torch_state_dict.pt` | `775dde0f9d847763317e95f277c11165f6ca6e2229bae9c38febeb430e0cfc79` |
+
+Python↔ONNX parity passed with worst max-absolute logit difference 6.44e-6 and
+identical greedy generation. The Java suite passed 10/10 tests. Java benchmark:
+cold load 1,542 ms; first translation 508 ms; warm median 354 ms, p95 562 ms;
+batch of 5 inputs 1,731 ms (2.89 inputs/s). Rebuild with:
+
+```bash
+$PY -m nmt.cli export --config configs/scaled_accelerator.yaml \
+  --checkpoint models/scaled_pilot/best.pt --tokenizer models/cpu_small/tokenizer \
+  --out models/scaled_export --provenance data/prepared/europarl_nc/manifest.json
+$PY -m nmt.cli parity --model-dir models/scaled_export \
+  --out reports/parity_scaled.json
 ```
 
 ## Corpora
@@ -111,20 +148,27 @@ plus `reports/newstest2014.82m.final_beam4.comparisons.json` and `.md`.
 
 The scaling experiment is configured by `configs/scaled_accelerator.yaml` and
 launched by `scripts/run_scaled_pilot.sh`; it writes under
-`models/scaled_pilot/`. Its step-14,000 best checkpoint and step-14,218 latest
-checkpoint are the two scaled rows above. The scaled full-set reports are
-`reports/newstest2014.scaled.{greedy,beam4}.{en-fr,fr-en}.full.json` with
-summaries, plus `reports/newstest2014.scaled.comparisons.{json,md}`. The
+`models/scaled_pilot/`. Its step-18,000 best checkpoint and step-18,799 latest
+checkpoint are the two current scaled rows above; the step-14,000 and step-14,218
+rows are archived. The current scaled full-set reports are
+`reports/newstest2014.scaled_resumed.{greedy,beam4}.{en-fr,fr-en}.full.json`
+with summaries, plus `reports/newstest2014.scaled_resumed.comparisons.{json,md}`;
+the archived step-14,000 reports remain at `reports/newstest2014.scaled.*`. The
+scaled export is `models/scaled_export/`; parity and Java evidence is in
+`reports/parity_scaled.json`, `reports/parity_scaled.log`,
+`reports/java_build_scaled.log`, and `reports/java_benchmark_scaled.json`. The
 per-direction evaluation JSON is written by the commands named in `README.md`;
 `newstest2014.82m.comparisons.json` is a combined view assembled from the two
 `_summary.json` files. Training history and checkpoints are under
-`models/accel_pilot/`; exported packages are under `models/accel_export/`
-(default step 14,500), `models/accel_export_step9500/`, and
-`models/accel_export_step15897/` (final verification).
+`models/accel_pilot/` and `models/scaled_pilot/`; exported packages are under
+`models/accel_export/` (default step 14,500),
+`models/accel_export_step9500/`, `models/accel_export_step15897/` (final small
+verification), and `models/scaled_export/` (scaled step 18,000).
 
 The small final training report records `stop_reason = max_train_tokens`, with
 the continuation log in `reports/train_continue_82m.log`; the scaled report
-records `stop_reason = max_walltime` at step 14,218.
+also records `stop_reason = max_train_tokens`, at step 18,799 / 164,002,778
+tokens. Its log is `reports/scaled_resume.log`.
 
 ## Terms
 
