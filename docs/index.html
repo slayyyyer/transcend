@@ -1,0 +1,1238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0e766e">
+  <title>Transcend — Translation Benchmark Report</title>
+  <meta name="description" content="Newstest2014 benchmark results for Transcend's 350M-token English↔French run, compared with the 18,000-step pilot.">
+  <link rel="canonical" href="https://slayyyyer.github.io/transcend/">
+  <meta property="og:title" content="Transcend — Translation Benchmark Report">
+  <meta property="og:description" content="Newstest2014 benchmark results for Transcend's 350M-token English↔French run, compared with the 18,000-step pilot.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://slayyyyer.github.io/transcend/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e766e'/%3E%3Cpath d='M18 21h28M32 21v24' stroke='%23f4f0e6' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --paper: #f4f0e6;
+      --paper-deep: #e9e1d2;
+      --panel: #fbf8f1;
+      --ink: #14201d;
+      --muted: #5f6a63;
+      --line: #d5cdbd;
+      --accent: #0e766e;
+      --accent-soft: #dcebe6;
+      --warm: #b94d2d;
+      --gold: #9a6a19;
+      --baseline: #aaa294;
+      --track: #e3dccd;
+      --radius: 18px;
+      --shadow: 0 1px 0 rgba(20, 32, 29, .04), 0 16px 38px rgba(20, 32, 29, .06);
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 76px;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(14, 118, 110, .08), transparent 28rem),
+        var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+    }
+
+    a { color: var(--accent); text-underline-offset: .18em; }
+    a:hover { color: var(--warm); }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+    .skip-link {
+      position: absolute;
+      left: 1rem;
+      top: -5rem;
+      z-index: 20;
+      padding: .65rem .9rem;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 8px;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    .wrap {
+      width: min(var(--max), calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-header__inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .65rem;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 750;
+      letter-spacing: -.02em;
+    }
+
+    .brand__mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--panel);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: -.08em;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: .77rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav a { color: var(--muted); text-decoration: none; }
+    .nav a:hover { color: var(--accent); }
+    .nav .nav__repo { color: var(--accent); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: end;
+      padding-block: clamp(4rem, 9vw, 7.5rem) 3rem;
+    }
+
+    .kicker {
+      margin: 0 0 .85rem;
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-weight: 650;
+      letter-spacing: -.035em;
+      line-height: 1.02;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(3.2rem, 8vw, 6.9rem);
+    }
+
+    h1 em {
+      color: var(--warm);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .lede {
+      max-width: 690px;
+      margin: 1.5rem 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.7vw, 1.28rem);
+      line-height: 1.55;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: 1.6rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .42rem .65rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel) 70%, transparent);
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .68rem;
+      font-weight: 650;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .badge__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--warm);
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 1.35rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, var(--accent), #5fb7a8 55%, var(--gold));
+    }
+
+    .hero-card .kicker { margin-top: .4rem; margin-bottom: 1.4rem; }
+
+    .hero-metric {
+      display: flex;
+      align-items: baseline;
+      gap: .65rem;
+      margin-bottom: .65rem;
+    }
+
+    .hero-metric strong {
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-size: clamp(3.1rem, 5vw, 4.5rem);
+      font-weight: 650;
+      letter-spacing: -.055em;
+      line-height: .9;
+      color: var(--accent);
+    }
+
+    .hero-metric span {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .hero-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .55rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .hero-split div { display: grid; gap: .15rem; }
+    .hero-split strong { font-size: 1.05rem; }
+    .hero-split span { color: var(--muted); font-size: .76rem; }
+
+    .hero-foot {
+      margin: 1.1rem 0 0;
+      color: var(--muted);
+      font-size: .79rem;
+    }
+
+    .verdict {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      width: fit-content;
+      margin-top: 1.3rem;
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 650;
+    }
+
+    .verdict__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--warm);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--warm) 15%, transparent);
+    }
+
+    .scores {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .8rem;
+      padding-bottom: 1.2rem;
+    }
+
+    .score {
+      padding: 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--panel) 76%, transparent);
+    }
+
+    .score__meta {
+      display: flex;
+      justify-content: space-between;
+      gap: .5rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .65rem;
+      font-weight: 750;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .score__value {
+      margin: .4rem 0 .1rem;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-size: 2.1rem;
+      font-weight: 650;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .score__delta {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .76rem;
+      font-weight: 750;
+    }
+
+    .score__delta span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .bars {
+      display: grid;
+      gap: 3px;
+      margin-top: .8rem;
+    }
+
+    .bars span {
+      display: block;
+      height: 6px;
+      border-radius: 99px;
+    }
+
+    .bars .bar--base { background: var(--baseline); }
+    .bars .bar--cand { background: var(--accent); }
+    .score__scale { margin: .5rem 0 0; color: var(--muted); font-size: .68rem; }
+
+    .section {
+      padding-block: clamp(3.5rem, 7vw, 6rem);
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      gap: 1rem 3rem;
+      align-items: start;
+      margin-bottom: 2rem;
+    }
+
+    .section-head .kicker { grid-column: 1 / -1; margin-bottom: -.2rem; }
+    .section-head h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); }
+    .section-head p { margin: .2rem 0 0; color: var(--muted); max-width: 690px; }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 1rem 1.5rem;
+      align-items: start;
+      margin: 1.4rem 0 2rem;
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--warm);
+      border-radius: 0 12px 12px 0;
+      background: color-mix(in srgb, var(--warm) 5%, var(--panel));
+    }
+
+    .callout strong {
+      color: var(--warm);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .callout p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: .86rem;
+    }
+
+    th, td {
+      padding: .78rem .9rem;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .65rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: color-mix(in srgb, var(--paper-deep) 55%, var(--panel));
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .delta { color: var(--accent); font-weight: 750; }
+    .muted { color: var(--muted); }
+    .small { font-size: .76rem; }
+
+    .panel {
+      padding: 1.1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .panel h3 {
+      margin: 0 0 .3rem;
+      font-size: 1.25rem;
+      letter-spacing: -.02em;
+    }
+
+    .panel p { margin: 0 0 .9rem; color: var(--muted); font-size: .84rem; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: .9rem;
+      margin-top: .9rem;
+    }
+
+    .two-col .table-wrap { min-width: 0; }
+    .two-col table { min-width: 560px; }
+
+    .training-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .training-chart {
+      margin-bottom: 1.2rem;
+      padding: 1.05rem 1.15rem .85rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .training-chart__head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: .7rem;
+    }
+
+    .training-chart__head .kicker { margin: 0 0 .22rem; }
+    .training-chart__head h3 { margin: 0; font-size: 1.35rem; letter-spacing: -.02em; }
+    .training-chart__best { margin: 0; color: var(--muted); font-size: .75rem; }
+    .training-chart__best strong { color: var(--accent); font-size: 1rem; font-variant-numeric: tabular-nums; }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .65rem 1rem;
+      margin-bottom: .45rem;
+      color: var(--muted);
+      font-size: .7rem;
+    }
+
+    .chart-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+    .chart-legend i { width: 18px; height: 0; border-top: 3px solid var(--accent); border-radius: 2px; }
+    .chart-legend .legend-en { border-top-color: var(--warm); border-top-width: 2px; }
+    .chart-legend .legend-fr { border-top-color: var(--gold); border-top-width: 2px; }
+
+    .chart-scroll { overflow-x: auto; padding-bottom: .2rem; }
+    .chart-svg { display: block; width: 100%; min-width: 680px; height: auto; }
+    .chart-grid { stroke: var(--line); stroke-width: 1; opacity: .65; }
+    .chart-axis { stroke: var(--muted); stroke-width: 1; opacity: .55; }
+    .chart-tick { fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 10px; }
+    .chart-tick--y { text-anchor: end; }
+    .chart-axis-title { fill: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; }
+    .chart-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-line--mean { stroke: var(--accent); stroke-width: 3.2; }
+    .chart-line--en { stroke: var(--warm); stroke-width: 1.7; opacity: .7; }
+    .chart-line--fr { stroke: var(--gold); stroke-width: 1.7; opacity: .7; }
+    .chart-area { fill: var(--accent-soft); opacity: .65; }
+    .chart-point { fill: var(--accent); stroke: var(--panel); stroke-width: 1.5; }
+    .chart-best { fill: var(--panel); stroke: var(--accent); stroke-width: 2.5; }
+    .chart-note { margin: .55rem 0 0; color: var(--muted); font-size: .72rem; }
+
+    .stat {
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .stat strong {
+      display: block;
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-size: clamp(1.7rem, 3vw, 2.35rem);
+      font-weight: 650;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: .4rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: .9rem;
+    }
+
+    .method-list {
+      margin: .8rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .method-list li {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: .8rem;
+      padding: .6rem 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .83rem;
+    }
+
+    .method-list li:first-child { border-top: 0; }
+    .method-list strong { color: var(--ink); font-weight: 700; }
+
+    details {
+      margin-top: .85rem;
+      border-top: 1px solid var(--line);
+      padding-top: .8rem;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--accent);
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    details p, details ul { color: var(--muted); font-size: .79rem; }
+    details ul { padding-left: 1.1rem; }
+    code {
+      padding: .12rem .32rem;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--paper-deep) 65%, transparent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .84em;
+      overflow-wrap: anywhere;
+    }
+
+    .hash {
+      display: block;
+      margin-top: .35rem;
+      font-size: .72rem;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .command {
+      display: block;
+      margin-top: .5rem;
+      padding: .75rem .85rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--ink);
+      color: #f4f0e6;
+      font-size: .75rem;
+      overflow-x: auto;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .9rem;
+    }
+
+    .example {
+      padding: 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .example__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .65rem;
+      margin-bottom: .9rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: .28rem .48rem;
+      border-radius: 5px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .63rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .tag--bad {
+      background: color-mix(in srgb, var(--warm) 13%, transparent);
+      color: var(--warm);
+    }
+
+    .tag--mixed {
+      background: color-mix(in srgb, var(--gold) 14%, transparent);
+      color: var(--gold);
+    }
+
+    .example__line {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: .55rem;
+      padding: .4rem 0;
+      border-top: 1px solid var(--line);
+      font-size: .83rem;
+    }
+
+    .example__line:first-of-type { border-top: 0; }
+
+    .example__label {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .61rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding-top: .18rem;
+    }
+
+    .example__out { font-weight: 650; }
+    .example__note { margin: .75rem 0 0; color: var(--muted); font-size: .78rem; }
+
+    .caveats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .8rem;
+    }
+
+    .caveat {
+      padding: 1.1rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--panel) 82%, transparent);
+    }
+
+    .caveat h3 {
+      margin: 0 0 .4rem;
+      font-size: 1.15rem;
+      letter-spacing: -.02em;
+    }
+
+    .caveat p { margin: 0; color: var(--muted); font-size: .84rem; }
+
+    .provenance {
+      margin-top: 1rem;
+      padding: 1.1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .provenance p { margin: 0 0 .6rem; color: var(--muted); font-size: .84rem; }
+    .provenance p:last-child { margin-bottom: 0; }
+
+    .footer {
+      padding-block: 2rem 3rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .footer__inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer a { color: var(--muted); }
+    .footer a:hover { color: var(--accent); }
+
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-card { max-width: 420px; }
+      .scores { grid-template-columns: 1fr 1fr; }
+      .section-head { grid-template-columns: 1fr; gap: .65rem; }
+      .section-head .kicker { margin-bottom: 0; }
+      .two-col, .method-grid, .examples { grid-template-columns: 1fr; }
+      .training-grid { grid-template-columns: 1fr 1fr; }
+      .caveats { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(var(--max), calc(100% - 1.4rem)); }
+      .site-header__inner { align-items: flex-start; padding-block: .8rem; }
+      .nav { flex-wrap: wrap; justify-content: flex-end; gap: .6rem .9rem; font-size: .67rem; }
+      .nav a:nth-child(3), .nav a:nth-child(4) { display: none; }
+      h1 { font-size: clamp(3rem, 15vw, 5rem); }
+      .scores, .training-grid { grid-template-columns: 1fr 1fr; }
+      .score { padding: .85rem; }
+      .callout { grid-template-columns: 1fr; gap: .3rem; }
+      .method-list li { grid-template-columns: 1fr; gap: .15rem; }
+      .example__line { grid-template-columns: 1fr; gap: .1rem; }
+      .example__label { padding-top: 0; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0e1514;
+        --paper-deep: #18211f;
+        --panel: #141d1b;
+        --ink: #f1eee4;
+        --muted: #a9b4ae;
+        --line: #2b3935;
+        --accent: #66d4c3;
+        --accent-soft: #193c36;
+        --warm: #f08a66;
+        --gold: #e0b45b;
+        --baseline: #5f6d68;
+        --track: #26332f;
+        --shadow: 0 1px 0 rgba(0, 0, 0, .25), 0 16px 38px rgba(0, 0, 0, .3);
+      }
+
+      body {
+        background:
+          radial-gradient(circle at 12% 0%, rgba(102, 212, 195, .08), transparent 28rem),
+          var(--paper);
+      }
+
+      .command { background: #080d0c; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    @media print {
+      .site-header, .skip-link, .badges, .nav { display: none !important; }
+      body { background: #fff; color: #000; }
+      .wrap { width: 100%; }
+      .section { break-inside: avoid; }
+      .score, .example, .stat, .caveat, .panel, .hero-card, .provenance { box-shadow: none; }
+      .chart-scroll { overflow: visible; }
+      .chart-svg { min-width: 0; }
+      a { color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to report</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="brand" href="#top" aria-label="Transcend report home">
+        <span class="brand__mark" aria-hidden="true">T</span>
+        <span>transcend</span>
+      </a>
+      <nav class="nav" aria-label="Report sections">
+        <a href="#comparison">Comparison</a>
+        <a href="#training">Training</a>
+        <a href="#method">Method</a>
+        <a href="#examples">Examples</a>
+        <a href="#caveats">Caveats</a>
+        <a class="nav__repo" href="https://github.com/slayyyyer/transcend">Repository ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="wrap hero" id="top">
+      <div>
+        <p class="kicker">Benchmark report · 09 November 2026</p>
+        <h1>The full-data run,<br><em>measured.</em></h1>
+        <p class="lede">
+          The full-data 350M-token run improves every newstest2014 comparison
+          against the scaled 18,000-step checkpoint. The gain is real; the
+          quality ceiling is not.
+        </p>
+        <div class="badges">
+          <span class="badge"><span class="badge__dot"></span> Automatic metrics only</span>
+          <span class="badge">No human evaluation</span>
+          <span class="badge">Trained from scratch</span>
+        </div>
+        <p class="verdict"><span class="verdict__dot"></span> Useful gist translation, not production quality.</p>
+      </div>
+
+      <aside class="hero-card" aria-label="Headline result">
+        <p class="kicker">Headline · beam 4</p>
+        <div class="hero-metric">
+          <strong>24.08</strong>
+          <span>EN→FR BLEU</span>
+        </div>
+        <div class="hero-split">
+          <div><strong>+2.84</strong><span>vs 21.24 baseline</span></div>
+          <div><strong>+1.88</strong><span>chrF++ gain</span></div>
+        </div>
+        <p class="hero-foot">FR→EN beam 4: <strong>22.15 BLEU</strong> · +1.85 vs baseline</p>
+      </aside>
+    </section>
+
+    <section class="wrap scores" aria-label="Headline scores">
+      <article class="score">
+        <div class="score__meta"><span>EN → FR</span><span>BLEU</span></div>
+        <div class="score__value">24.08</div>
+        <div class="score__delta">+2.84 <span>vs 21.24</span></div>
+        <div class="bars" role="img" aria-label="BLEU: baseline 21.24, full data 24.08, out of 30">
+          <span class="bar--base" style="width:70.8%"></span>
+          <span class="bar--cand" style="width:80.3%"></span>
+        </div>
+        <p class="score__scale">0–30 · beam 4</p>
+      </article>
+
+      <article class="score">
+        <div class="score__meta"><span>FR → EN</span><span>BLEU</span></div>
+        <div class="score__value">22.15</div>
+        <div class="score__delta">+1.85 <span>vs 20.30</span></div>
+        <div class="bars" role="img" aria-label="BLEU: baseline 20.30, full data 22.15, out of 30">
+          <span class="bar--base" style="width:67.7%"></span>
+          <span class="bar--cand" style="width:73.8%"></span>
+        </div>
+        <p class="score__scale">0–30 · beam 4</p>
+      </article>
+
+      <article class="score">
+        <div class="score__meta"><span>EN → FR</span><span>chrF++</span></div>
+        <div class="score__value">50.32</div>
+        <div class="score__delta">+1.88 <span>vs 48.44</span></div>
+        <div class="bars" role="img" aria-label="chrF++: baseline 48.44, full data 50.32, out of 60">
+          <span class="bar--base" style="width:80.7%"></span>
+          <span class="bar--cand" style="width:83.9%"></span>
+        </div>
+        <p class="score__scale">0–60 · beam 4</p>
+      </article>
+
+      <article class="score">
+        <div class="score__meta"><span>FR → EN</span><span>chrF++</span></div>
+        <div class="score__value">49.88</div>
+        <div class="score__delta">+1.73 <span>vs 48.15</span></div>
+        <div class="bars" role="img" aria-label="chrF++: baseline 48.15, full data 49.88, out of 60">
+          <span class="bar--base" style="width:80.3%"></span>
+          <span class="bar--cand" style="width:83.1%"></span>
+        </div>
+        <p class="score__scale">0–60 · beam 4</p>
+      </article>
+    </section>
+
+    <section class="wrap section" id="comparison">
+      <div class="section-head">
+        <p class="kicker">01 / Comparison</p>
+        <h2>Every aggregate metric improved.</h2>
+        <p>
+          Full-data step 38,000 versus scaled step 18,000 on exactly the same
+          retained newstest2014 rows. Beam 4 is the dev-tuned setting; greedy
+          remains the model default.
+        </p>
+      </div>
+
+      <div class="callout">
+        <strong>Read this first</strong>
+        <p>
+          BLEU in the low 20s is a gist-level score, not a percentage of correct
+          sentences. The model can carry the main idea of a straightforward news
+          sentence; it still drops details and produces wrong words.
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="small muted" style="text-align:left;padding:.75rem .9rem 0">Full newstest2014 scores; positive deltas favor the full-data checkpoint.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Direction</th>
+              <th scope="col">Decoder</th>
+              <th scope="col" class="num">Step 18k BLEU</th>
+              <th scope="col" class="num">Full BLEU</th>
+              <th scope="col" class="num">Δ BLEU</th>
+              <th scope="col" class="num">Step 18k chrF++</th>
+              <th scope="col" class="num">Full chrF++</th>
+              <th scope="col" class="num">Δ chrF++</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EN→FR</td><td>Greedy</td>
+              <td class="num">20.011</td><td class="num">22.655</td><td class="num delta">+2.644</td>
+              <td class="num">47.036</td><td class="num">49.045</td><td class="num delta">+2.009</td>
+            </tr>
+            <tr>
+              <td>EN→FR</td><td>Beam 4</td>
+              <td class="num">21.243</td><td class="num">24.079</td><td class="num delta">+2.836</td>
+              <td class="num">48.442</td><td class="num">50.318</td><td class="num delta">+1.876</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Greedy</td>
+              <td class="num">19.018</td><td class="num">21.260</td><td class="num delta">+2.242</td>
+              <td class="num">46.698</td><td class="num">48.755</td><td class="num delta">+2.057</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Beam 4</td>
+              <td class="num">20.300</td><td class="num">22.145</td><td class="num delta">+1.845</td>
+              <td class="num">48.152</td><td class="num">49.882</td><td class="num delta">+1.730</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>Paired document bootstrap</h3>
+          <p>1,000 resamples over 176 newstest2014 documents. Every interval excludes zero.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Direction</th>
+                  <th scope="col">Decoder</th>
+                  <th scope="col">ΔBLEU 95% CI</th>
+                  <th scope="col">ΔchrF++ 95% CI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>EN→FR</td><td>Greedy</td><td>+2.644 <span class="muted">[+2.185, +3.090]</span></td><td>+2.009 <span class="muted">[+1.742, +2.302]</span></td></tr>
+                <tr><td>EN→FR</td><td>Beam 4</td><td>+2.836 <span class="muted">[+2.282, +3.424]</span></td><td>+1.876 <span class="muted">[+1.633, +2.113]</span></td></tr>
+                <tr><td>FR→EN</td><td>Greedy</td><td>+2.242 <span class="muted">[+1.874, +2.617]</span></td><td>+2.057 <span class="muted">[+1.783, +2.310]</span></td></tr>
+                <tr><td>FR→EN</td><td>Beam 4</td><td>+1.845 <span class="muted">[+1.468, +2.228]</span></td><td>+1.730 <span class="muted">[+1.496, +1.977]</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Sentence-level is mixed</h3>
+          <p>Descriptive chrF++ win/loss/tie counts, not a significance test.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Direction</th>
+                  <th scope="col">Decoder</th>
+                  <th scope="col" class="num">Wins</th>
+                  <th scope="col" class="num">Losses</th>
+                  <th scope="col" class="num">Ties</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>EN→FR</td><td>Greedy</td><td class="num">1,819</td><td class="num">1,065</td><td class="num">75</td></tr>
+                <tr><td>EN→FR</td><td>Beam 4</td><td class="num">1,780</td><td class="num">1,084</td><td class="num">95</td></tr>
+                <tr><td>FR→EN</td><td>Greedy</td><td class="num">1,823</td><td class="num">1,022</td><td class="num">77</td></tr>
+                <tr><td>FR→EN</td><td>Beam 4</td><td class="num">1,773</td><td class="num">1,047</td><td class="num">102</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section" id="training">
+      <div class="section-head">
+        <p class="kicker">02 / Training run</p>
+        <h2>More pairs, more tokens, same 19.8M model.</h2>
+        <p>
+          The full-data run trained on the complete prepared Europarl/News
+          Commentary split for 350M target tokens. It is a combined
+          more-data/more-training comparison, not a clean data-only ablation.
+        </p>
+      </div>
+
+      <div class="training-grid">
+        <div class="stat"><strong>2.10M</strong><span>training pairs</span></div>
+        <div class="stat"><strong>350M</strong><span>target tokens</span></div>
+        <div class="stat"><strong>40,113</strong><span>updates at stop</span></div>
+        <div class="stat"><strong>9h 19m</strong><span>training time</span></div>
+      </div>
+
+      <div class="training-chart">
+        <div class="training-chart__head">
+          <div>
+            <p class="kicker">Development curve</p>
+            <h3>Greedy dev chrF++ by training step</h3>
+          </div>
+          <p class="training-chart__best"><span>Best dev</span> <strong>54.81</strong> at step 38,000</p>
+        </div>
+        <div class="chart-legend" aria-hidden="true">
+          <span><i></i>Mean</span>
+          <span><i class="legend-en"></i>EN→FR</span>
+          <span><i class="legend-fr"></i>FR→EN</span>
+        </div>
+        <div class="chart-scroll" tabindex="0" role="region" aria-label="Training curve chart">
+          <svg class="chart-svg" viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="train-chart-title train-chart-desc">
+            <title id="train-chart-title">Greedy development chrF++ over training</title>
+            <desc id="train-chart-desc">Line chart of greedy development chrF++ over 40 validation points. Mean chrF++ rises from 21.21 at step 1,000 to 54.81 at step 38,000, then 54.61 at step 40,000. EN to FR and FR to EN are shown separately.</desc>
+            <line class="chart-grid" x1="58.00" y1="308.00" x2="790.00" y2="308.00"/><text class="chart-tick chart-tick--y" x="48.00" y="311.00">20</text><line class="chart-grid" x1="58.00" y1="228.56" x2="790.00" y2="228.56"/><text class="chart-tick chart-tick--y" x="48.00" y="231.56">30</text><line class="chart-grid" x1="58.00" y1="149.11" x2="790.00" y2="149.11"/><text class="chart-tick chart-tick--y" x="48.00" y="152.11">40</text><line class="chart-grid" x1="58.00" y1="69.67" x2="790.00" y2="69.67"/><text class="chart-tick chart-tick--y" x="48.00" y="72.67">50</text><line class="chart-grid" x1="58.00" y1="29.94" x2="790.00" y2="29.94"/><text class="chart-tick chart-tick--y" x="48.00" y="32.94">55</text><line class="chart-grid" x1="58.00" y1="22.00" x2="58.00" y2="308.00"/><text class="chart-tick" text-anchor="middle" x="58.00" y="326.00">0</text><line class="chart-grid" x1="241.00" y1="22.00" x2="241.00" y2="308.00"/><text class="chart-tick" text-anchor="middle" x="241.00" y="326.00">10k</text><line class="chart-grid" x1="424.00" y1="22.00" x2="424.00" y2="308.00"/><text class="chart-tick" text-anchor="middle" x="424.00" y="326.00">20k</text><line class="chart-grid" x1="607.00" y1="22.00" x2="607.00" y2="308.00"/><text class="chart-tick" text-anchor="middle" x="607.00" y="326.00">30k</text><line class="chart-grid" x1="790.00" y1="22.00" x2="790.00" y2="308.00"/><text class="chart-tick" text-anchor="middle" x="790.00" y="326.00">40k</text>
+            <path class="chart-area" d="M 76.30 308.00 L 76.30 298.42 L 94.60 157.99 L 112.90 117.03 L 131.20 100.12 L 149.50 84.55 L 167.80 79.28 L 186.10 73.29 L 204.40 65.22 L 222.70 64.63 L 241.00 60.40 L 259.30 56.58 L 277.60 56.51 L 295.90 54.01 L 314.20 51.21 L 332.50 47.32 L 350.80 49.22 L 369.10 47.53 L 387.40 44.88 L 405.70 45.82 L 424.00 42.20 L 442.30 41.75 L 460.60 41.83 L 478.90 38.78 L 497.20 39.71 L 515.50 39.67 L 533.80 38.47 L 552.10 39.45 L 570.40 37.00 L 588.70 37.89 L 607.00 36.06 L 625.30 37.07 L 643.60 36.68 L 661.90 34.46 L 680.20 35.87 L 698.50 33.21 L 716.80 34.12 L 735.10 33.34 L 753.40 31.45 L 771.70 31.49 L 790.00 33.06 L 790.00 308.00 Z"/>
+            <path class="chart-line chart-line--en" d="M 76.30 306.53 L 94.60 161.51 L 112.90 119.22 L 131.20 101.59 L 149.50 83.18 L 167.80 81.28 L 186.10 74.51 L 204.40 66.99 L 222.70 64.21 L 241.00 60.87 L 259.30 55.84 L 277.60 56.99 L 295.90 52.58 L 314.20 50.67 L 332.50 45.45 L 350.80 47.97 L 369.10 44.05 L 387.40 44.90 L 405.70 42.32 L 424.00 40.43 L 442.30 39.31 L 460.60 38.07 L 478.90 35.81 L 497.20 37.27 L 515.50 39.53 L 533.80 34.19 L 552.10 34.80 L 570.40 33.15 L 588.70 34.09 L 607.00 33.00 L 625.30 34.36 L 643.60 34.95 L 661.90 31.28 L 680.20 34.65 L 698.50 29.66 L 716.80 31.49 L 735.10 31.85 L 753.40 28.03 L 771.70 30.11 L 790.00 30.20"/>
+            <path class="chart-line chart-line--fr" d="M 76.30 290.31 L 94.60 154.47 L 112.90 114.83 L 131.20 98.64 L 149.50 85.93 L 167.80 77.27 L 186.10 72.08 L 204.40 63.44 L 222.70 65.05 L 241.00 59.94 L 259.30 57.32 L 277.60 56.04 L 295.90 55.44 L 314.20 51.74 L 332.50 49.20 L 350.80 50.47 L 369.10 51.00 L 387.40 44.85 L 405.70 49.31 L 424.00 43.98 L 442.30 44.18 L 460.60 45.59 L 478.90 41.74 L 497.20 42.16 L 515.50 39.82 L 533.80 42.75 L 552.10 44.10 L 570.40 40.86 L 588.70 41.69 L 607.00 39.12 L 625.30 39.79 L 643.60 38.41 L 661.90 37.64 L 680.20 37.10 L 698.50 36.76 L 716.80 36.75 L 735.10 34.82 L 753.40 34.88 L 771.70 32.88 L 790.00 35.93"/>
+            <path class="chart-line chart-line--mean" d="M 76.30 298.42 L 94.60 157.99 L 112.90 117.03 L 131.20 100.12 L 149.50 84.55 L 167.80 79.28 L 186.10 73.29 L 204.40 65.22 L 222.70 64.63 L 241.00 60.40 L 259.30 56.58 L 277.60 56.51 L 295.90 54.01 L 314.20 51.21 L 332.50 47.32 L 350.80 49.22 L 369.10 47.53 L 387.40 44.88 L 405.70 45.82 L 424.00 42.20 L 442.30 41.75 L 460.60 41.83 L 478.90 38.78 L 497.20 39.71 L 515.50 39.67 L 533.80 38.47 L 552.10 39.45 L 570.40 37.00 L 588.70 37.89 L 607.00 36.06 L 625.30 37.07 L 643.60 36.68 L 661.90 34.46 L 680.20 35.87 L 698.50 33.21 L 716.80 34.12 L 735.10 33.34 L 753.40 31.45 L 771.70 31.49 L 790.00 33.06"/>
+            <circle class="chart-point" cx="149.50" cy="84.55" r="2.1"/><circle class="chart-point" cx="241.00" cy="60.40" r="2.1"/><circle class="chart-point" cx="332.50" cy="47.32" r="2.1"/><circle class="chart-point" cx="424.00" cy="42.20" r="2.1"/><circle class="chart-point" cx="515.50" cy="39.67" r="2.1"/><circle class="chart-point" cx="607.00" cy="36.06" r="2.1"/><circle class="chart-point" cx="698.50" cy="33.21" r="2.1"/><circle class="chart-best" cx="753.40" cy="31.45" r="4.6"><title>Best mean dev chrF++ 54.8099 at step 38,000</title></circle><circle class="chart-point" cx="790.00" cy="33.06" r="2.1"/>
+            <line class="chart-axis" x1="58.00" y1="22.00" x2="58.00" y2="308.00"/>
+            <line class="chart-axis" x1="58.00" y1="308.00" x2="790.00" y2="308.00"/>
+            <text class="chart-axis-title" transform="translate(16 165) rotate(-90)" text-anchor="middle">DEV CHRF++</text>
+            <text class="chart-axis-title" x="790.00" y="346" text-anchor="end">TRAINING STEP</text>
+          </svg>
+        </div>
+        <p class="chart-note">Validation on 300 dev rows per direction; not the newstest2014 test score. Y-axis begins at 20. The final validation at step 40,000 was 54.61.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Run</th>
+              <th scope="col" class="num">Train pairs</th>
+              <th scope="col" class="num">Target tokens</th>
+              <th scope="col" class="num">Best step</th>
+              <th scope="col" class="num">Final step</th>
+              <th scope="col" class="num">Dev chrF++</th>
+              <th scope="col" class="num">Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Scaled pilot</td>
+              <td class="num">565,475</td><td class="num">164,002,778</td>
+              <td class="num">18,000</td><td class="num">18,799</td>
+              <td class="num">52.6313</td><td class="num">19,825,920</td>
+            </tr>
+            <tr>
+              <td><strong>Full data</strong></td>
+              <td class="num">2,101,321</td><td class="num">350,004,440</td>
+              <td class="num">38,000</td><td class="num">40,113</td>
+              <td class="num delta">54.8099</td><td class="num">19,825,920</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="small muted" style="margin:1rem 0 0">
+        The evaluated candidate is <code>models/scaled_full/best.pt</code>, the
+        dev-selected step-38,000 checkpoint. The final step-40,113 checkpoint was
+        not evaluated. The run stopped on <code>max_train_tokens</code> before the
+        45,000-update cap.
+      </p>
+    </section>
+
+    <section class="wrap section" id="method">
+      <div class="section-head">
+        <p class="kicker">03 / Method</p>
+        <h2>One benchmark. Same rows. Automatic metrics.</h2>
+        <p>
+          Both checkpoints were decoded on the same retained newstest2014
+          segments with the same references. Nothing was truncated silently.
+        </p>
+      </div>
+
+      <div class="method-grid">
+        <div class="panel">
+          <h3>Evaluation setup</h3>
+          <ul class="method-list">
+            <li><strong>Benchmark</strong><span>newstest2014 (<code>wmt14/full</code>), both directions</span></li>
+            <li><strong>Retained rows</strong><span>2,959 EN→FR; 2,922 FR→EN; 44 and 81 overlength sources skipped</span></li>
+            <li><strong>Documents</strong><span>176 per direction; bootstrap resamples documents</span></li>
+            <li><strong>Decoders</strong><span>Greedy and beam 4 (length penalty 1.2, minimum 16 new tokens)</span></li>
+            <li><strong>Metrics</strong><span>SacreBLEU 2.5.1, 13a cased BLEU; chrF++ with word_order=2</span></li>
+            <li><strong>Uncertainty</strong><span>1,000 paired bootstrap resamples per comparison</span></li>
+          </ul>
+          <details>
+            <summary>Metric signatures and checkpoint hashes</summary>
+            <p>BLEU: <code>nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1</code></p>
+            <p>chrF++: <code>nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1</code></p>
+            <p>Full-data checkpoint SHA-256:<code class="hash">fee0f72cfc4556f03fd6820157cc9c530c41f0a6db67153f8185d1e92b813277</code></p>
+            <p>Step-18,000 baseline SHA-256:<code class="hash">2c2f518b1f3b015fdce0cff6ef762a4a0f081643add9ec6865856ba821f22c77</code></p>
+          </details>
+        </div>
+
+        <div class="panel">
+          <h3>Reproduce and inspect</h3>
+          <p>The evaluation wrapper waits for the completed training report, runs both decoders in both directions, and builds the comparison.</p>
+          <code class="command">WAIT=0 bash scripts/evaluate_full.sh</code>
+          <details open>
+            <summary>Report trail</summary>
+            <ul>
+              <li><code>reports/newstest2014.scaled_full.comparisons.md</code></li>
+              <li><code>reports/newstest2014.scaled_full.comparisons.json</code></li>
+              <li><code>reports/newstest2014.scaled_full.{greedy,beam4}.{en-fr,fr-en}.full.json</code></li>
+              <li><code>models/scaled_full/training_report.json</code></li>
+              <li><code>reports/review_packet_scaled_full_20/</code> — 20-row review packet; human review pending</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section" id="examples">
+      <div class="section-head">
+        <p class="kicker">04 / What it looks like</p>
+        <h2>Useful gist, visible errors.</h2>
+        <p>
+          Examples from the deterministic 20-sentence review packet. These are
+          illustrative, not a random quality estimate or a human evaluation.
+        </p>
+      </div>
+
+      <div class="examples">
+        <article class="example">
+          <div class="example__head"><span class="tag">FR → EN</span><span class="tag">usable gist</span></div>
+          <div class="example__line"><span class="example__label">Source</span><span>Le Nevada a déjà mené à terme un projet pilote.</span></div>
+          <div class="example__line"><span class="example__label">Reference</span><span>Nevada has already completed a pilot.</span></div>
+          <div class="example__line"><span class="example__label">Model</span><span class="example__out">Nevada has already conducted a pilot project.</span></div>
+          <p class="example__note">Short and clear. “Pilot project” is a reasonable expansion; the meaning survives.</p>
+        </article>
+
+        <article class="example">
+          <div class="example__head"><span class="tag">EN → FR</span><span class="tag tag--bad">clear error</span></div>
+          <div class="example__line"><span class="example__label">Source</span><span>Nevada has already completed a pilot.</span></div>
+          <div class="example__line"><span class="example__label">Reference</span><span>Le Nevada a déjà mené à terme un projet pilote.</span></div>
+          <div class="example__line"><span class="example__label">Model</span><span class="example__out">La Nevada a déjà terminé un piot.</span></div>
+          <p class="example__note">Wrong article/gender and a broken noun (“piot”). Not acceptable as written.</p>
+        </article>
+
+        <article class="example">
+          <div class="example__head"><span class="tag">FR → EN</span><span class="tag tag--mixed">mixed</span></div>
+          <div class="example__line"><span class="example__label">Source</span><span>Cela leur laisse le temps de faire certains tests et de les comprendre, et un délai avant d'inscrire « masculin » ou « féminin ».</span></div>
+          <div class="example__line"><span class="example__label">Reference</span><span>It gives them the time to do some tests and figure it out and a period of time before they write 'male' or 'female.'</span></div>
+          <div class="example__line"><span class="example__label">Model</span><span class="example__out">It leaves them time to make some tests and to understand them, and a deadline before inscribing “masculin” or “feminin.”</span></div>
+          <p class="example__note">Clear gist, but “deadline” is wrong and the quoted labels remain French.</p>
+        </article>
+
+        <article class="example">
+          <div class="example__head"><span class="tag">EN → FR</span><span class="tag tag--bad">clear error</span></div>
+          <div class="example__line"><span class="example__label">Source</span><span>In October, GM sold 42,660 Silverado and 16,503 Sierra pickup trucks.</span></div>
+          <div class="example__line"><span class="example__label">Reference</span><span>En octobre, GM a vendu 42 660 pickups Silverado et 16 503 pickups Sierra.</span></div>
+          <div class="example__line"><span class="example__label">Model</span><span class="example__out">En octobre, les OGM ont vendu 42,660 Silverado et 16,503 Sierra en pont.</span></div>
+          <p class="example__note">GM becomes OGM (“GMO”), and “pickup trucks” becomes “en pont.”</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap section" id="caveats">
+      <div class="section-head">
+        <p class="kicker">05 / Caveats</p>
+        <h2>What this result does not prove.</h2>
+        <p>
+          The comparison is useful because it is controlled on the evaluation
+          side. It is not a complete quality claim.
+        </p>
+      </div>
+
+      <div class="caveats">
+        <article class="caveat">
+          <h3>Not a data-only ablation</h3>
+          <p>The full-data run saw both more pairs and about twice as many target tokens as the pilot. The gain cannot be attributed to data alone.</p>
+        </article>
+        <article class="caveat">
+          <h3>No human evaluation</h3>
+          <p>All results are automatic metrics. The 20-row packet has blank reviewer columns and remains pending; no qualified bilingual review was performed.</p>
+        </article>
+        <article class="caveat">
+          <h3>Not production-ready</h3>
+          <p>Low-20s BLEU means the model still mistranslates names, idioms, numbers and sentence structure often enough to need heavy postediting.</p>
+        </article>
+      </div>
+
+      <div class="provenance">
+        <p>
+          <strong>Scope.</strong> The page reports the completed 350M-token
+          full-data run and its dev-selected checkpoint. It does not report the
+          later 800M-token continuation, which has not been started.
+        </p>
+        <p>
+          <strong>Source.</strong> Built from the project's evaluation reports in
+          <code>reports/</code> and the completed run report in
+          <code>models/scaled_full/</code>. Page source: <code>docs/index.html</code>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <p>Transcend — English↔French neural machine translation, trained from scratch.</p>
+      <p>
+        <a href="https://github.com/slayyyyer/transcend">GitHub repository</a> ·
+        <a href="https://github.com/slayyyyer/transcend#readme">README</a> ·
+        Report generated 09 Nov 2026
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
