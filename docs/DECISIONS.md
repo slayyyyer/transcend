@@ -176,7 +176,7 @@ artifact terms; see `NOTICE`.
   The step-14,000 and step-14,218 artifacts are preserved as
   `best_step14000.pt` and `checkpoint_step14218.pt`.
 
-## Next data expansion (planned, not run)
+## Data expansion: full Europarl (phase 1 complete)
 
 The current prepared train split uses Europarl stride 5: 565,475 train pairs
 from 2,007,723 Europarl source lines plus 183,784 News Commentary lines. The
@@ -186,23 +186,58 @@ lowest-licensing-risk expansion, and it is the recommended first quality run.
 
 Phase 1, no new corpus download:
 
-* Re-prepare with all Europarl v7 pairs (stride 1) plus the existing News
+* Re-prepared with all Europarl v7 pairs (stride 1) plus all existing News
   Commentary v9 candidates, retaining exact deduplication, length-ratio
-  filtering and the existing opaque block split. Expect roughly 2.0-2.2M pairs
-  after cleaning.
-* Keep the frozen 8,000-entry tokenizer and the 128/136 sequence limits fixed,
-  so the first experiment changes data quantity only.
-* Train the 6+6 scaled architecture from scratch for about 350M target tokens
-  (about 43k updates at 8,192 tokens), keeping the same peak LR and a 12-hour
-  walltime cap. At the measured 10,148 target tokens/s this is about 9.6 hours
-  before validation.
-* A 350M-token pass draws roughly 1.2M pairs at the observed ~290 target
-  tokens/pair, more than doubling the unique-pair coverage of the 565k-pair
-  run even though it is not a full pass over 2.2M pairs.
-* Evaluate on the same full newstest2014 rows and 1,000-document bootstrap, and
-  report the comparison to step 18,000. This is automatic metrics only.
+  filtering and the existing opaque block split. The result is
+  `data/prepared/europarl_full`: 2,190,974 raw candidates, 2,143,227 kept,
+  and 2,101,321 train / 20,138 dev / 19,789 test pairs. Cross-split overlap is
+  zero in the contamination report.
+* The frozen 8,000-entry tokenizer and the 128/136 sequence limits are fixed,
+  so this experiment changes data quantity only relative to the scaled run.
+* Trained the 6+6 scaled architecture from scratch for at most 350M target
+  tokens (about 43k updates at 8,192 tokens), keeping the same peak LR and a
+  12-hour walltime cap. The run completed in `models/scaled_full` with
+  `configs/scaled_full.yaml`: 40,113 updates, 350,004,440 target tokens,
+  33,528.56 s (9h 19m), stopping on `max_train_tokens`. Realized throughput was
+  10,438.99 target tokens/s. The best development checkpoint was step 38,000 at
+  54.8099 mean chrF++; the final checkpoint was step 40,113. Evaluation used the
+  dev-selected `best.pt`, not the final checkpoint.
+* The training manifest records 3,991,640 directional examples and 219,771,441
+  target tokens in one epoch. A 350M-token budget is therefore about 1.6 epochs
+  over 2,101,321 train pairs, so all 2,009,059 usable pairs are seen rather
+  than a 1.2M-pair subset.
+* Evaluated on the same full newstest2014 rows and 1,000-document bootstrap, and
+  reported against scaled step 18,000. This is automatic metrics only.
+* `scripts/extend_full_data.sh` continued the same model from its 350M-token
+  checkpoint to an 800M-token / 100k-update cumulative budget, with a 24-hour
+  per-invocation walltime and patience 30. It preserved the 350M report,
+  `best.pt`, `checkpoint.pt` and history under `.pre_extend` names, then resumed
+  from `checkpoint.pt`; it did not reinitialize or restart the run. The token and
+  step limits are cumulative, while `--max-walltime` applies afresh to each
+  invocation. The learning-rate schedule remains the existing inverse-square-
+  root schedule.
 
-Phase 2, only if phase 1 justifies more work:
+### 800M continuation result (complete)
+
+The continuation resumed at step 88,000 / 767,805,099 tokens and stopped on
+`max_train_tokens` at step 91,691 / 800,002,117 tokens, adding 3,691 updates and
+32,197,018 tokens in 1,907.66 s. Cumulative reported walltime is 64,152.22 s.
+The dev-selected best remains step 77,000 at 56.0833 mean chrF++; the final
+step-91,691 checkpoint last validated at 55.8353. The preserved 350M baseline
+is step 38,000, not the final 350M checkpoint.
+
+On the same retained newstest2014 rows (2,959 EN→FR / 2,922 FR→EN), the final
+800M checkpoint scores 25.367/51.391 EN→FR and 23.558/50.830 FR→EN greedy, and
+26.440/52.531 and 24.377/51.902 beam 4. Against the 350M baseline the BLEU gains
+are +2.712/+2.298 greedy and +2.361/+2.232 beam 4; chrF++ gains are
++2.346/+2.075 and +2.213/+2.020. The paired chrF++ 95% intervals are
+[2.106, 2.587], [1.859, 2.282], [1.998, 2.451] and [1.801, 2.253]; all exclude
+zero. The 77,000 best is also above baseline, and the final test scores are
+slightly higher than the best, but the final-vs-best difference was not
+bootstrap-tested. This is a positive but diminishing-return result at roughly
+2.3x the token budget, not evidence of production quality or human acceptability.
+
+Phase 2, after the extension and data-expansion arms:
 
 * DGT v2021 is available as a 315 MB EN-FR archive with about 5.7M pairs and
   explicit EC re-use terms. Sample and deduplicate it (EU legal boilerplate
@@ -211,9 +246,10 @@ Phase 2, only if phase 1 justifies more work:
 * WMT News Commentary v18.1 (46 MB, about 0.3M pairs) is available, but it is
   the highest-risk source for newstest2014 contamination; it needs exact and
   n-gram overlap filtering before use.
-* Do not start with ParaCrawl or OpenSubtitles at this scale. They are hundreds
-  of millions of noisy pairs, expensive to clean on this machine, and their
-  redistribution terms are unclear or incompatible with the artifact policy.
+* OpenSubtitles, GlobalVoices, WikiMatrix and Giga-French remain later
+  candidates. ParaCrawl is now added only as a bounded, filtered sample; see
+  "Everyday-language expansion" below for the measured limits and licensing
+  caveats.
 * More data is not a guaranteed BLEU gain. The 4 GB card limits model capacity,
   and the current run is still far below compute-optimal tokens per parameter;
   the phase-1 experiment is designed to test the data constraint cleanly.
@@ -237,7 +273,23 @@ Phase 2, only if phase 1 justifies more work:
   greedy and beam-4 runs on exactly the same retained newstest2014 segments
   (`reports/newstest2014.scaled_resumed.comparisons.json`); the archived
   step-14,000 comparison remains in
-  `reports/newstest2014.scaled.comparisons.json`.
+  `reports/newstest2014.scaled.comparisons.json`. The full-data comparison is
+  generated by `scripts/evaluate_full.sh`, which waits for
+  `models/scaled_full/training_report.json`, evaluates
+  `models/scaled_full/best.pt` against scaled step 18,000 on the same retained
+  rows, and writes `reports/newstest2014.scaled_full.comparisons.{json,md}` via
+  `scripts/compare_full_vs_scaled.py`. The completed comparison is positive in
+  all four evaluations: greedy 22.655/49.045 EN→FR and 21.260/48.755 FR→EN;
+  beam 4 24.079/50.318 and 22.145/49.882. Against step 18,000, the chrF++ gains
+  are +2.009 [1.742, 2.302], +2.057 [1.783, 2.310], +1.876 [1.633, 2.113] and
+  +1.730 [1.496, 1.977]; the BLEU gains are +2.644/+2.242 greedy and
+  +2.836/+1.845 beam 4. Every paired 95% interval excludes zero. This is
+  automatic metrics only. The 800M continuation comparison is in
+  `reports/newstest2014.scaled_full_800m.comparisons.{json,md}`: the final
+  step-91,691 checkpoint is above the preserved step-38,000 baseline in all
+  four evaluations by +2.712/+2.298 BLEU and +2.346/+2.075 chrF++ greedy, and
+  +2.361/+2.232 BLEU and +2.213/+2.020 chrF++ beam 4. Every paired chrF++
+  95% interval excludes zero; final-vs-best was not tested.
 * Metrics: SacreBLEU (`13a`, cased) and chrF++ (`word_order=2`), with signatures.
 * A documented 564-row EN→FR subset retains random-initialized, CPU-pilot and
   accelerator baselines (`reports/subset600.en-fr*`). The full-set baselines are
@@ -297,6 +349,52 @@ Phase 2, only if phase 1 justifies more work:
   is the external machine-assisted comparator for this proof of concept; it is
   evaluation-only. The earlier step-14,500 gtx reports remain under
   `reports/review_api_google_82m_enfr/` and `reports/review_api_google_82m_fren/`.
+
+## Everyday-language expansion (Tatoeba and bounded ParaCrawl)
+
+This iteration adds data-pipeline support only. No model was trained on the new
+sources, so none of the measured BLEU/chrF++ results in this repository are
+claims about Tatoeba or ParaCrawl.
+
+* Tatoeba is acquired from the weekly per-language sentence files plus the
+  EN-FR link file. The weekly files are UTF-8 and do not contain a per-row
+  license or review column; the source-level terms are CC BY 2.0 FR by default,
+  with some rows also CC0 1.0. Pair IDs retain both sentence IDs for
+  attribution. All translations of one English sentence share a split block.
+* ParaCrawl v9 EN-FR is acquired only as a bounded compressed prefix, 64 MiB by
+  default. The inspected TXT has two tab-separated columns and **no** per-row
+  Bicleaner score; the parser supports an optional score column but does not
+  pretend one exists here. The sample is a prefix, not a uniform sample of the
+  21 GiB release.
+* The new-source cleaner rejects malformed markup/URLs/control characters,
+  wrong-language rows (Tatoeba tags; a conservative heuristic for ParaCrawl),
+  excessive repetition, and unreasonable length mismatches. The smoke sample
+  retained 440,351 of 442,283 Tatoeba pairs and 61,152 of 83,151 ParaCrawl
+  pairs from an 8 MiB prefix. Those are sample statistics, not corpus
+  estimates.
+* Mixtures are built on top of an existing prepared baseline. The baseline
+  splits are copied verbatim; new sources are capped independently, split by
+  their own groups, deduplicated against every baseline split, and checked for
+  exact and near-duplicate contamination. Per-source caps are configurable, so
+  a large ParaCrawl sample cannot exceed its configured share.
+* Near-duplicate contamination uses word 3-gram Jaccard at a configurable
+  threshold (default 0.85). Exact overlap assertions remain mandatory. The
+  smoke run removed zero near-duplicates and had zero exact overlaps; this
+  validates the guard, not the full-corpus leakage rate.
+* Controlled comparisons keep the same architecture, seed, frozen 8,000-entry
+  tokenizer, decoding settings and 350M-token budget. A new tokenizer, if one is
+  ever trained, must read `train.tsv` only; an existing checkpoint must not be
+  retokenized.
+* The four configs are `configs/scaled_full.yaml` (existing data),
+  `configs/scaled_full_tatoeba.yaml`, `configs/scaled_full_paracrawl.yaml`, and
+  `configs/scaled_full_combined.yaml`. Exact preparation and training commands
+  are in `docs/DATA_CARD.md`; the long runs are deliberately not launched.
+* The separate 24-row everyday review set covers questions, negation, names,
+  numbers, idioms and *tu/vous*. Its French references are project-authored
+  drafts and are labeled `not_bilingual_human_reviewed`; it is excluded from
+  training and is not a general-quality benchmark.
+* OpenSubtitles, GlobalVoices, WikiMatrix and Giga-French remain later
+  candidates. The full ParaCrawl release is not a first-step download.
 
 ## Acceptance criteria recorded before final testing
 

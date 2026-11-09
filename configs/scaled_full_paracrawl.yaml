@@ -1,0 +1,49 @@
+# Data ablation: full Europarl v7 + News Commentary v9 + bounded ParaCrawl v9.
+#
+# Same 6+6 architecture, seed, frozen 8,000-entry tokenizer, sequence limits,
+# optimizer and 350M-token budget as scaled_full. The only intended change is
+# the training mixture. Keep the frozen tokenizer when comparing.
+name: scaled_full_paracrawl
+seed: 1337
+
+model:
+  vocab_size: auto
+  d_model: 320
+  encoder_layers: 6
+  decoder_layers: 6
+  attention_heads: 5
+  ffn_dim: 1280
+  dropout: 0.1
+  max_positions: 512
+
+tokenizer:
+  target_vocab_size: 8000
+  min_pair_frequency: 2
+
+data:
+  source: europarl_full_paracrawl
+  train_pairs: 0
+  max_source_tokens: 128
+  max_target_tokens: 136
+  max_char_ratio: 3.0
+  block_size: 200
+
+train:
+  device: auto
+  precision: auto
+  num_threads: 8
+  peak_lr: 4.0e-4
+  warmup_updates: 800
+  token_budget: 8192
+  max_micro_batch: 16
+  max_steps: 45000
+  max_train_tokens: 350000000
+  max_walltime_s: 43200
+  checkpoint_every: 1000
+  validate_every: 1000
+  patience: 10
+
+eval:
+  max_new_tokens: 136
+  beam_size: 1
+  dev_limit: 300

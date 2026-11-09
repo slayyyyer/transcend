@@ -11,13 +11,16 @@
 | Scaled experiment checkpoint | `models/scaled_pilot/best.pt`, step 18,000 (19,825,920 parameters; separately exported, not the default) |
 | Scaled checkpoint SHA-256 | `2c2f518b1f3b015fdce0cff6ef762a4a0f081643add9ec6865856ba821f22c77` |
 | Scaled latest checkpoint | `models/scaled_pilot/checkpoint.pt`, step 18,799 |
+| Full-data 350M baseline | `models/scaled_full/best.pre_extend.pt`, step 38,000 (preserved; 19,825,920 parameters) |
+| 800M continuation best | `models/scaled_full/best.pt`, step 77,000 |
+| 800M continuation final | `models/scaled_full/checkpoint.pt`, step 91,691 |
 | Scaled export | `models/scaled_export` (12 files, 237,211,722 B; step 18,000; not the default package) |
 | Scaled export encoder SHA-256 | `8937c77c0caac9db4eba9502ebb3acf6c4414dfdea11dc42f2cf4047ed836b7f` |
 | Exported package | `models/accel_export` (11 files, 120 MB; default, rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
 | Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
 | Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
-| Training code version | repository state at 2026-11-08 |
+| Training code version | repository state at 2026-11-09 |
 
 The model was initialized from the documented random scheme `N(0, 0.02)` with
 seed 1337 (`nmt/model.py::INITIALIZATION_MANIFEST`). No pretrained weights,
@@ -90,6 +93,25 @@ step-14,218 artifacts are preserved as `best_step14000.pt` and
 `checkpoint_step14218.pt`. The scaled run changes both model size and data
 exposure relative to the small pilot, so it is not a single-factor ablation.
 
+### Full-data and 800M continuation
+
+The full-data phase re-prepared the same corpora at stride 1: 2,190,974 raw
+candidates became 2,143,227 clean pairs, split into 2,101,321 train / 20,138 dev /
+19,789 test with zero cross-split overlap. The same 6+6 model trained from
+scratch under a 350M-token / 45,000-update / 12-hour budget and stopped at step
+40,113 / 350,004,440 tokens after 33,528.56 s (9h 19m); its dev-selected best is
+step 38,000 at 54.8099 mean chrF++.
+
+The same run was then continued to a cumulative 800M-token budget. The final
+resume began from step 88,000 / 767,805,099 tokens and stopped at step 91,691 /
+800,002,117 tokens on `max_train_tokens`, adding 3,691 updates / 32,197,018
+additional tokens in 1,907.66 s; cumulative reported walltime is 64,152.22 s.
+The dev-selected best is step 77,000 at 56.0833 mean chrF++; the final
+step-91,691 checkpoint measured 55.8353 at the last validation. The 350M
+artifacts are preserved as `best.pre_extend.pt` (step 38,000) and
+`checkpoint.pre_extend.pt` (step 40,113), so the comparison does not overwrite
+the baseline.
+
 Development metric (mean chrF++ over the two directions, 300 rows per direction
 from the held-out block split; small-model history in
 `models/accel_pilot/history.json`, scaled history in
@@ -113,6 +135,29 @@ from the held-out block split; small-model history in
 | 14,500 | **47.18** | 47.51 | 46.85 |
 | 15,000 | 46.81 | 46.86 | 46.76 |
 | 15,500 | 46.82 | 47.03 | 46.60 |
+
+## Everyday-language data expansion (preparation only)
+
+The repository now has a reproducible preparation path for Tatoeba and a
+bounded ParaCrawl v9 sample, plus four comparable 6+6-layer data recipes. This
+card's reported checkpoints were **not** trained on either source. No quality
+improvement from Tatoeba or ParaCrawl is measured or claimed here.
+
+- Tatoeba: weekly 2026-11-07 files, CC BY 2.0 FR by default (some CC0), with
+  sentence IDs retained for attribution. All translations of an English
+  sentence share a split block.
+- ParaCrawl: v9 EN-FR TXT, 21,863,614,702 B, read only as a bounded 64 MiB
+  prefix by default. The TXT is two-column and has no per-row score; the sample
+  is not uniform over the release. Packaging is CC0, but the underlying website
+  text rights are not asserted by ParaCrawl.
+- The baseline splits are copied verbatim into mixtures; new sources are
+  capped, cleaned, deduplicated across sources, and checked for exact and
+  near-duplicate contamination. The frozen 8,000-entry tokenizer must be used
+  for controlled comparisons; any new tokenizer must be trained on `train.tsv`
+  only.
+- A real-source smoke preparation and 10-update CPU train validated the path.
+  It is plumbing validation only; its one-row review output is not a quality
+  result.
 
 ## Evaluation
 
@@ -139,6 +184,12 @@ FR→EN: n = 2,922, 81 skipped.
 | Scaled 19.8M step 14,000, tuned beam 4 (LP 1.2, min 16) | 20.67 | 47.22 | 19.41 | 46.92 |
 | Scaled 19.8M step 18,000, greedy | 20.01 | 47.04 | 19.02 | 46.70 |
 | Scaled 19.8M step 18,000, tuned beam 4 (LP 1.2, min 16) | **21.24** | **48.44** | **20.30** | **48.15** |
+| Full-data 19.8M step 38,000 (350M baseline), greedy | 22.66 | 49.05 | 21.26 | 48.76 |
+| Full-data 19.8M step 38,000 (350M baseline), tuned beam 4 | 24.08 | 50.32 | 22.15 | 49.88 |
+| Full-data 19.8M step 77,000 (800M best), greedy | 25.02 | 51.07 | 23.33 | 50.60 |
+| Full-data 19.8M step 77,000 (800M best), tuned beam 4 | 26.28 | 52.25 | 23.90 | 51.46 |
+| Full-data 19.8M step 91,691 final (800M), greedy | **25.37** | **51.39** | **23.56** | **50.83** |
+| Full-data 19.8M step 91,691 final (800M), tuned beam 4 | **26.44** | **52.53** | **24.38** | **51.90** |
 
 The tuned beam rows use beam 4, length penalty 1.2 and a minimum of 16 new
 target tokens, selected on dev only. For the step-14,500 row, paired chrF++
@@ -168,6 +219,18 @@ chrF++ ([1.206, 1.610] and [1.280, 1.625]). The resumed checkpoint improves on
 archived step 14,000 by +1.087/+1.160 BLEU and +1.307/+1.283 chrF++ greedy, and
 +0.573/+0.886 BLEU and +1.226/+1.237 chrF++ beam 4. These are automatic metrics,
 not human evaluation; see `reports/newstest2014.scaled_resumed.comparisons.md`.
+
+The full-data 350M baseline scores 22.655/49.045 EN→FR and 21.260/48.755 FR→EN
+greedy, and 24.079/50.318 and 22.145/49.882 beam 4. The 800M final checkpoint
+(step 91,691) scores 25.367/51.391 and 23.558/50.830 greedy, and 26.440/52.531
+and 24.377/51.902 beam 4. Against the 350M baseline, greedy gains are
++2.712/+2.298 BLEU and +2.346/+2.075 chrF++; beam gains are +2.361/+2.232 BLEU
+and +2.213/+2.020 chrF++. The paired chrF++ 95% intervals are [2.106, 2.587],
+[1.859, 2.282], [1.998, 2.451] and [1.801, 2.253]; all exclude zero. The 77,000
+dev-selected best is also above baseline; the final test scores are slightly
+higher than the best, but dev preferred 77,000 and final-vs-best was not
+bootstrap-tested. See `reports/newstest2014.scaled_full_800m.comparisons.md`.
+This is automatic metrics only, not human evaluation.
 
 ### API-assisted spot check
 
@@ -209,6 +272,10 @@ Paired document bootstrap, 1,000 resamples over 176 documents:
 | Scaled step 18,000 vs final step 15,897, greedy | +7.58 [7.26, 7.90] | +7.17 [6.86, 7.49] |
 | Scaled step 18,000 vs final step 15,897, beam 4 | +7.08 [6.79, 7.37] | +6.70 [6.42, 6.98] |
 | Scaled step 18,000 beam 4 vs scaled greedy | +1.41 [1.21, 1.61] | +1.45 [1.28, 1.63] |
+| Full-data step 38,000 vs scaled step 18,000, greedy | +2.01 [1.74, 2.30] | +2.06 [1.78, 2.31] |
+| Full-data step 38,000 vs scaled step 18,000, beam 4 | +1.88 [1.63, 2.11] | +1.73 [1.50, 1.98] |
+| 800M final step 91,691 vs full-data 350M step 38,000, greedy | +2.35 [2.11, 2.59] | +2.08 [1.86, 2.28] |
+| 800M final step 91,691 vs full-data 350M step 38,000, beam 4 | +2.21 [2.00, 2.45] | +2.02 [1.80, 2.25] |
 
 The step-9,500 checkpoint beat both baselines on chrF++ in both directions; the
 step-14,500 candidate then improved on step 9,500 by +3.10/+2.92 chrF++ and beat
@@ -292,6 +359,11 @@ package. The final step-15,897 checkpoint remains at
   changing both size and data exposure. Its automatic scores are stronger, and
   the step-18,000 checkpoint is now exported and Java-verified, but it has no
   human review.
+- The 800M continuation used about 2.3x the 350M token budget for roughly
+  +2.4 BLEU average on newstest2014. Dev peaked at step 77,000 (56.0833 chrF++)
+  and did not improve after; the final test scores are slightly above the best,
+  but that small difference was not bootstrap-tested. No ONNX export or Java
+  parity was run for the full-data or 800M checkpoints. It has no human review.
 - No quantified bias, toxicity, or privacy audit was performed. Parliamentary
   proceedings contain personal names and political content inherited from the
   source corpora.
@@ -301,16 +373,22 @@ package. The final step-15,897 checkpoint remains at
   human judgment. COMET was not run. The AI-assisted review of the step-14,500
   packet found only 43/200 acceptable (21.5%) and 50 CRITICAL rows. It is not a
   substitute for qualified human evaluation.
+- The everyday review set has no qualified bilingual review; its French
+  references are drafts marked `not_bilingual_human_reviewed`. Tatoeba and
+  ParaCrawl are preparation-only, and ParaCrawl's bounded prefix has no per-row
+  quality score. Do not interpret the smoke run as a data-ablation result.
 
 ## Provenance, licensing and artifacts
 
-Training corpora: Europarl v7 and WMT14 News Commentary v9 from statmt.org, with
-pinned SHA-256 checksums and retrieval dates in
-`data/prepared/europarl_nc/manifest.json`. Evaluation: newstest2014, recorded in
-`data/prepared/newstest2014/manifest.json`. The corpora are not redistributed
-here; see `NOTICE`, `LICENSE` and `docs/DATA_CARD.md`. Source-code licensing is
-separate from corpus and model-artifact terms; the model artifact inherits the
-corpus constraints and is published for research use only.
+Training corpora for the checkpoints in this card: Europarl v7 and WMT14 News
+Commentary v9 from statmt.org, with pinned SHA-256 checksums and retrieval dates
+in `data/prepared/europarl_nc/manifest.json`. Evaluation: newstest2014, recorded
+in `data/prepared/newstest2014/manifest.json`. Tatoeba and bounded ParaCrawl data
+are prepared by `nmt.cli prepare-mixture` but were not used for any checkpoint
+reported here. The corpora are not redistributed; see `NOTICE`, `LICENSE` and
+`docs/DATA_CARD.md`. Source-code licensing is separate from corpus and
+model-artifact terms; the model artifact inherits the corpus constraints and is
+published for research use only.
 
 Raw corpora and large checkpoints are kept outside git: `data/raw/`,
 `data/prepared/`, `models/`. Exact paths and hashes are listed in

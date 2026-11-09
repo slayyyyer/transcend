@@ -1,0 +1,25 @@
+id	category	en	fr	reference_review
+q01	question	Where is the nearest pharmacy?	Où est la pharmacie la plus proche ?	not_bilingual_human_reviewed
+q02	question	What time does the store open?	À quelle heure ouvre le magasin ?	not_bilingual_human_reviewed
+q03	question	Can I pay by card?	Puis-je payer par carte ?	not_bilingual_human_reviewed
+q04	question	How do I get to the train station?	Comment puis-je aller à la gare ?	not_bilingual_human_reviewed
+n01	negation	I don't have any change.	Je n'ai pas de monnaie.	not_bilingual_human_reviewed
+n02	negation	She never drinks coffee.	Elle ne boit jamais de café.	not_bilingual_human_reviewed
+n03	negation	We cannot come tomorrow.	Nous ne pouvons pas venir demain.	not_bilingual_human_reviewed
+n04	negation	There is nothing in the fridge.	Il n'y a rien dans le réfrigérateur.	not_bilingual_human_reviewed
+m01	names	My name is Marie.	Je m'appelle Marie.	not_bilingual_human_reviewed
+m02	names	Thomas lives in Lyon.	Thomas habite à Lyon.	not_bilingual_human_reviewed
+m03	names	Have you met Sophie?	Avez-vous rencontré Sophie ?	not_bilingual_human_reviewed
+m04	names	I saw Jean at the market.	J'ai vu Jean au marché.	not_bilingual_human_reviewed
+d01	numbers	The train leaves at 7:45.	Le train part à 7 h 45.	not_bilingual_human_reviewed
+d02	numbers	It costs twenty-three euros.	Ça coûte vingt-trois euros.	not_bilingual_human_reviewed
+d03	numbers	I have two brothers and one sister.	J'ai deux frères et une sœur.	not_bilingual_human_reviewed
+d04	numbers	The meeting is on March 3.	La réunion est le 3 mars.	not_bilingual_human_reviewed
+i01	idiom	It's raining cats and dogs.	Il pleut des cordes.	not_bilingual_human_reviewed
+i02	idiom	Break a leg!	Bonne chance !	not_bilingual_human_reviewed
+i03	idiom	I'm all ears.	Je suis tout ouïe.	not_bilingual_human_reviewed
+i04	idiom	That costs an arm and a leg.	Ça coûte les yeux de la tête.	not_bilingual_human_reviewed
+t01	tu_vous	Can you help me? (formal)	Pouvez-vous m'aider ?	not_bilingual_human_reviewed
+t02	tu_vous	Can you help me? (informal)	Peux-tu m'aider ?	not_bilingual_human_reviewed
+t03	tu_vous	Are you ready? (formal)	Êtes-vous prêt ?	not_bilingual_human_reviewed
+t04	tu_vous	Are you ready? (informal)	Es-tu prêt ?	not_bilingual_human_reviewed

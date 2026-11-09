@@ -1,0 +1,28 @@
+{
+  "beam_size": 1,
+  "benchmark": "data/prepared/everyday_review/everyday_review.en-fr.jsonl",
+  "comparisons": {},
+  "direction": "en-fr",
+  "length_penalty": 1.0,
+  "min_new_tokens": 0,
+  "models": {
+    "smoke": {
+      "bleu": 0.0,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp": 0.0,
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 1,
+      "step": 10
+    }
+  },
+  "n": 1,
+  "signatures": {
+    "bleu": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+    "chrfpp": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1"
+  },
+  "skipped_overlength": 0,
+  "source_copy": {
+    "bleu": 5.816,
+    "chrfpp": 21.095
+  }
+}

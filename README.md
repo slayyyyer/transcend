@@ -16,6 +16,8 @@ step-14,500 packet found 43/200 acceptable and 157/200 MAJOR or CRITICAL, and
 ordinary sentences are frequently mistranslated (see [Measured
 results](#measured-results)). This demonstrates a working, auditable training → export → Java pipeline, not translation quality.
 
+**[Read the translation benchmark report →](https://slayyyyer.github.io/transcend/)**
+
 **Scaled follow-up:** the separate 19,825,920-parameter 6+6-layer model resumed
 past its first 4-hour walltime stop and finished at the 164M-token cap after
 18,799 updates (164,002,778 target tokens; 18,343.24 s cumulative). Its best
@@ -25,6 +27,33 @@ beam 4. Versus the final small model that is +7.90/+6.85 BLEU greedy and
 +6.79/+6.19 beam 4; every paired 95% interval excludes zero. The step-18,000
 checkpoint also has a verified `models/scaled_export` ONNX/Java package. It
 remains a pilot, not a usable translator, and no human evaluation was performed.
+
+**Full-data follow-up:** the stride-1 preparation is complete. All 2,190,974
+aligned Europarl/News Commentary candidates cleaned to 2,143,227 pairs and
+split into 2,101,321 train / 20,138 dev / 19,789 test, with zero cross-split
+overlap. The same 6+6 model trained from scratch on
+`data/prepared/europarl_full` under a 350M-token / 45,000-update / 12-hour
+budget into `models/scaled_full`; it stopped on the token cap at step 40,113 /
+350,004,440 tokens with a dev-selected best at step 38,000. The run was then
+resumed from that checkpoint to a cumulative 800M-token / 100,000-update
+budget. It finished at step 91,691 / 800,002,117 tokens; the dev-selected best
+remains step 77,000 at 56.0833 chrF++, while the final step-91,691 checkpoint
+scores 25.37/23.56 BLEU and 51.39/50.83 chrF++ greedy, and 26.44/24.38 BLEU and
+52.53/51.90 chrF++ with beam 4. Versus the preserved 350M checkpoint that is
++2.71/+2.30 BLEU greedy and +2.36/+2.23 BLEU beam 4; all paired 95% intervals
+exclude zero. These are automatic newstest2014 metrics only, not human review.
+
+**Everyday-language data expansion (preparation only):** the pipeline now
+supports Tatoeba and a bounded, filtered ParaCrawl v9 sample. A real-source
+smoke mixture prepared 2,000 Tatoeba + 2,000 ParaCrawl pairs with zero exact
+cross-split overlap and zero near-duplicate train leaks; a tokenizer and a
+10-update CPU model ran end to end. **No model was trained on these sources in
+this iteration**, so there is no new translation-quality claim. The four
+comparable recipes are `configs/scaled_full.yaml`,
+`configs/scaled_full_tatoeba.yaml`, `configs/scaled_full_paracrawl.yaml` and
+`configs/scaled_full_combined.yaml`; see `docs/DATA_CARD.md` for the exact
+commands, licensing, filtering statistics and limitations. The ordered next
+steps are tracked in [`docs/TODO.md`](docs/TODO.md).
 
 ## What "from scratch" means here
 
@@ -60,10 +89,11 @@ java/                Maven module: ONNX Runtime Java inference library + CLI
 configs/             architecture/recipe presets (smoke, cpu_small,
                      existing_accelerator, scaled_accelerator, compact)
 scripts/             fixture generation, Java golden vectors, baseline helpers
-data/                acquisition and prepared manifests (raw archives git-ignored)
+data/                acquisition/prepared manifests, raw archives git-ignored;
+                     data/review/ holds the authored everyday review set
 models/              tokenizer, pilot checkpoints, exported packages (git-ignored)
 reports/             hardware, training, evaluation, parity and benchmark JSON
-docs/                decisions, data card, model card
+docs/                decisions, data card, model card, TODO
 ```
 
 ## Quick start
@@ -113,6 +143,17 @@ $PY scripts/compare_scaled_full.py \
   --title "Resumed scaled checkpoint on full newstest2014" \
   --out reports/newstest2014.scaled_resumed.comparisons.json \
   --markdown reports/newstest2014.scaled_resumed.comparisons.md
+# After models/scaled_full/training_report.json exists, compare its dev-selected
+# best checkpoint directly with scaled step 18,000 on the same full test rows.
+# The wrapper waits for training, runs greedy + beam-4 in both directions, and
+# writes reports/newstest2014.scaled_full.comparisons.{json,md}.
+bash scripts/evaluate_full.sh
+# 5c. After that evaluation, continue the same model from its 350M-token
+#     checkpoint to 800M. The wrapper waits for the current report, preserves
+#     the pre-extension report/checkpoints, and resumes without reinitializing.
+#     Its 24-hour walltime is a per-invocation budget; token and step limits
+#     are cumulative.
+bash scripts/extend_full_data.sh
 # Export and verify the scaled package separately; it is not the default.
 $PY -m nmt.cli export --config configs/scaled_accelerator.yaml \
   --checkpoint models/scaled_pilot/best.pt --tokenizer models/cpu_small/tokenizer \
@@ -264,7 +305,13 @@ truncated.
 | Scaled 19.8M step 14,000 (archived), greedy | 18.92 | 45.73 | 17.86 | 45.42 |
 | Scaled 19.8M step 14,000, tuned beam 4 | 20.67 | 47.22 | 19.41 | 46.92 |
 | Scaled 19.8M step 18,000, greedy | 20.01 | 47.04 | 19.02 | 46.70 |
-| Scaled 19.8M step 18,000, tuned beam 4 | **21.24** | **48.44** | **20.30** | **48.15** |
+| Scaled 19.8M step 18,000, tuned beam 4 | 21.24 | 48.44 | 20.30 | 48.15 |
+| Full-data 19.8M step 38,000 (350M baseline), greedy | 22.66 | 49.05 | 21.26 | 48.76 |
+| Full-data 19.8M step 38,000 (350M baseline), tuned beam 4 | 24.08 | 50.32 | 22.15 | 49.88 |
+| Full-data 19.8M step 77,000 (800M best), greedy | 25.02 | 51.07 | 23.33 | 50.60 |
+| Full-data 19.8M step 77,000 (800M best), tuned beam 4 | 26.28 | 52.25 | 23.90 | 51.46 |
+| Full-data 19.8M step 91,691 final (800M), greedy | **25.37** | **51.39** | **23.56** | **50.83** |
+| Full-data 19.8M step 91,691 final (800M), tuned beam 4 | **26.44** | **52.53** | **24.38** | **51.90** |
 
 The step-14,500 tuned beam row is the full-set comparison from
 `reports/beam_tuned_step14500.md`: beam 4, length penalty 1.2, minimum 16 new
@@ -282,8 +329,8 @@ The same beam settings on the final step-15,897 checkpoint give full-set
 comparison, not a human evaluation. See
 `reports/newstest2014.82m.final_beam4.comparisons.md`.
 
-The scaled checkpoint (`models/scaled_pilot/best.pt`, step 18,000) is the
-strongest full-set result so far. Greedy scores 20.011/47.036 EN→FR and
+The scaled checkpoint (`models/scaled_pilot/best.pt`, step 18,000) was the
+strongest full-set result before the full-data run. Greedy scores 20.011/47.036 EN→FR and
 19.018/46.698 FR→EN; beam 4 scores 21.243/48.442 and 20.300/48.152. Relative to
 the final small model, greedy gains are +7.901/+6.849 BLEU and +7.577/+7.170
 chrF++ (95% CIs [7.264, 7.896] and [6.863, 7.490]); beam gains are
@@ -295,6 +342,28 @@ and +0.573/+0.886 BLEU and +1.226/+1.237 chrF++ beam 4. This is a larger-model
 plus more-data experiment, not a clean single-factor ablation. It is automatic
 metrics only; no human evaluation. See
 `reports/newstest2014.scaled_resumed.comparisons.md`.
+
+The full-data 350M checkpoint (`models/scaled_full/best.pre_extend.pt`, step
+38,000) now leads on all four full-set evaluations against scaled step 18,000.
+Greedy scores 22.655/49.045 EN→FR and 21.260/48.755 FR→EN; beam 4 scores
+24.079/50.318 and 22.145/49.882. Against scaled step 18,000, BLEU gains are
++2.644/+2.242 greedy and +2.836/+1.845 beam 4; chrF++ gains are +2.009/+2.057
+and +1.876/+1.730. The paired 95% intervals for chrF++ are [1.742, 2.302],
+[1.783, 2.310], [1.633, 2.113] and [1.496, 1.977]; all four exclude zero.
+Sentence chrF++ W/L/T is 1,819/1,065/75 and 1,780/1,084/95 EN→FR, and
+1,823/1,022/77 and 1,773/1,047/102 FR→EN, so the gain is not uniform at sentence
+level. These are automatic metrics only; no human evaluation. See
+`reports/newstest2014.scaled_full.comparisons.md`.
+
+The 800M continuation's final checkpoint (`models/scaled_full/checkpoint.pt`,
+step 91,691) is higher than the 350M baseline in all four evaluations:
++2.712/+2.298 BLEU and +2.346/+2.075 chrF++ greedy, +2.361/+2.232 BLEU and
++2.213/+2.020 chrF++ beam 4. The paired chrF++ 95% intervals are [2.106, 2.587],
+[1.859, 2.282], [1.998, 2.451] and [1.801, 2.253]; all exclude zero. The
+dev-selected 77,000 checkpoint is also above baseline; the final test scores are
+slightly higher than that best, but dev preferred 77,000 and final-vs-best was
+not bootstrap-tested. See
+`reports/newstest2014.scaled_full_800m.comparisons.md`.
 
 The final step-15,897 checkpoint was evaluated after selection; it improves on
 the step-14,500 candidate by +0.79/+0.67 chrF++ (95% CIs [0.58, 1.01] and
@@ -319,6 +388,10 @@ comparisons are archived in `reports/newstest2014.comparisons.json`:
 | Scaled step 18,000 vs final step 15,897, greedy | +7.58 [7.26, 7.90] | +7.17 [6.86, 7.49] |
 | Scaled step 18,000 vs final step 15,897, beam 4 | +7.08 [6.79, 7.37] | +6.70 [6.42, 6.98] |
 | Scaled step 18,000 beam 4 vs scaled greedy | +1.41 [1.21, 1.61] | +1.45 [1.28, 1.63] |
+| Full-data step 38,000 vs step 18,000, greedy | +2.01 [1.74, 2.30] | +2.06 [1.78, 2.31] |
+| Full-data step 38,000 vs step 18,000, beam 4 | +1.88 [1.63, 2.11] | +1.73 [1.50, 1.98] |
+| 800M final step 91,691 vs full-data 350M step 38,000, greedy | +2.35 [2.11, 2.59] | +2.08 [1.86, 2.28] |
+| 800M final step 91,691 vs full-data 350M step 38,000, beam 4 | +2.21 [2.00, 2.45] | +2.02 [1.80, 2.25] |
 
 A 200-example AI-assisted packet review (100 per direction) of the **step-14,500
 checkpoint** found **43/200 acceptable** (3 OK, 40 MINOR), 107 MAJOR and 50
@@ -371,14 +444,23 @@ these results are not evidence of usable general translation.
 
 ## Data and licensing
 
-Training data: Europarl v7 (FR–EN) plus WMT14 News Commentary v9, fetched from
-statmt.org, SHA-256 pinned in `data/prepared/*/manifest.json`. Splits are opaque
-contiguous 200-pair blocks hashed 98/1/1 with cross-split EN/FR overlap removal
-and assertions (`contamination_report.json`). The tokenizer saw training text
-only. Final evaluation uses newstest2014 (wmt14/full) in both directions; the
-reverse direction is the same bilingual set with sides swapped, not a separately
+Training data for the reported models: Europarl v7 (FR–EN) plus WMT14 News
+Commentary v9, fetched from statmt.org, SHA-256 pinned in
+`data/prepared/*/manifest.json`. Splits are opaque contiguous 200-pair blocks
+hashed 98/1/1 with cross-split EN/FR overlap removal and assertions
+(`contamination_report.json`). The tokenizer saw training text only. Final
+evaluation uses newstest2014 (wmt14/full) in both directions; the reverse
+direction is the same bilingual set with sides swapped, not a separately
 published benchmark. Q4/2000 Europarl material is reserved. Segments above the
 source limit are dropped and counted, never silently truncated.
+
+The optional everyday-language preparation adds Tatoeba weekly sentence/link
+files (CC BY 2.0 FR by default, some rows CC0) and a bounded ParaCrawl v9 TXT
+prefix (CC0 packaging; underlying website text rights are not asserted). The
+new source totals, checksums and filtering statistics are recorded by
+`nmt.cli prepare-mixture` in the output manifest. These sources are not part of
+the measured models above. Raw archives are not redistributed; attribution and
+limitations are in `NOTICE` and `docs/DATA_CARD.md`.
 
 Corpus terms are **not** permissive by default: Europarl's original terms allow
 use but not blanket redistribution, WMT distribution does not grant every
@@ -409,17 +491,29 @@ constraints recorded in the model card.
   checkpoint is stronger on automatic metrics but remains a pilot; it is
   exported separately for Java verification, and no human evaluation was
   performed for it.
+- The 800M continuation used about 2.3x the 350M token budget for roughly
+  +2.4 BLEU average on newstest2014. Dev peaked at step 77,000 (56.0833 chrF++)
+  and did not improve after; the final test scores are slightly above the best,
+  but that small difference was not bootstrap-tested. No ONNX export or Java
+  parity was run for the full-data or 800M checkpoints. It has no human review.
 - API-assisted review is a 25-row-per-direction spot check with an unofficial
   no-key Google endpoint. It is not a full benchmark, COMET, or human review.
+- Tatoeba and ParaCrawl are preparation-only in this iteration. The smoke run
+  proves the acquisition/filter/split/tokenizer/training plumbing, not a
+  quality gain. ParaCrawl is a bounded prefix, not a uniform sample of the
+  21 GiB release, and its TXT has no per-row quality score. See
+  `docs/DATA_CARD.md` and `reports/data_expansion_smoke.md`.
 
 ## Verification actually run
 
-- `pytest -q`: **34 passed** on CPU, covering tokenizer parity, masking, causal
+- `pytest -q`: **42 passed** on CPU, covering tokenizer parity, masking, causal
   decoder behavior, padding, memorization, resume determinism, ONNX export,
   Python↔ONNX Runtime parity, beam-search validity/exploration, batched/single
-  beam parity, and minimum-length EOS blocking. Review-harness tests cover
-  UTF-8 chunking, provider response parsing, provider-scoped caches, dry-run
-  output, and report alignment.
+  beam parity, minimum-length EOS blocking, Tatoeba/ParaCrawl parsing, language
+  and repetition filtering, cross-source deduplication, near-duplicate
+  detection, review-set manifests, and a real-source smoke mixture. Review-harness
+  tests cover UTF-8 chunking, provider response parsing, provider-scoped caches,
+  dry-run output, and report alignment.
 - `mvn -B package -Dtranscend.model.dir=../models/accel_export`: **10 tests, 0
   failures**, including the Java↔Python greedy parity tests.
 - The same 10-test suite passed against
@@ -459,6 +553,12 @@ constraints recorded in the model card.
   beam gains are +6.788/+6.187 BLEU and +7.077/+6.700 chrF++ (all paired 95%
   intervals exclude zero). See
   `reports/newstest2014.scaled_resumed.comparisons.md`. Automatic metrics only.
+- Full newstest2014 full-data 800M evaluation, greedy and beam-4, both directions
+  (2,959/2,922 retained): final step 91,691 scores 25.367/51.391 EN→FR and
+  23.558/50.830 FR→EN greedy, and 26.440/52.531 and 24.377/51.902 beam 4.
+  Against the preserved 350M baseline, all four BLEU and chrF++ deltas are
+  positive with 95% chrF++ intervals excluding zero. See
+  `reports/newstest2014.scaled_full_800m.comparisons.md`. Automatic metrics only.
 - The scaled step-18,000 package at `models/scaled_export` has 12 files /
   237,211,722 B. Python↔ONNX parity passed with worst max-absolute logit
   difference 6.44e-6 and identical greedy generation; the 10-test Java suite

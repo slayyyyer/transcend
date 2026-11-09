@@ -20,6 +20,8 @@ from .data.build import (
     train_tokenizer,
 )
 from .data.dataset import Example
+from .data.mixture import prepare_expanded_corpus
+from .data.review import prepare_review_set
 from .decode import DecodeOptions, beam_search_batch, greedy_decode_batch
 from .evaluate import corpus_scores, paired_bootstrap, summarize
 from .export_onnx import export_model
@@ -139,8 +141,20 @@ def cmd_prepare(args) -> int:
             max_pairs=args.max_pairs,
             block_size=args.block_size,
             max_download_gib=args.max_download_gib,
+            europarl_stride=args.europarl_stride,
+            news_commentary_stride=args.news_commentary_stride,
         )
         print(f"europarl_nc: {manifest['counts']}")
+    if args.source == "europarl_full":
+        manifest = prepare_training_corpus(
+            out / "europarl_full",
+            max_pairs=args.max_pairs,
+            block_size=args.block_size,
+            max_download_gib=args.max_download_gib,
+            europarl_stride=args.europarl_stride or 1,
+            news_commentary_stride=args.news_commentary_stride or 1,
+        )
+        print(f"europarl_full: {manifest['counts']}")
     if args.source in ("newstest2014", "all"):
         manifest = prepare_newstest(out / "newstest2014", max_download_gib=args.max_download_gib)
         print(f"newstest2014: {manifest['segments']} segments, {manifest['documents']} documents")
@@ -160,6 +174,46 @@ def cmd_tokenizer(args) -> int:
     return 0
 
 
+def cmd_prepare_mixture(args) -> int:
+    manifest = prepare_expanded_corpus(
+        Path(args.out),
+        base_dir=Path(args.base),
+        include_tatoeba=args.include_tatoeba,
+        include_paracrawl=args.include_paracrawl,
+        tatoeba_max_pairs=args.tatoeba_max_pairs,
+        paracrawl_max_pairs=args.paracrawl_max_pairs,
+        paracrawl_max_bytes=args.paracrawl_max_bytes,
+        max_download_gib=args.max_download_gib,
+        block_size=args.block_size,
+        seed=args.seed,
+        max_char_ratio=args.max_char_ratio,
+        max_word_ratio=args.max_word_ratio,
+        near_duplicate_threshold=args.near_duplicate_threshold,
+        review_dir=Path(args.review_dir) if args.review_dir else None,
+        audit_base_near_duplicates=not args.skip_base_near_audit,
+    )
+    print(
+        json.dumps(
+            {
+                "out": args.out,
+                "counts": manifest["counts"],
+                "added_counts": manifest["added_counts"],
+                "sampling": manifest["sampling"],
+                "assertions": manifest["assertions"],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_prepare_review(args) -> int:
+    manifest = prepare_review_set(Path(args.out), source_path=Path(args.source))
+    print(json.dumps(manifest, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_train(args) -> int:
     tokenizer = ByteBPETokenizer.load(Path(args.tokenizer))
     experiment, _ = _experiment_and_tokenizer(Path(args.config), Path(args.tokenizer), Path(args.resume) if args.resume else None)
@@ -174,6 +228,7 @@ def cmd_train(args) -> int:
         max_walltime_s=args.max_walltime,
         max_steps=args.max_steps,
         max_train_tokens=args.max_train_tokens,
+        patience=args.patience,
         calibrate=args.calibrate,
         calibrate_updates=args.calibrate_updates,
     )
@@ -381,12 +436,56 @@ def build_parser() -> argparse.ArgumentParser:
     hardware.set_defaults(func=cmd_hardware)
 
     prepare = sub.add_parser("prepare", help="acquire and prepare corpora")
-    prepare.add_argument("--source", default="all", choices=["fixtures", "europarl_nc", "newstest2014", "all"])
+    prepare.add_argument(
+        "--source",
+        default="all",
+        choices=["fixtures", "europarl_nc", "europarl_full", "newstest2014", "all"],
+    )
     prepare.add_argument("--out", default="data/prepared")
     prepare.add_argument("--max-pairs", type=int, default=300_000)
+    prepare.add_argument(
+        "--europarl-stride",
+        type=int,
+        default=None,
+        help="use every Nth Europarl aligned pair; overrides max-pairs sampling for Europarl",
+    )
+    prepare.add_argument(
+        "--news-commentary-stride",
+        type=int,
+        default=None,
+        help="use every Nth News Commentary pair; overrides max-pairs sampling for NC",
+    )
     prepare.add_argument("--block-size", type=int, default=200)
     prepare.add_argument("--max-download-gib", type=float, default=5.0)
     prepare.set_defaults(func=cmd_prepare)
+
+    mixture = sub.add_parser(
+        "prepare-mixture",
+        help="add Tatoeba and/or bounded ParaCrawl to an existing prepared baseline",
+    )
+    mixture.add_argument("--base", default="data/prepared/europarl_full")
+    mixture.add_argument("--out", required=True)
+    mixture.add_argument("--include-tatoeba", action="store_true")
+    mixture.add_argument("--include-paracrawl", action="store_true")
+    mixture.add_argument("--tatoeba-max-pairs", type=int, default=100_000)
+    mixture.add_argument("--paracrawl-max-pairs", type=int, default=100_000)
+    mixture.add_argument("--paracrawl-max-bytes", type=int, default=64 * 1024 * 1024)
+    mixture.add_argument("--max-download-gib", type=float, default=5.0)
+    mixture.add_argument("--block-size", type=int, default=200)
+    mixture.add_argument("--seed", type=int, default=1337)
+    mixture.add_argument("--max-char-ratio", type=float, default=3.0)
+    mixture.add_argument("--max-word-ratio", type=float, default=4.0)
+    mixture.add_argument("--near-duplicate-threshold", type=float, default=0.85)
+    mixture.add_argument("--review-dir", default="data/prepared/everyday_review")
+    mixture.add_argument("--skip-base-near-audit", action="store_true")
+    mixture.set_defaults(func=cmd_prepare_mixture)
+
+    review = sub.add_parser(
+        "prepare-review", help="prepare the separate everyday-language review set"
+    )
+    review.add_argument("--source", default="data/review/everyday_review.tsv")
+    review.add_argument("--out", default="data/prepared/everyday_review")
+    review.set_defaults(func=cmd_prepare_review)
 
     tokenizer = sub.add_parser("tokenizer", help="train the joint tokenizer on the train split only")
     tokenizer.add_argument("--train-dir", required=True)
@@ -408,6 +507,7 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("--max-walltime", type=int, default=None)
     train.add_argument("--max-steps", type=int, default=None)
     train.add_argument("--max-train-tokens", type=int, default=None)
+    train.add_argument("--patience", type=int, default=None)
     train.add_argument("--calibrate", action="store_true")
     train.add_argument("--calibrate-updates", type=int, default=30)
     train.set_defaults(func=cmd_train)

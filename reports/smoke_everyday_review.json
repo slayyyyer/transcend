@@ -1,0 +1,52 @@
+{
+  "beam_size": 1,
+  "benchmark": "data/prepared/everyday_review/everyday_review.en-fr.jsonl",
+  "comparisons": {},
+  "direction": "en-fr",
+  "doc_ids": [
+    ""
+  ],
+  "documents": null,
+  "length_penalty": 1.0,
+  "min_new_tokens": 0,
+  "models": {
+    "smoke": {
+      "checkpoint": "models/smoke_everyday/run/checkpoint.pt",
+      "hypotheses": [
+        "                                                                        "
+      ],
+      "scores": {
+        "bleu": 0.0,
+        "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+        "chrfpp": 0.0,
+        "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+        "n": 1
+      },
+      "step": 10
+    }
+  },
+  "n": 1,
+  "references": [
+    "Où est la pharmacie la plus proche ?"
+  ],
+  "skipped_overlength": {
+    "details": [],
+    "n": 0
+  },
+  "source_copy": {
+    "hypotheses": [
+      "Where is the nearest pharmacy?"
+    ],
+    "scores": {
+      "bleu": 5.816,
+      "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+      "chrfpp": 21.095,
+      "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+      "n": 1
+    }
+  },
+  "source_token_limit": 64,
+  "sources": [
+    "Where is the nearest pharmacy?"
+  ]
+}

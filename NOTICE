@@ -1,7 +1,7 @@
 NOTICES AND RIGHTS
 ==================
 
-This repository separates three kinds of material.
+This repository separates four kinds of material.
 
 1. Source code (`nmt/`, `java/`, `scripts/`, `configs/`, `tests/`)
    Copyright 2026 the project authors. Released under the MIT licence
@@ -22,9 +22,22 @@ This repository separates three kinds of material.
    The newstest2014 evaluation set is WMT14 task data and is used for scoring
    only.
 
+   The optional everyday-language preparation adds:
+     * Tatoeba weekly sentence/link exports. Tatoeba sentence text is CC BY 2.0
+       FR by default, with some rows also CC0 1.0. Attribution to Tatoeba
+       (https://tatoeba.org) and its contributors is required; sentence IDs are
+       retained in derived pair IDs. The weekly files do not carry a per-row
+       license column.
+     * ParaCrawl v9 EN-FR packaging, released under CC0 1.0. ParaCrawl states
+       that it does not own the underlying website text; no right to that text
+       is asserted here. Acknowledge ParaCrawl (https://paracrawl.eu) and cite
+       *ParaCrawl: Web-Scale Acquisition of Parallel Corpora* (ACL 2020). The
+       repository uses only a bounded compressed prefix, not the full release.
+   No model reported in this repository was trained on these optional sources.
+
    Therefore:
      * raw corpora are NOT redistributed here; they are downloaded by
-       `python -m nmt.cli prepare` and are git-ignored;
+       `python -m nmt.cli prepare` or `prepare-mixture` and are git-ignored;
      * trained model weights derived from those corpora inherit their unresolved
        status and are published as research artifacts only, not for commercial
        redistribution;
@@ -33,6 +46,13 @@ This repository separates three kinds of material.
    If you need a commercially redistributable translator, you must re-run this
    pipeline on data whose terms allow it. The code supports that; the data
    choice does not.
+
+4. Everyday review set (`data/review/everyday_review.tsv`)
+   Project-authored prompts and draft French references, released under
+   CC0-1.0. The references have NOT received qualified bilingual human review;
+   the generated manifest must retain `human_reviewed: false` and the
+   `not_bilingual_human_reviewed` label. This set is evaluation-only and is
+   excluded from training.
 
 Third-party software
 --------------------

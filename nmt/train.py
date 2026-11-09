@@ -169,6 +169,7 @@ def run_training(
     max_walltime_s: int | None = None,
     max_steps: int | None = None,
     max_train_tokens: int | None = None,
+    patience: int | None = None,
     calibrate: bool = False,
     calibrate_updates: int = 30,
 ) -> dict[str, Any]:
@@ -179,19 +180,25 @@ def run_training(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     train_pairs = select_pairs(read_split(prepared_dir, "train"), experiment.data.train_pairs, experiment.seed)
-    dev_pairs = read_split(prepared_dir, "dev")
+    train_pairs_used = len(train_pairs)
     train_examples, train_stats = build_examples(
         train_pairs,
         tokenizer,
         max_source_tokens=experiment.data.max_source_tokens,
         max_target_tokens=experiment.data.max_target_tokens,
     )
+    # The directional token arrays are the training representation. Keeping the
+    # full source strings alive as well needlessly doubles peak memory on the
+    # expanded corpus.
+    del train_pairs
+    dev_pairs = read_split(prepared_dir, "dev")
     dev_examples, dev_stats = build_examples(
         dev_pairs,
         tokenizer,
         max_source_tokens=experiment.data.max_source_tokens,
         max_target_tokens=experiment.data.max_target_tokens,
     )
+    del dev_pairs
     if not train_examples:
         raise RuntimeError("no training examples survived filtering; check token limits")
 
@@ -247,6 +254,9 @@ def run_training(
         max_train_tokens=max_train_tokens or experiment.train.max_train_tokens,
         max_walltime_s=max_walltime_s or experiment.train.max_walltime_s,
     )
+    patience = patience if patience is not None else experiment.train.patience
+    if patience < 1:
+        raise ValueError("patience must be positive")
 
     run_manifest = {
         "experiment": experiment.name,
@@ -260,7 +270,7 @@ def run_training(
         "initialization": INITIALIZATION_MANIFEST,
         "data": {
             "train_pairs_requested": experiment.data.train_pairs,
-            "train_pairs_used": len(train_pairs),
+            "train_pairs_used": train_pairs_used,
             "train_examples": len(train_examples),
             "dev_examples": len(dev_examples),
             "train_stats": train_stats.as_dict(),
@@ -280,6 +290,7 @@ def run_training(
             "max_steps": limits.max_steps,
             "max_train_tokens": limits.max_train_tokens,
             "max_walltime_s": limits.max_walltime_s,
+            "patience": patience,
             "per_update_target_tokens": experiment.train.token_budget,
         },
         "model_config": json.loads(experiment.to_json())["model"],
@@ -437,7 +448,7 @@ def run_training(
                 f"en-fr={last_validation['directions']['en-fr']['chrfpp']} "
                 f"fr-en={last_validation['directions']['fr-en']['chrfpp']}"
             )
-            if validations_without_improvement >= experiment.train.patience:
+            if validations_without_improvement >= patience:
                 stop_reason = "early_stopping"
                 break
 
@@ -476,6 +487,7 @@ def run_training(
             "max_steps": limits.max_steps,
             "max_train_tokens": limits.max_train_tokens,
             "max_walltime_s": limits.max_walltime_s,
+            "patience": patience,
         },
     }
     write_json(output_dir / ("calibration.json" if calibrate else "training_report.json"), report)

@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections import defaultdict
 from collections import Counter
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -22,6 +23,22 @@ SGM_SEG = re.compile(r'<seg id="(\d+)">(.*?)</seg>', re.DOTALL)
 SGM_DOC = re.compile(r'<doc docid="([^"]+)"[^>]*>')
 MARKUP_MARKERS = ("<seg ", "<doc ", "</doc>", "</seg>")
 
+MALFORMED_RE = re.compile(
+    r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\ufffd]|"
+    r"</?(?:html|body|div|p|br|span|a|script|style)\b|"
+    r"https?://|www\.|\{\{|\}\}|\[\[|\]\]|&#\d+;|&[a-z][a-z0-9]+;",
+    re.IGNORECASE,
+)
+REPEATED_CHAR_RE = re.compile(r"([^\W\d_])\1{5,}", re.UNICODE)
+WORD_RE = re.compile(r"[\w'’‑-]+", re.UNICODE)
+
+EN_STOP = frozenset(
+    "a an and are as at be been but by can could did do does for from had has have he her his how i if in into is it its me more most my no not of on one only or other our out she should so some than that the their them there these they this those to two up us was we were what when where which who why will with would you your".split()
+)
+FR_STOP = frozenset(
+    "a ai au aux avec ce ces cette comme comment dans de des du elle en est et eu fait faire faites fois il ils je la le les leur lui ma mais me mes moi mon ne nos notre nous on ou où par pas peu plus pour que quel quelle qui sa se ses si son sur ta te tes toi ton tu un une vos votre vous y été être".split()
+)
+
 
 @dataclass
 class Pair:
@@ -29,6 +46,7 @@ class Pair:
     block: int
     en: str
     fr: str
+    source: str = ""
 
 
 @dataclass
@@ -42,6 +60,10 @@ class CleanStats:
     dropped_markup: int = 0
     dropped_too_long: int = 0
     dropped_duplicate: int = 0
+    dropped_language: int = 0
+    dropped_malformed: int = 0
+    dropped_repetition: int = 0
+    dropped_length_mismatch: int = 0
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -60,7 +82,15 @@ def read_tsv(path: Path, *, has_header: bool = False) -> list[Pair]:
         if len(parts) != 3:
             raise ValueError(f"{path}: expected 3 tab-separated columns, got {len(parts)}")
         pair_id, en, fr = parts
-        pairs.append(Pair(pair_id=pair_id, block=int(hashlib.sha256(pair_id.encode()).hexdigest()[:8], 16), en=en, fr=fr))
+        pairs.append(
+            Pair(
+                pair_id=pair_id,
+                block=int(hashlib.sha256(pair_id.encode()).hexdigest()[:8], 16),
+                en=en,
+                fr=fr,
+                source=pair_id.split(":", 1)[0],
+            )
+        )
     return pairs
 
 
@@ -92,6 +122,7 @@ def read_parallel(
                 block=index // block_size,
                 en=en,
                 fr=fr,
+                source=source,
             )
         )
     return pairs
@@ -137,6 +168,9 @@ def clean_pairs(
     min_chars: int = 1,
     max_chars: int = 4000,
     max_char_ratio: float = 3.0,
+    max_word_ratio: float = 5.0,
+    quality_filter: bool = False,
+    language_filter: bool = False,
 ) -> tuple[list[Pair], CleanStats]:
     stats = CleanStats(input_pairs=len(pairs))
     seen: set[tuple[str, str]] = set()
@@ -163,14 +197,233 @@ def clean_pairs(
         if ratio > max_char_ratio or ratio < 1.0 / max_char_ratio:
             stats.dropped_ratio += 1
             continue
+        if quality_filter:
+            if MALFORMED_RE.search(en) or MALFORMED_RE.search(fr):
+                stats.dropped_malformed += 1
+                continue
+            if _is_repetitive(en) or _is_repetitive(fr):
+                stats.dropped_repetition += 1
+                continue
+            en_words = WORD_RE.findall(en)
+            fr_words = WORD_RE.findall(fr)
+            if not en_words or not fr_words:
+                stats.dropped_malformed += 1
+                continue
+            word_ratio = len(en_words) / len(fr_words)
+            if word_ratio > max_word_ratio or word_ratio < 1.0 / max_word_ratio:
+                stats.dropped_length_mismatch += 1
+                continue
+            if max(len(en_words), len(fr_words)) > 40 and min(len(en_words), len(fr_words)) < 3:
+                stats.dropped_length_mismatch += 1
+                continue
+        if language_filter:
+            if not language_ok(en, "en") or not language_ok(fr, "fr"):
+                stats.dropped_language += 1
+                continue
         key = (en, fr)
         if key in seen:
             stats.dropped_duplicate += 1
             continue
         seen.add(key)
-        kept.append(Pair(pair_id=pair.pair_id, block=pair.block, en=en, fr=fr))
+        kept.append(Pair(pair_id=pair.pair_id, block=pair.block, en=en, fr=fr, source=pair.source))
     stats.kept = len(kept)
     return kept, stats
+
+
+def _is_repetitive(text: str) -> bool:
+    if REPEATED_CHAR_RE.search(text):
+        return True
+    words = [word.casefold() for word in WORD_RE.findall(text)]
+    if len(words) >= 4 and max(Counter(words).values()) >= 4:
+        return True
+    for n in (2, 3):
+        if len(words) >= 3 * n:
+            grams = [tuple(words[i : i + n]) for i in range(len(words) - n + 1)]
+            if any(grams.count(gram) >= 3 for gram in set(grams)):
+                return True
+    return False
+
+
+def language_scores(text: str) -> tuple[int, int]:
+    """Return rough English/French marker counts; a guard, not a language ID model."""
+    words = [word.casefold() for word in WORD_RE.findall(normalize_text(text))]
+    return sum(word in EN_STOP for word in words), sum(word in FR_STOP for word in words)
+
+
+def language_ok(text: str, language: str) -> bool:
+    words = WORD_RE.findall(normalize_text(text))
+    if len(words) < 3:
+        # Short strings cannot be identified reliably. Tatoeba's language tags
+        # are authoritative; this helper is only used for ParaCrawl.
+        return True
+    en, fr = language_scores(text)
+    if language == "en":
+        return en >= 1 and en >= fr
+    return fr >= 1 and fr >= en
+
+
+def dedup_text(text: str, *, aggressive: bool = True) -> str:
+    key = normalize_text(text).casefold()
+    if aggressive:
+        key = re.sub(r"[^\w]+", " ", key, flags=re.UNICODE).strip()
+    return key
+
+
+def deduplicate_pairs(pairs: list[Pair], *, aggressive: bool = True) -> tuple[list[Pair], dict]:
+    """Keep the first occurrence of each pair, including reversed duplicates."""
+    seen: set[tuple[str, str]] = set()
+    kept: list[Pair] = []
+    removed_by_source: Counter = Counter()
+    for pair in pairs:
+        en_key = dedup_text(pair.en, aggressive=aggressive)
+        fr_key = dedup_text(pair.fr, aggressive=aggressive)
+        key = tuple(sorted((en_key, fr_key)))
+        if key in seen:
+            removed_by_source[pair.source or "unknown"] += 1
+            continue
+        seen.add(key)
+        kept.append(pair)
+    return kept, {
+        "removed_duplicate": len(pairs) - len(kept),
+        "removed_by_source": dict(sorted(removed_by_source.items())),
+        "key": "casefolded normalized sides, punctuation removed, reversed pairs unified"
+        if aggressive
+        else "exact normalized pair",
+    }
+
+
+def cap_pairs(
+    pairs: list[Pair],
+    max_pairs: int,
+    *,
+    seed: int = 1337,
+    by_block: bool = False,
+) -> tuple[list[Pair], dict]:
+    """Deterministically cap a source. Grouped caps never split a Tatoeba group."""
+    if max_pairs <= 0 or len(pairs) <= max_pairs:
+        return list(pairs), {
+            "requested": max_pairs,
+            "available": len(pairs),
+            "kept": len(pairs),
+            "by_block": by_block,
+        }
+    if not by_block:
+        ranked = sorted(
+            pairs, key=lambda pair: hashlib.sha256(f"{seed}:{pair.pair_id}".encode()).hexdigest()
+        )
+        kept = ranked[:max_pairs]
+        return kept, {
+            "requested": max_pairs,
+            "available": len(pairs),
+            "kept": len(kept),
+            "by_block": False,
+        }
+    groups: dict[int, list[Pair]] = defaultdict(list)
+    for pair in pairs:
+        groups[pair.block].append(pair)
+    order = sorted(
+        groups, key=lambda block: hashlib.sha256(f"{seed}:block:{block}".encode()).hexdigest()
+    )
+    kept: list[Pair] = []
+    for block in order:
+        group = groups[block]
+        if kept and len(kept) + len(group) > max_pairs:
+            continue
+        kept.extend(group)
+        if len(kept) >= max_pairs:
+            break
+    return kept, {
+        "requested": max_pairs,
+        "available": len(pairs),
+        "kept": len(kept),
+        "by_block": True,
+        "blocks_available": len(groups),
+    }
+
+
+def _near_shingles(text: str, n: int = 3) -> frozenset[str]:
+    normalized = re.sub(r"[^\w]+", " ", normalize_text(text).casefold(), flags=re.UNICODE).strip()
+    tokens = normalized.split()
+    if len(tokens) >= n:
+        return frozenset(" ".join(tokens[i : i + n]) for i in range(len(tokens) - n + 1))
+    return frozenset([normalized]) if normalized else frozenset()
+
+
+class NearDuplicateIndex:
+    """Small word-shingle index for approximate held-out contamination checks."""
+
+    def __init__(self, texts: list[str], *, max_postings: int = 200):
+        self.shingles = [_near_shingles(text) for text in texts]
+        postings: dict[str, list[int]] = defaultdict(list)
+        for index, shingles in enumerate(self.shingles):
+            for shingle in shingles:
+                postings[shingle].append(index)
+        self.postings = {
+            shingle: indices
+            for shingle, indices in postings.items()
+            if len(indices) <= max_postings
+        }
+
+    def match(self, text: str, *, threshold: float = 0.85, max_candidates: int = 100) -> tuple[int, float] | None:
+        shingles = _near_shingles(text)
+        if not shingles:
+            return None
+        candidates: Counter = Counter()
+        for shingle in shingles:
+            for index in self.postings.get(shingle, ()):
+                candidates[index] += 1
+        for index, _ in candidates.most_common(max_candidates):
+            other = self.shingles[index]
+            union = len(shingles | other)
+            if union and len(shingles & other) / union >= threshold:
+                return index, len(shingles & other) / union
+        return None
+
+
+def filter_near_duplicates(
+    pairs: list[Pair],
+    held_out: list[Pair],
+    *,
+    threshold: float = 0.85,
+    max_postings: int = 200,
+) -> tuple[list[Pair], dict]:
+    if threshold <= 0 or threshold > 1:
+        raise ValueError("near-duplicate threshold must be in (0, 1]")
+    en_index = NearDuplicateIndex([pair.en for pair in held_out], max_postings=max_postings)
+    fr_index = NearDuplicateIndex([pair.fr for pair in held_out], max_postings=max_postings)
+    kept: list[Pair] = []
+    removed_by_source: Counter = Counter()
+    removed_by_side: Counter = Counter()
+    examples: list[dict] = []
+    for pair in pairs:
+        en_match = en_index.match(pair.en, threshold=threshold)
+        fr_match = fr_index.match(pair.fr, threshold=threshold)
+        if en_match is None and fr_match is None:
+            kept.append(pair)
+            continue
+        source = pair.source or "unknown"
+        removed_by_source[source] += 1
+        side = "en" if en_match is not None else "fr"
+        removed_by_side[side] += 1
+        if len(examples) < 20:
+            examples.append(
+                {
+                    "pair_id": pair.pair_id,
+                    "source": source,
+                    "side": side,
+                    "similarity": round((en_match or fr_match)[1], 4),  # type: ignore[index]
+                }
+            )
+    return kept, {
+        "threshold": threshold,
+        "checked_pairs": len(pairs),
+        "held_out_pairs": len(held_out),
+        "removed": len(pairs) - len(kept),
+        "removed_by_source": dict(sorted(removed_by_source.items())),
+        "removed_by_side": dict(sorted(removed_by_side.items())),
+        "examples": examples,
+        "method": "word 3-gram Jaccard; exact normalized matches also score 1.0",
+    }
 
 
 def assign_split(block: int, salt: str, *, dev_permyriad: int = 100, test_permyriad: int = 100) -> str:

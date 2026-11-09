@@ -1,0 +1,210 @@
+{
+  "packet": "reports\\review_packet_scaled_full_20",
+  "created_utc": "2026-11-09T02:03:03+00:00",
+  "total_rows": 20,
+  "counts": {
+    "en-fr": 10,
+    "fr-en": 10
+  },
+  "model": {
+    "label": "scaled_full",
+    "step": 38000,
+    "checkpoint": "models\\scaled_full\\best.pt",
+    "sha256": "fee0f72cfc4556f03fd6820157cc9c530c41f0a6db67153f8185d1e92b813277"
+  },
+  "decoding": {
+    "beam_size": 4,
+    "length_penalty": 1.2,
+    "min_new_tokens": 16
+  },
+  "sampling": {
+    "seed": 20261107,
+    "per_direction": 10,
+    "diagnostic_quota_per_direction": 2,
+    "policy": "deterministic SHA-256 ranking with diagnostic-marker stratification"
+  },
+  "reports": {
+    "en-fr": {
+      "path": "reports\\newstest2014.scaled_full.beam4.en-fr.full.json",
+      "sha256": "d7dc7ab372444d489c8d8e2bed51b0dfc88382180c44f4ac38e31ee51b2a7b01",
+      "segments": 2959,
+      "documents": 176,
+      "selected_ids": [
+        "en-fr:38",
+        "en-fr:361",
+        "en-fr:891",
+        "en-fr:1061",
+        "en-fr:2103",
+        "en-fr:2268",
+        "en-fr:2471",
+        "en-fr:2475",
+        "en-fr:2598",
+        "en-fr:2932"
+      ],
+      "diagnostic_quota": 2
+    },
+    "fr-en": {
+      "path": "reports\\newstest2014.scaled_full.beam4.fr-en.full.json",
+      "sha256": "87413389aecda4a715947c945273556e669f3699ae4430fc553b63666ce30527",
+      "segments": 2922,
+      "documents": 176,
+      "selected_ids": [
+        "fr-en:38",
+        "fr-en:601",
+        "fr-en:891",
+        "fr-en:1318",
+        "fr-en:1684",
+        "fr-en:1688",
+        "fr-en:1909",
+        "fr-en:1917",
+        "fr-en:2403",
+        "fr-en:2475"
+      ],
+      "diagnostic_quota": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "en-fr:38",
+      "report_index": 38,
+      "direction": "en-fr",
+      "document": "1016-latimes",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:361",
+      "report_index": 361,
+      "direction": "en-fr",
+      "document": "1205-lemondefr",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:891",
+      "report_index": 891,
+      "direction": "en-fr",
+      "document": "1676-radio-canada.ca",
+      "diagnostic_flags": "negation,name_or_acronym,pronoun"
+    },
+    {
+      "id": "en-fr:1061",
+      "report_index": 1061,
+      "direction": "en-fr",
+      "document": "1801-cyberpresse",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:2103",
+      "report_index": 2103,
+      "direction": "en-fr",
+      "document": "368-nicematin.com",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:2268",
+      "report_index": 2268,
+      "direction": "en-fr",
+      "document": "4213-reuters",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:2471",
+      "report_index": 2471,
+      "direction": "en-fr",
+      "document": "513-ledevoir",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:2475",
+      "report_index": 2475,
+      "direction": "en-fr",
+      "document": "513-ledevoir",
+      "diagnostic_flags": "negation,pronoun"
+    },
+    {
+      "id": "en-fr:2598",
+      "report_index": 2598,
+      "direction": "en-fr",
+      "document": "720-nicematin.com",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "en-fr:2932",
+      "report_index": 2932,
+      "direction": "en-fr",
+      "document": "969-news.com.au",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:38",
+      "report_index": 38,
+      "direction": "fr-en",
+      "document": "1016-latimes",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:601",
+      "report_index": 601,
+      "direction": "fr-en",
+      "document": "1354-canoe",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:891",
+      "report_index": 891,
+      "direction": "fr-en",
+      "document": "1685-newyorker.com",
+      "diagnostic_flags": "pronoun"
+    },
+    {
+      "id": "fr-en:1318",
+      "report_index": 1318,
+      "direction": "fr-en",
+      "document": "1925-abcnews",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:1684",
+      "report_index": 1684,
+      "direction": "fr-en",
+      "document": "250-reuters-fr",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:1688",
+      "report_index": 1688,
+      "direction": "fr-en",
+      "document": "2592-news.com.au",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:1909",
+      "report_index": 1909,
+      "direction": "fr-en",
+      "document": "3093-cbsnews",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:1917",
+      "report_index": 1917,
+      "direction": "fr-en",
+      "document": "3093-cbsnews",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:2403",
+      "report_index": 2403,
+      "direction": "fr-en",
+      "document": "501-croix",
+      "diagnostic_flags": ""
+    },
+    {
+      "id": "fr-en:2475",
+      "report_index": 2475,
+      "direction": "fr-en",
+      "document": "573-reuters",
+      "diagnostic_flags": "name_or_acronym,pronoun"
+    }
+  ],
+  "human_evaluation": "pending",
+  "reviewer_judgments_filled": false
+}

@@ -111,6 +111,8 @@ def prepare_training_corpus(
     block_size: int = 200,
     max_char_ratio: float = 3.0,
     max_download_gib: float = 5.0,
+    europarl_stride: int | None = None,
+    news_commentary_stride: int | None = None,
 ) -> dict:
     raw_dir = REPO_ROOT / "data" / "raw"
     acquisition = acquire(
@@ -131,10 +133,19 @@ def prepare_training_corpus(
     europarl_lines = sum(1 for _ in europarl_en.open("r", encoding="utf-8"))
     nc_lines = sum(1 for _ in nc_en.open("r", encoding="utf-8"))
     # Deterministic strides spread sampling over the whole release while keeping
-    # memory bounded on the target machine.
+    # memory bounded on the target machine. Explicit stride overrides let a
+    # controlled data-expansion run keep every aligned pair; the defaults preserve
+    # the original max-pairs sampler.
+    if europarl_stride is not None and europarl_stride < 1:
+        raise ValueError("europarl_stride must be at least 1")
+    if news_commentary_stride is not None and news_commentary_stride < 1:
+        raise ValueError("news_commentary_stride must be at least 1")
     share = 0.62
-    europarl_stride = max(1, math.ceil((europarl_lines * share) / max_pairs))
-    nc_stride = max(1, math.ceil((nc_lines * (1 - share)) / max_pairs))
+    if europarl_stride is None:
+        europarl_stride = max(1, math.ceil((europarl_lines * share) / max_pairs))
+    nc_stride = news_commentary_stride
+    if nc_stride is None:
+        nc_stride = max(1, math.ceil((nc_lines * (1 - share)) / max_pairs))
 
     pairs: list[Pair] = []
     pairs.extend(
@@ -160,7 +171,9 @@ def prepare_training_corpus(
 
     cleaned, stats = clean_pairs(pairs, min_chars=1, max_char_ratio=max_char_ratio)
     del pairs
+    cleaned_count = len(cleaned)
     splits = split_pairs(cleaned, salt="europarl-nc-v1")
+    del cleaned
     splits, leak = remove_cross_split_leakage(splits)
     assertions = assert_disjoint(splits)
     hashes = write_splits(out_dir, splits)
@@ -198,13 +211,15 @@ def prepare_training_corpus(
         "sampling": {
             "europarl_stride": europarl_stride,
             "news_commentary_stride": nc_stride,
+            "stride_overridden": europarl_stride != max(1, math.ceil((europarl_lines * share) / max_pairs))
+            or nc_stride != max(1, math.ceil((nc_lines * (1 - share)) / max_pairs)),
             "europarl_source_lines": europarl_lines,
             "news_commentary_source_lines": nc_lines,
             "pairs_before_cleaning": pair_count_before_clean,
         },
         "counts": {
             "before_cleaning": pair_count_before_clean,
-            "after_cleaning": len(cleaned),
+            "after_cleaning": cleaned_count,
             "train": len(splits["train"]),
             "dev": len(splits["dev"]),
             "test": len(splits["test"]),
