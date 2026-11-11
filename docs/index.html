@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0e766e">
-  <title>Transcend — 800M Translation Benchmark Report</title>
-  <meta name="description" content="Newstest2014 results for Transcend's completed 800M-token English↔French continuation, compared with the preserved 350M full-data checkpoint.">
+  <title>Transcend — 800M Translation Benchmark and Data Ablation</title>
+  <meta name="description" content="Newstest2014 results for Transcend's 800M-token English↔French model and its 350M Tatoeba and ParaCrawl data ablations. The 800M ParaCrawl run is in progress.">
   <link rel="canonical" href="https://slayyyyer.github.io/transcend/">
-  <meta property="og:title" content="Transcend — 800M Translation Benchmark Report">
-  <meta property="og:description" content="Newstest2014 results for Transcend's completed 800M-token English↔French continuation, compared with the preserved 350M full-data checkpoint.">
+  <meta property="og:title" content="Transcend — 800M Translation Benchmark and Data Ablation">
+  <meta property="og:description" content="Newstest2014 results for Transcend's 800M-token English↔French model and its 350M Tatoeba and ParaCrawl data ablations. The 800M ParaCrawl run is in progress.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://slayyyyer.github.io/transcend/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e766e'/%3E%3Cpath d='M18 21h28M32 21v24' stroke='%23f4f0e6' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -743,7 +743,7 @@
       .wrap { width: min(var(--max), calc(100% - 1.4rem)); }
       .site-header__inner { align-items: flex-start; padding-block: .8rem; }
       .nav { flex-wrap: wrap; justify-content: flex-end; gap: .6rem .9rem; font-size: .67rem; }
-      .nav a:nth-child(3), .nav a:nth-child(4) { display: none; }
+      .nav a:nth-child(4), .nav a:nth-child(5) { display: none; }
       h1 { font-size: clamp(3rem, 15vw, 5rem); }
       .scores, .training-grid { grid-template-columns: 1fr 1fr; }
       .score { padding: .85rem; }
@@ -806,6 +806,7 @@
       </a>
       <nav class="nav" aria-label="Report sections">
         <a href="#comparison">Comparison</a>
+        <a href="#ablation">Ablation</a>
         <a href="#training">Training</a>
         <a href="#method">Method</a>
         <a href="#examples">Examples</a>
@@ -818,12 +819,13 @@
   <main id="main">
     <section class="wrap hero" id="top">
       <div>
-        <p class="kicker">Benchmark report · 09 November 2026</p>
+        <p class="kicker">Benchmark report · updated 11 November 2026</p>
         <h1>The 800M run,<br><em>measured.</em></h1>
         <p class="lede">
           The completed 800M-token continuation improves every newstest2014
-          comparison against the preserved 350M full-data checkpoint. The gain
-          is real; the quality ceiling is not.
+          comparison against the preserved 350M full-data checkpoint. At 350M,
+          ParaCrawl is the clearest data addition; Tatoeba helps mainly FR→EN.
+          The gains are real; quality remains pilot-level.
         </p>
         <div class="badges">
           <span class="badge"><span class="badge__dot"></span> Automatic metrics only</span>
@@ -1008,9 +1010,149 @@
       </div>
     </section>
 
+    <section class="wrap section" id="ablation">
+      <div class="section-head">
+        <p class="kicker">02 / Data ablation</p>
+        <h2>Two data additions. One clear winner at 350M.</h2>
+        <p>
+          Each arm keeps the 19.8M-parameter model and the 350M-token budget,
+          then adds about 99k everyday-language pairs to the same 2.1M-pair
+          baseline. ParaCrawl improves every cell; Tatoeba's gain is
+          FR→EN-specific.
+        </p>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="example__head"><h3>Tatoeba-only</h3><span class="tag tag--mixed">direction-specific</span></div>
+          <p>
+            99,135 added pairs, mostly short conversational sentences. The
+            EN→FR point estimates are positive but both 95% intervals cross
+            zero. FR→EN clears the interval in greedy and beam 4.
+          </p>
+          <ul class="method-list">
+            <li><strong>FR→EN</strong><span>+0.543 BLEU / +0.423 chrF++ greedy; +0.336 / +0.351 beam 4. Both intervals exclude zero.</span></li>
+            <li><strong>EN→FR</strong><span>+0.173 / +0.179 greedy; +0.145 / +0.001 beam 4. Not statistically significant.</span></li>
+            <li><strong>Best step</strong><span>39,000; 350,000,282 tokens.</span></li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <div class="example__head"><h3>ParaCrawl-only</h3><span class="tag">consistent gain</span></div>
+          <p>
+            98,034 added pairs from a bounded, filtered web sample. Every one
+            of the four cells improves on both BLEU and chrF++, and every
+            paired chrF++ interval excludes zero.
+          </p>
+          <ul class="method-list">
+            <li><strong>EN→FR</strong><span>+1.313 BLEU / +1.017 chrF++ greedy; +1.141 / +0.882 beam 4.</span></li>
+            <li><strong>FR→EN</strong><span>+1.228 / +0.922 greedy; +1.136 / +0.888 beam 4.</span></li>
+            <li><strong>Best step</strong><span>40,000; 350,001,418 tokens.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:.9rem">
+        <table>
+          <caption class="small muted" style="text-align:left;padding:.75rem .9rem 0">
+            Full newstest2014 scores versus the full-data 350M checkpoint (step 38,000). Positive deltas favor the data arm.
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Arm</th>
+              <th scope="col">Direction</th>
+              <th scope="col">Decoder</th>
+              <th scope="col" class="num">BLEU</th>
+              <th scope="col" class="num">Δ BLEU</th>
+              <th scope="col" class="num">chrF++</th>
+              <th scope="col" class="num">Δ chrF++</th>
+              <th scope="col">chrF++ 95% CI</th>
+              <th scope="col">CI excludes 0</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="4"><strong>Tatoeba</strong><br><span class="small muted">+99,135 pairs</span></td>
+              <td>EN→FR</td><td>Greedy</td>
+              <td class="num">22.828</td><td class="num delta">+0.173</td>
+              <td class="num">49.224</td><td class="num delta">+0.179</td>
+              <td><span class="muted">[−0.076, +0.435]</span></td><td class="muted">No</td>
+            </tr>
+            <tr>
+              <td>EN→FR</td><td>Beam 4</td>
+              <td class="num">24.224</td><td class="num delta">+0.145</td>
+              <td class="num">50.319</td><td class="num delta">+0.001</td>
+              <td><span class="muted">[−0.239, +0.230]</span></td><td class="muted">No</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Greedy</td>
+              <td class="num">21.803</td><td class="num delta">+0.543</td>
+              <td class="num">49.178</td><td class="num delta">+0.423</td>
+              <td>[+0.184, +0.665]</td><td class="delta">Yes</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Beam 4</td>
+              <td class="num">22.481</td><td class="num delta">+0.336</td>
+              <td class="num">50.233</td><td class="num delta">+0.351</td>
+              <td>[+0.118, +0.568]</td><td class="delta">Yes</td>
+            </tr>
+            <tr>
+              <td rowspan="4"><strong>ParaCrawl</strong><br><span class="small muted">+98,034 pairs</span></td>
+              <td>EN→FR</td><td>Greedy</td>
+              <td class="num">23.968</td><td class="num delta">+1.313</td>
+              <td class="num">50.062</td><td class="num delta">+1.017</td>
+              <td>[+0.770, +1.275]</td><td class="delta">Yes</td>
+            </tr>
+            <tr>
+              <td>EN→FR</td><td>Beam 4</td>
+              <td class="num">25.220</td><td class="num delta">+1.141</td>
+              <td class="num">51.200</td><td class="num delta">+0.882</td>
+              <td>[+0.651, +1.119]</td><td class="delta">Yes</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Greedy</td>
+              <td class="num">22.488</td><td class="num delta">+1.228</td>
+              <td class="num">49.677</td><td class="num delta">+0.922</td>
+              <td>[+0.661, +1.174]</td><td class="delta">Yes</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Beam 4</td>
+              <td class="num">23.281</td><td class="num delta">+1.136</td>
+              <td class="num">50.770</td><td class="num delta">+0.888</td>
+              <td>[+0.618, +1.146]</td><td class="delta">Yes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="small muted" style="margin:.9rem 0 0">
+        Baseline BLEU / chrF++: EN→FR greedy 22.655 / 49.045, beam 4 24.079 / 50.318;
+        FR→EN greedy 21.260 / 48.755, beam 4 22.145 / 49.882. Each arm is a
+        separate from-scratch run to 350M target tokens, not a fine-tune of the
+        baseline. The additions are about 4.7% more training pairs, so this is
+        an equal-token comparison, not equal-data.
+      </p>
+
+      <div class="panel" style="margin-top:.9rem">
+        <div class="example__head"><h3>800M ParaCrawl scale-up</h3><span class="tag tag--mixed">training now</span></div>
+        <p>
+          The 350M ParaCrawl result is being tested at the 800M budget. A fresh
+          run started from random initialization on 11 November with 2,199,355
+          training pairs and the frozen tokenizer. It will be compared with the
+          dev-selected 800M baseline at step 77,000 on the same four cells. The
+          comparison is not ready yet; no 800M ablation claim is made here.
+        </p>
+        <p class="small muted" style="margin:.65rem 0 0">
+          The 800M baseline is a continuation of the 350M full-data run, while
+          this candidate is a fresh 800M run. That schedule difference will be
+          reported with the result. The 350M combined arm remains untrained.
+        </p>
+      </div>
+    </section>
+
     <section class="wrap section" id="training">
       <div class="section-head">
-        <p class="kicker">02 / Training run</p>
+        <p class="kicker">03 / Training run</p>
         <h2>Same data, more tokens, same 19.8M model.</h2>
         <p>
           The 350M baseline trained on the complete prepared Europarl/News
@@ -1110,12 +1252,13 @@
 
     <section class="wrap section" id="method">
       <div class="section-head">
-        <p class="kicker">03 / Method</p>
+        <p class="kicker">04 / Method</p>
         <h2>One benchmark. Same rows. Automatic metrics.</h2>
         <p>
-          The preserved 350M checkpoint and both 800M checkpoints were decoded
-          on the same retained newstest2014 segments with the same references.
-          Nothing was truncated silently.
+          The preserved 350M checkpoint, both 800M checkpoints, and the two
+          completed 350M data arms were decoded on the same retained
+          newstest2014 segments with the same references. Nothing was truncated
+          silently.
         </p>
       </div>
 
@@ -1142,7 +1285,7 @@
 
         <div class="panel">
           <h3>Reproduce and inspect</h3>
-          <p>The comparison wrapper evaluates the preserved 350M checkpoint and both 800M checkpoints on identical rows, then builds the report.</p>
+          <p>The 800M wrapper evaluates the preserved 350M checkpoint and both 800M checkpoints on identical rows, then builds the report. The 350M data arms use the same rows, references, decoders and bootstrap.</p>
           <code class="command">SKIP_TRAIN=1 bash scripts/run_800m_comparison.sh</code>
           <details open>
             <summary>Report trail</summary>
@@ -1150,6 +1293,9 @@
               <li><code>reports/newstest2014.scaled_full_800m.comparisons.md</code></li>
               <li><code>reports/newstest2014.scaled_full_800m.comparisons.json</code></li>
               <li><code>reports/newstest2014.scaled_full_800m.{greedy,beam4}.{en-fr,fr-en}.full.json</code></li>
+              <li><code>reports/newstest2014.tatoeba.comparisons.{json,md}</code></li>
+              <li><code>reports/newstest2014.paracrawl.comparisons.{json,md}</code></li>
+              <li><code>reports/data_expansion_full.md</code></li>
               <li><code>models/scaled_full/training_report.json</code></li>
               <li><code>reports/review_packet_scaled_full_20/</code> — 20-row source/reference packet; original outputs from 350M; human review pending</li>
             </ul>
@@ -1160,7 +1306,7 @@
 
     <section class="wrap section" id="examples">
       <div class="section-head">
-        <p class="kicker">04 / What it looks like</p>
+        <p class="kicker">05 / What it looks like</p>
         <h2>Aggregate gains, visible errors.</h2>
         <p>
           Examples from the same deterministic 20-sentence review packet,
@@ -1213,7 +1359,7 @@
 
     <section class="wrap section" id="caveats">
       <div class="section-head">
-        <p class="kicker">05 / Caveats</p>
+        <p class="kicker">06 / Caveats</p>
         <h2>What this result does not prove.</h2>
         <p>
           The comparison is useful because it is controlled on the evaluation
@@ -1223,12 +1369,12 @@
 
       <div class="caveats">
         <article class="caveat">
-          <h3>Not a data-only ablation</h3>
-          <p>The 800M continuation uses the same 2.1M pairs as the 350M baseline. Its gain reflects about 450M additional target tokens, not additional data.</p>
+          <h3>The 800M gain is not a data-only ablation</h3>
+          <p>The 800M continuation uses the same 2.1M pairs as the 350M baseline. Its gain reflects about 450M additional target tokens, not additional data. The 350M data arms are separate equal-token comparisons.</p>
         </article>
         <article class="caveat">
           <h3>No human evaluation</h3>
-          <p>All results are automatic metrics. The 20-row packet has blank reviewer columns and remains pending; no qualified bilingual review was performed on either checkpoint.</p>
+          <p>All results are automatic metrics. The 20-row packet has blank reviewer columns and remains pending; no qualified bilingual review was performed on any reported checkpoint.</p>
         </article>
         <article class="caveat">
           <h3>Not production-ready</h3>
@@ -1239,10 +1385,11 @@
       <div class="provenance">
         <p>
           <strong>Scope.</strong> The page reports the completed 800M-token
-          continuation and its final step-91,691 checkpoint, compared with the
-          preserved 350M checkpoint. The dev-selected step-77,000 checkpoint is
-          covered in the comparison report. It does not report the in-progress
-          Tatoeba data-expansion arms.
+          continuation and its final step-91,691 checkpoint, plus the completed
+          350M Tatoeba and ParaCrawl arms. The dev-selected 800M step-77,000
+          checkpoint is covered in the comparison report. The 800M ParaCrawl
+          scale-up is still training, and the 350M combined arm is untrained;
+          neither is reported as a result.
         </p>
         <p>
           <strong>Source.</strong> Built from the project's evaluation reports in
@@ -1259,7 +1406,7 @@
       <p>
         <a href="https://github.com/slayyyyer/transcend">GitHub repository</a> ·
         <a href="https://github.com/slayyyyer/transcend#readme">README</a> ·
-        Report updated 09 Nov 2026
+        Report updated 11 Nov 2026
       </p>
     </div>
   </footer>
