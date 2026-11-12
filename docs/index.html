@@ -6,10 +6,10 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0e766e">
   <title>Transcend — 800M Translation Benchmark and Data Ablation</title>
-  <meta name="description" content="Newstest2014 results for Transcend's 800M-token English↔French model and its 350M Tatoeba and ParaCrawl data ablations. The 800M ParaCrawl run is in progress.">
+  <meta name="description" content="Newstest2014 results for Transcend's 800M-token English↔French model, its 350M Tatoeba and ParaCrawl ablations, and the completed 800M ParaCrawl scale-up.">
   <link rel="canonical" href="https://slayyyyer.github.io/transcend/">
   <meta property="og:title" content="Transcend — 800M Translation Benchmark and Data Ablation">
-  <meta property="og:description" content="Newstest2014 results for Transcend's 800M-token English↔French model and its 350M Tatoeba and ParaCrawl data ablations. The 800M ParaCrawl run is in progress.">
+  <meta property="og:description" content="Newstest2014 results for Transcend's 800M-token English↔French model, its 350M Tatoeba and ParaCrawl ablations, and the completed 800M ParaCrawl scale-up.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://slayyyyer.github.io/transcend/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e766e'/%3E%3Cpath d='M18 21h28M32 21v24' stroke='%23f4f0e6' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -825,7 +825,8 @@
           The completed 800M-token continuation improves every newstest2014
           comparison against the preserved 350M full-data checkpoint. At 350M,
           ParaCrawl is the clearest data addition; Tatoeba helps mainly FR→EN.
-          The gains are real; quality remains pilot-level.
+          A fresh 800M ParaCrawl run also improves every cell. The gains are
+          real; quality remains pilot-level.
         </p>
         <div class="badges">
           <span class="badge"><span class="badge__dot"></span> Automatic metrics only</span>
@@ -1013,12 +1014,13 @@
     <section class="wrap section" id="ablation">
       <div class="section-head">
         <p class="kicker">02 / Data ablation</p>
-        <h2>Two data additions. One clear winner at 350M.</h2>
+        <h2>Two data additions. ParaCrawl wins at both scales.</h2>
         <p>
-          Each arm keeps the 19.8M-parameter model and the 350M-token budget,
-          then adds about 99k everyday-language pairs to the same 2.1M-pair
-          baseline. ParaCrawl improves every cell; Tatoeba's gain is
-          FR→EN-specific.
+          At 350M, each arm keeps the 19.8M-parameter model and the 350M-token
+          budget, then adds about 99k everyday-language pairs to the same
+          2.1M-pair baseline. ParaCrawl improves every cell; Tatoeba's gain is
+          FR→EN-specific. A fresh 800M ParaCrawl run now confirms the same
+          direction at the larger budget.
         </p>
       </div>
 
@@ -1134,20 +1136,73 @@
       </p>
 
       <div class="panel" style="margin-top:.9rem">
-        <div class="example__head"><h3>800M ParaCrawl scale-up</h3><span class="tag tag--mixed">training now</span></div>
+        <div class="example__head"><h3>800M ParaCrawl scale-up</h3><span class="tag">confirmed at 800M</span></div>
         <p>
-          The 350M ParaCrawl result is being tested at the 800M budget. A fresh
-          run started from random initialization on 11 November with 2,199,355
-          training pairs and the frozen tokenizer. It will be compared with the
-          dev-selected 800M baseline at step 77,000 on the same four cells. The
-          comparison is not ready yet; no 800M ablation claim is made here.
+          A fresh 800M ParaCrawl run completed at 800,004,736 tokens and step
+          91,754; the dev-selected checkpoint is step 91,000. Against the 800M
+          continuation baseline at step 77,000, all four cells improve and all
+          paired chrF++ intervals exclude zero. The effect holds at both
+          scales.
         </p>
         <p class="small muted" style="margin:.65rem 0 0">
-          The 800M baseline is a continuation of the 350M full-data run, while
-          this candidate is a fresh 800M run. That schedule difference will be
-          reported with the result. The 350M combined arm remains untrained.
+          The baseline is a continuation of the 350M full-data run, while this
+          candidate is a fresh 800M run. This is an equal-token comparison, not
+          an identical-schedule comparison. The 350M combined arm remains
+          untrained.
         </p>
       </div>
+
+      <div class="table-wrap" style="margin-top:.9rem">
+        <table>
+          <caption class="small muted" style="text-align:left;padding:.75rem .9rem 0">
+            Full newstest2014 scores for the 800M ParaCrawl arm. Baseline is the 800M continuation at step 77,000; candidate is step 91,000. Positive deltas favor the candidate.
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Direction</th>
+              <th scope="col">Decoder</th>
+              <th scope="col" class="num">Baseline BLEU / chrF++</th>
+              <th scope="col" class="num">ParaCrawl BLEU / chrF++</th>
+              <th scope="col" class="num">Δ BLEU</th>
+              <th scope="col" class="num">Δ chrF++</th>
+              <th scope="col">chrF++ 95% CI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EN→FR</td><td>Greedy</td>
+              <td class="num">25.021 / 51.065</td><td class="num">26.174 / 52.144</td>
+              <td class="num delta">+1.153</td><td class="num delta">+1.079</td>
+              <td>[+0.757, +1.388]</td>
+            </tr>
+            <tr>
+              <td>EN→FR</td><td>Beam 4</td>
+              <td class="num">26.277 / 52.249</td><td class="num">27.709 / 53.260</td>
+              <td class="num delta">+1.432</td><td class="num delta">+1.011</td>
+              <td>[+0.743, +1.283]</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Greedy</td>
+              <td class="num">23.330 / 50.600</td><td class="num">24.806 / 51.685</td>
+              <td class="num delta">+1.476</td><td class="num delta">+1.085</td>
+              <td>[+0.843, +1.334]</td>
+            </tr>
+            <tr>
+              <td>FR→EN</td><td>Beam 4</td>
+              <td class="num">23.898 / 51.462</td><td class="num">25.458 / 52.565</td>
+              <td class="num delta">+1.560</td><td class="num delta">+1.103</td>
+              <td>[+0.903, +1.324]</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="small muted" style="margin:.9rem 0 0">
+        Same retained rows and decoders as the headline comparison: 2,959
+        EN→FR and 2,922 FR→EN segments, with 1,000 document-level bootstrap
+        resamples. The candidate adds 98,034 ParaCrawl pairs to the baseline
+        training mixture and was trained from random initialization.
+      </p>
     </section>
 
     <section class="wrap section" id="training">
@@ -1255,10 +1310,10 @@
         <p class="kicker">04 / Method</p>
         <h2>One benchmark. Same rows. Automatic metrics.</h2>
         <p>
-          The preserved 350M checkpoint, both 800M checkpoints, and the two
-          completed 350M data arms were decoded on the same retained
-          newstest2014 segments with the same references. Nothing was truncated
-          silently.
+          The preserved 350M checkpoint, both 800M continuation checkpoints,
+          the two completed 350M data arms, and the fresh 800M ParaCrawl arm
+          were decoded on the same retained newstest2014 segments with the same
+          references. Nothing was truncated silently.
         </p>
       </div>
 
@@ -1280,12 +1335,13 @@
             <p>Preserved 350M checkpoint SHA-256:<code class="hash">fee0f72cfc4556f03fd6820157cc9c530c41f0a6db67153f8185d1e92b813277</code></p>
             <p>800M dev-selected checkpoint SHA-256:<code class="hash">44f963e715121d4efd4746a8631a674808d899b3ff72cd6cb9871649ec68de86</code></p>
             <p>800M final checkpoint SHA-256:<code class="hash">6fe833dd7c359d62c01935b5d7f117e2c490a69b83decf3550da7af059741342</code></p>
+            <p>800M ParaCrawl checkpoint SHA-256:<code class="hash">4e578110c728465a708b357708a5dbbb640180308aa86a4922a584bec088575e</code></p>
           </details>
         </div>
 
         <div class="panel">
           <h3>Reproduce and inspect</h3>
-          <p>The 800M wrapper evaluates the preserved 350M checkpoint and both 800M checkpoints on identical rows, then builds the report. The 350M data arms use the same rows, references, decoders and bootstrap.</p>
+          <p>The 800M continuation wrapper evaluates the preserved 350M checkpoint and both 800M checkpoints on identical rows. The data-arm wrappers evaluate their baselines and candidates with the same rows, references, decoders and bootstrap. The 800M ParaCrawl wrapper is <code>scripts/run_paracrawl_800m.sh</code>.</p>
           <code class="command">SKIP_TRAIN=1 bash scripts/run_800m_comparison.sh</code>
           <details open>
             <summary>Report trail</summary>
@@ -1295,6 +1351,9 @@
               <li><code>reports/newstest2014.scaled_full_800m.{greedy,beam4}.{en-fr,fr-en}.full.json</code></li>
               <li><code>reports/newstest2014.tatoeba.comparisons.{json,md}</code></li>
               <li><code>reports/newstest2014.paracrawl.comparisons.{json,md}</code></li>
+              <li><code>reports/newstest2014.paracrawl_800m.comparisons.{json,md}</code></li>
+              <li><code>reports/newstest2014.paracrawl_800m.{greedy,beam4}.{en-fr,fr-en}.full.json</code></li>
+              <li><code>models/data_ablation/paracrawl_800m/training_report.json</code></li>
               <li><code>reports/data_expansion_full.md</code></li>
               <li><code>models/scaled_full/training_report.json</code></li>
               <li><code>reports/review_packet_scaled_full_20/</code> — 20-row source/reference packet; original outputs from 350M; human review pending</li>
@@ -1369,8 +1428,8 @@
 
       <div class="caveats">
         <article class="caveat">
-          <h3>The 800M gain is not a data-only ablation</h3>
-          <p>The 800M continuation uses the same 2.1M pairs as the 350M baseline. Its gain reflects about 450M additional target tokens, not additional data. The 350M data arms are separate equal-token comparisons.</p>
+          <h3>Two different 800M comparisons</h3>
+          <p>The 800M continuation uses the same 2.1M pairs as the 350M baseline; its gain reflects about 450M additional target tokens. The 800M ParaCrawl candidate adds 98,034 pairs but starts from random initialization while its baseline is a continuation. The schedule difference remains.</p>
         </article>
         <article class="caveat">
           <h3>No human evaluation</h3>
@@ -1385,16 +1444,19 @@
       <div class="provenance">
         <p>
           <strong>Scope.</strong> The page reports the completed 800M-token
-          continuation and its final step-91,691 checkpoint, plus the completed
-          350M Tatoeba and ParaCrawl arms. The dev-selected 800M step-77,000
-          checkpoint is covered in the comparison report. The 800M ParaCrawl
-          scale-up is still training, and the 350M combined arm is untrained;
-          neither is reported as a result.
+          continuation and its final step-91,691 checkpoint, the completed 350M
+          Tatoeba and ParaCrawl arms, and the fresh 800M ParaCrawl scale-up.
+          The 800M ParaCrawl candidate is the dev-selected step-91,000 checkpoint
+          from a fresh 800,004,736-token run; its baseline is the dev-selected
+          continuation checkpoint at step 77,000. The 350M combined arm remains
+          untrained.
         </p>
         <p>
           <strong>Source.</strong> Built from the project's evaluation reports in
-          <code>reports/</code> and the completed run report in
-          <code>models/scaled_full/</code>. Page source: <code>docs/index.html</code>.
+          <code>reports/</code>, the completed continuation report in
+          <code>models/scaled_full/</code>, and the data-arm report in
+          <code>models/data_ablation/paracrawl_800m/</code>. Page source:
+          <code>docs/index.html</code>.
         </p>
       </div>
     </section>
