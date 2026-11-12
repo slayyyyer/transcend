@@ -126,6 +126,16 @@
     .nav a { color: var(--muted); text-decoration: none; }
     .nav a:hover { color: var(--accent); }
     .nav .nav__repo { color: var(--accent); }
+    .nav__download {
+      padding: .38rem .62rem;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      color: var(--accent) !important;
+    }
+    .nav__download:hover {
+      background: var(--accent);
+      color: var(--panel) !important;
+    }
 
     .hero {
       display: grid;
@@ -282,6 +292,64 @@
       border-radius: 50%;
       background: var(--warm);
       box-shadow: 0 0 0 4px color-mix(in srgb, var(--warm) 15%, transparent);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .75rem;
+      margin-top: 1.35rem;
+    }
+
+    .download-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      min-height: 54px;
+      max-width: 100%;
+      padding: .72rem .9rem .72rem 1rem;
+      border: 1px solid var(--ink);
+      border-radius: 10px;
+      background: var(--ink);
+      color: var(--panel);
+      text-decoration: none;
+    }
+
+    .download-button > span:first-child { min-width: 0; }
+
+    .download-button:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--paper);
+    }
+
+    .download-button__label {
+      display: block;
+      font-size: .88rem;
+      font-weight: 750;
+      letter-spacing: -.01em;
+    }
+
+    .download-button__meta {
+      display: block;
+      margin-top: .14rem;
+      color: color-mix(in srgb, var(--panel) 72%, transparent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .61rem;
+      font-weight: 650;
+      line-height: 1.35;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .download-button:hover .download-button__meta {
+      color: color-mix(in srgb, var(--paper) 78%, transparent);
+    }
+
+    .download-button__arrow {
+      font-size: 1.25rem;
+      line-height: 1;
     }
 
     .scores {
@@ -784,7 +852,7 @@
     }
 
     @media print {
-      .site-header, .skip-link, .badges, .nav { display: none !important; }
+      .site-header, .skip-link, .badges, .nav, .hero-actions { display: none !important; }
       body { background: #fff; color: #000; }
       .wrap { width: 100%; }
       .section { break-inside: avoid; }
@@ -811,6 +879,7 @@
         <a href="#method">Method</a>
         <a href="#examples">Examples</a>
         <a href="#caveats">Caveats</a>
+        <a class="nav__download" href="https://github.com/slayyyyer/transcend/releases/latest/download/Transcend-Translator-Setup.msi">Windows app ↓</a>
         <a class="nav__repo" href="https://github.com/slayyyyer/transcend">Repository ↗</a>
       </nav>
     </div>
@@ -834,6 +903,17 @@
           <span class="badge">Trained from scratch</span>
         </div>
         <p class="verdict"><span class="verdict__dot"></span> Useful gist translation, not production quality.</p>
+        <div class="hero-actions">
+          <a class="download-button"
+             href="https://github.com/slayyyyer/transcend/releases/latest/download/Transcend-Translator-Setup.msi"
+             aria-label="Download Transcend Translator for Windows (MSI installer, 19.8M-parameter pilot model included)">
+            <span>
+              <span class="download-button__label">Download for Windows</span>
+              <span class="download-button__meta">MSI · Windows 10/11 x64 · 19.8M-param pilot model included</span>
+            </span>
+            <span class="download-button__arrow" aria-hidden="true">↓</span>
+          </a>
+        </div>
       </div>
 
       <aside class="hero-card" aria-label="Headline result">

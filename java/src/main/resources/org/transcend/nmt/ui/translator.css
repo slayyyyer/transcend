@@ -1,0 +1,683 @@
+/* Transcend Translator — a bilingual reading desk. */
+
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-text-fill: #14201d;
+    -fx-background-color:
+        radial-gradient(center 86% 0%, radius 80%, rgba(14, 118, 110, 0.10), rgba(14, 118, 110, 0) 60%),
+        radial-gradient(center 0% 106%, radius 70%, rgba(185, 77, 45, 0.06), rgba(185, 77, 45, 0) 60%),
+        linear-gradient(to bottom right, #f7f3ea, #f4f0e6 55%, #efe9dc);
+}
+
+.app {
+    -fx-padding: 0 40 16 40;
+}
+
+.workspace {
+    -fx-padding: 22 0 0 0;
+}
+
+/* ---------- Header ---------- */
+
+.topbar {
+    -fx-border-color: transparent transparent rgba(213, 205, 189, 0.70) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.brand-mark {
+    -fx-background-color: #0e766e;
+    -fx-background-radius: 9;
+    -fx-text-fill: #fbf8f1;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.brand-name {
+    -fx-text-fill: #14201d;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+.brand-product {
+    -fx-padding: 0 0 0 14;
+    -fx-border-color: transparent transparent transparent #d5cdbd;
+    -fx-border-width: 0 0 0 1;
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.direction-switch {
+    -fx-padding: 4;
+    -fx-background-color: rgba(251, 248, 241, 0.70);
+    -fx-background-radius: 999;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 999;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.03), 2, 0.1, 0, 1);
+}
+
+.direction-option {
+    -fx-min-height: 34;
+    -fx-padding: 7 14 7 14;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 999;
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.direction-option:hover {
+    -fx-background-color: rgba(233, 225, 210, 0.58);
+    -fx-text-fill: #14201d;
+}
+
+.direction-option:selected {
+    -fx-background-color: #14201d;
+    -fx-text-fill: #fbf8f1;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.16), 5, 0.15, 0, 2);
+}
+
+.direction-option:focused {
+    -fx-border-color: #0e766e;
+}
+
+.direction-option:selected:focused {
+    -fx-border-color: #e0b45b;
+}
+
+.direction-option:disabled {
+    -fx-opacity: 0.55;
+}
+
+.local-dot {
+    -fx-background-color: #0e766e;
+    -fx-background-radius: 99;
+    -fx-effect: dropshadow(gaussian, rgba(14, 118, 110, 0.22), 5, 0.2, 0, 0);
+}
+
+.local-text {
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.model-button {
+    -fx-min-height: 34;
+    -fx-padding: 0 13 0 13;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 999;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 999;
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.model-button:hover {
+    -fx-background-color: #fbf8f1;
+    -fx-border-color: #14201d;
+    -fx-text-fill: #14201d;
+}
+
+.model-button:focused {
+    -fx-border-color: #0e766e;
+}
+
+.model-button:disabled {
+    -fx-opacity: 0.55;
+}
+
+/* ---------- Sheet ---------- */
+
+.sheet {
+    -fx-background-color: #fbf8f1;
+    -fx-background-radius: 6;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.08), 28, 0.14, 0, 14);
+}
+
+.sheet-rule {
+    -fx-background-color: linear-gradient(to right, #0e766e 0%, #0e766e 42%, #9a6a19 42%, #9a6a19 58%, #b94d2d 58%, #b94d2d 100%);
+    -fx-background-radius: 5 5 0 0;
+}
+
+.page {
+    -fx-padding: 32 38 16 38;
+}
+
+.source-page {
+    -fx-background-color: #fbf8f1;
+    -fx-background-radius: 0 0 0 5;
+}
+
+.target-page {
+    -fx-background-color:
+        linear-gradient(to right, rgba(233, 225, 210, 0.42), rgba(248, 243, 232, 0.14) 24%, rgba(248, 243, 232, 0) 65%),
+        #f8f3e8;
+    -fx-background-radius: 0 0 5 0;
+}
+
+.page-meta-text {
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.folio {
+    -fx-background-color: transparent;
+    -fx-background-radius: 99;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-text-fill: #0e766e;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+}
+
+.language-row {
+    -fx-padding: 0 0 15 0;
+    -fx-border-color: transparent transparent #d5cdbd transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.language-name {
+    -fx-text-fill: #14201d;
+    -fx-font-family: "Palatino Linotype";
+    -fx-font-size: 38px;
+    -fx-font-weight: normal;
+}
+
+.language-code {
+    -fx-padding: 3 6 3 6;
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-text-fill: #0e766e;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 8.5px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Editors ---------- */
+
+.editor-shell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 3;
+    -fx-padding: 0;
+}
+
+.editor-shell:focus-within {
+    -fx-border-color: #0e766e;
+}
+
+.editor-placeholder {
+    -fx-text-fill: #969186;
+    -fx-font-family: "Palatino Linotype";
+    -fx-font-size: 24px;
+    -fx-font-style: italic;
+    -fx-line-spacing: 4px;
+}
+
+.target-placeholder {
+    -fx-font-size: 26px;
+}
+
+.translation-editor {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-text-fill: #14201d;
+    -fx-text-inner-color: #14201d;
+    -fx-highlight-fill: #dcebe6;
+    -fx-highlight-text-fill: #14201d;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-family: "Palatino Linotype";
+    -fx-font-size: 24px;
+}
+
+.target-editor {
+    -fx-font-size: 26px;
+}
+
+.translation-editor:focused {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.translation-editor .content {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 8 4 2 2;
+}
+
+.translation-editor:focused .content {
+    -fx-background-color: transparent;
+}
+
+.translation-editor .scroll-pane,
+.translation-editor .scroll-pane .viewport,
+.translation-editor .scroll-pane .content,
+.translation-editor .scroll-pane .corner {
+    -fx-background-color: transparent;
+}
+
+.translation-editor .prompt-text {
+    -fx-fill: #969186;
+    -fx-font-family: "Palatino Linotype";
+    -fx-font-style: italic;
+}
+
+.translation-editor .text {
+    -fx-font-smoothing-type: gray;
+    -fx-line-spacing: 4px;
+}
+
+.translation-editor .scroll-bar:vertical {
+    -fx-pref-width: 7;
+    -fx-padding: 0 0 0 2;
+    -fx-background-color: transparent;
+}
+
+.translation-editor .scroll-bar:horizontal {
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.translation-editor .scroll-bar > .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.translation-editor .scroll-bar > .thumb {
+    -fx-background-color: rgba(213, 205, 189, 0.85);
+    -fx-background-radius: 99;
+}
+
+.translation-editor .scroll-bar > .increment-button,
+.translation-editor .scroll-bar > .decrement-button {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.translation-editor .scroll-bar > .increment-button > .increment-arrow,
+.translation-editor .scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-padding: 0;
+    -fx-opacity: 0;
+}
+
+/* ---------- Page footers ---------- */
+
+.page-footer {
+    -fx-min-height: 44;
+    -fx-padding: 12 0 0 0;
+    -fx-border-color: rgba(213, 205, 189, 0.68) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.token-count,
+.token-unit,
+.quality-text {
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.token-count {
+    -fx-text-fill: #5f6a63;
+}
+
+.token-unit {
+    -fx-text-fill: #5f6a63;
+}
+
+.token-meter {
+    -fx-pref-height: 3;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
+    -fx-padding: 0;
+}
+
+.token-meter > .track {
+    -fx-background-color: #e9e1d2;
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.token-meter > .bar {
+    -fx-background-color: #0e766e;
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+    -fx-padding: 1.5;
+}
+
+.token-meter-box.is-near .token-meter > .bar {
+    -fx-background-color: #9a6a19;
+}
+
+.token-meter-box.is-over .token-meter > .bar {
+    -fx-background-color: #b94d2d;
+}
+
+.token-meter-box.is-over .token-count {
+    -fx-text-fill: #b94d2d;
+}
+
+.quality-text {
+    -fx-text-fill: #9a6a19;
+}
+
+.quality-dot {
+    -fx-background-color: #9a6a19;
+    -fx-background-radius: 99;
+}
+
+/* ---------- Quiet and primary actions ---------- */
+
+.text-action {
+    -fx-min-height: 32;
+    -fx-padding: 2 0 2 0;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 9.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.text-action:hover {
+    -fx-text-fill: #0e766e;
+}
+
+.text-action:focused {
+    -fx-border-color: #0e766e;
+}
+
+.text-action:disabled {
+    -fx-text-fill: #969186;
+    -fx-opacity: 0.6;
+}
+
+.text-action.is-copied {
+    -fx-text-fill: #0e766e;
+}
+
+/* ---------- Gutter ---------- */
+
+.gutter {
+    -fx-background-color: linear-gradient(to right, rgba(233, 225, 210, 0.40), rgba(244, 240, 230, 0.08) 50%, rgba(233, 225, 210, 0.40));
+    -fx-border-color: transparent rgba(213, 205, 189, 0.68) transparent rgba(213, 205, 189, 0.68);
+    -fx-border-width: 0 1 0 1;
+}
+
+.seam-line {
+    -fx-background-color: linear-gradient(to bottom, transparent, rgba(213, 205, 189, 0.52) 12%, rgba(213, 205, 189, 0.52) 88%, transparent);
+}
+
+.swap-button {
+    -fx-padding: 0;
+    -fx-background-color: #fbf8f1;
+    -fx-background-insets: 0;
+    -fx-background-radius: 99;
+    -fx-border-color: #d5cdbd;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-text-fill: #0e766e;
+    -fx-font-family: "Segoe UI Symbol";
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.06), 14, 0.15, 0, 4);
+}
+
+.swap-button:hover {
+    -fx-background-color: #0e766e;
+    -fx-border-color: #0e766e;
+    -fx-text-fill: #fbf8f1;
+}
+
+.swap-button:focused {
+    -fx-border-color: #0e766e;
+    -fx-border-width: 2;
+}
+
+.swap-button:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* ---------- Notice ---------- */
+
+.notice {
+    -fx-padding: 10 12 10 12;
+    -fx-background-color: rgba(220, 235, 230, 0.72);
+    -fx-background-radius: 4;
+    -fx-border-color: rgba(14, 118, 110, 0.24);
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.notice.is-error {
+    -fx-background-color: #f8e8e0;
+    -fx-border-color: rgba(185, 77, 45, 0.30);
+}
+
+.notice-mark {
+    -fx-background-color: transparent;
+    -fx-background-radius: 99;
+    -fx-border-color: #22564f;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-text-fill: #22564f;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.notice.is-error .notice-mark {
+    -fx-border-color: #7e2d17;
+    -fx-text-fill: #7e2d17;
+}
+
+.notice-text {
+    -fx-text-fill: #22564f;
+    -fx-font-size: 12px;
+}
+
+.notice.is-error .notice-text {
+    -fx-text-fill: #7e2d17;
+}
+
+.notice-dismiss {
+    -fx-min-height: 24;
+    -fx-padding: 1 0 1 12;
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-text-fill: #22564f;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.8;
+    -fx-cursor: hand;
+}
+
+.notice.is-error .notice-dismiss {
+    -fx-text-fill: #7e2d17;
+}
+
+.notice-dismiss:hover {
+    -fx-opacity: 1;
+}
+
+.notice-dismiss:focused {
+    -fx-border-color: #22564f;
+}
+
+.notice.is-error .notice-dismiss:focused {
+    -fx-border-color: #7e2d17;
+}
+
+/* ---------- Status and translation action ---------- */
+
+.statusbar {
+    -fx-min-height: 68;
+    -fx-padding: 12 2 4 2;
+}
+
+.status-dot {
+    -fx-background-radius: 99;
+}
+
+.status-dot.status-ready {
+    -fx-background-color: #0e766e;
+    -fx-effect: dropshadow(gaussian, rgba(14, 118, 110, 0.18), 5, 0.2, 0, 0);
+}
+
+.status-dot.status-busy {
+    -fx-background-color: #9a6a19;
+    -fx-effect: dropshadow(gaussian, rgba(154, 106, 25, 0.22), 5, 0.2, 0, 0);
+}
+
+.status-dot.status-error {
+    -fx-background-color: #b94d2d;
+    -fx-effect: dropshadow(gaussian, rgba(185, 77, 45, 0.20), 5, 0.2, 0, 0);
+}
+
+.status-title {
+    -fx-text-fill: #14201d;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.status-divider {
+    -fx-text-fill: #d5cdbd;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+}
+
+.status-detail {
+    -fx-text-fill: #5f6a63;
+    -fx-font-family: "Consolas";
+    -fx-font-size: 9px;
+}
+
+.privacy {
+    -fx-text-fill: #5f6a63;
+    -fx-font-size: 11.5px;
+}
+
+.translate-button {
+    -fx-min-width: 184;
+    -fx-min-height: 48;
+    -fx-padding: 0 13 0 20;
+    -fx-background-color: #b94d2d;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+    -fx-border-color: #963a22;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-text-fill: #fff9f0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.12), 2, 0.1, 0, 2);
+}
+
+.translate-button:hover {
+    -fx-background-color: #9f3c20;
+    -fx-effect: dropshadow(gaussian, rgba(20, 32, 29, 0.10), 4, 0.1, 0, 4);
+}
+
+.translate-button:pressed {
+    -fx-background-color: #8d341c;
+    -fx-effect: innershadow(gaussian, rgba(20, 32, 29, 0.18), 2, 0.2, 0, 1);
+}
+
+.translate-button:focused {
+    -fx-border-color: #0e766e;
+    -fx-border-width: 2;
+}
+
+.translate-button:disabled {
+    -fx-background-color: #b7aa9e;
+    -fx-border-color: #ab9d91;
+    -fx-effect: none;
+    -fx-opacity: 1;
+    -fx-cursor: default;
+}
+
+.translate-label {
+    -fx-text-fill: #fff9f0;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.translate-button:disabled .translate-label {
+    -fx-text-fill: #f8f2e7;
+}
+
+.kbd {
+    -fx-min-width: 34;
+    -fx-padding: 4 5 4 5;
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+    -fx-border-color: rgba(255, 255, 255, 0.30);
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-text-fill: rgba(255, 255, 255, 0.84);
+    -fx-font-family: "Consolas";
+    -fx-font-size: 8px;
+    -fx-alignment: center;
+}
+
+.translate-button:disabled .kbd {
+    -fx-border-color: rgba(255, 255, 255, 0.22);
+    -fx-text-fill: rgba(255, 255, 255, 0.72);
+}
+
+.translate-spinner {
+    -fx-progress-color: #fff9f0;
+}
+
+.translate-spinner .indicator {
+    -fx-background-color: transparent;
+}
+
+.tooltip {
+    -fx-padding: 7 9 7 9;
+    -fx-background-color: #14201d;
+    -fx-background-radius: 4;
+    -fx-text-fill: #fbf8f1;
+    -fx-font-size: 11px;
+}

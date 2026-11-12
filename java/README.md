@@ -22,6 +22,74 @@ mvn -B test -Dtranscend.model.dir=../models/accel_export   # + integration parit
 
 If Maven is not on `PATH`, configure your JDK 17+ and Maven installation.
 
+## Desktop UI
+
+The JavaFX translator is a separate entry point; the CLI remains unchanged.
+
+```bash
+cd java
+mvn -B javafx:run
+```
+
+The app searches for a package in this order:
+
+1. `TRANSCEND_MODEL_DIR` (environment variable)
+2. `-Dtranscend.model.dir=...` when the JVM is launched directly
+3. `models/scaled_export` beside the launcher in a packaged Windows install
+4. `models/scaled_export` below the project root
+5. `../models/scaled_export` when launched from `java/`
+
+If no package is found, or you want a different one, use **MODEL…** in the
+window. The selected folder must contain the normal exported package layout
+(`model_config.json`, `generation.json`, `manifest.json`, `onnx/`, and
+`tokenizer/`). Model loading and translation both run off the JavaFX
+Application Thread.
+
+The window provides one source area, one selectable output area, an EN→FR /
+FR→EN direction switch, swap, Copy and Clear. `Ctrl+Enter` (`Cmd+Enter` on
+macOS) translates. The source meter uses the model's exact tokenizer count and
+disables translation above the package's source limit; input is never
+truncated. `Pilot quality` is shown deliberately: this model is useful for gist
+translation, not production-quality text.
+
+## Windows installer
+
+The release build is a per-user Windows x64 MSI built with `jpackage`. It bundles
+a private Java runtime and the `scaled_export` model package, so the installed
+app does not need Java, Python, a network connection or a separate model
+download. The model archive omits the unused `torch_state_dict.pt` file.
+
+Build the model archive locally from the verified scaled package:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/package_windows_model.ps1
+# -> java/target/Transcend-Model.zip
+```
+
+Build the MSI locally after installing WiX Toolset 3.x and JDK 21. The script
+runs the Maven tests with the bundled model unless `-SkipMaven` is passed:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build_windows_installer.ps1 `
+  -ModelDir models/scaled_export `
+  -Version 0.1.0
+# -> java/target/release/Transcend-Translator-Setup.msi
+```
+
+For a release, use a `vX.Y.Z` tag. Attach the model archive to the **draft**
+release as `Transcend-Model.zip`, then publish it. The
+`.github/workflows/windows-installer.yml` workflow downloads that asset, runs
+the Java tests, builds the MSI, and uploads
+`Transcend-Translator-Setup.msi` plus its SHA-256 file to the same release. The
+workflow can also be run manually with an existing release tag.
+
+The website's Windows download button targets the stable asset:
+`https://github.com/slayyyyer/transcend/releases/latest/download/Transcend-Translator-Setup.msi`.
+That link resolves to the latest non-prerelease release. The generated MSI is
+unsigned, so Windows may show a SmartScreen or unknown-publisher warning. The
+bundled model is a pilot artifact and carries the corpus terms recorded in
+`NOTICE` and `docs/MODEL_CARD.md`.
+
 ## CLI
 
 ```bash
@@ -103,9 +171,10 @@ All sequence axes are dynamic; the step graph takes exactly one new token.
 
 ## Verification
 
-* Full Maven suite: **10 tests, 0 failures, 0 skipped** (2 cache-reorder, 3
-  preprocessor, 2 tokenizer-golden, 3 model-package integration) against both
-  the step-14,500 and step-15,897 packages.
+* Full Maven suite with an export supplied: **13 tests, 0 failures, 0
+  skipped** (2 cache-reorder, 3 preprocessor, 2 tokenizer-golden, 3 model
+  package locator, and 3 model-package integration). Without
+  `-Dtranscend.model.dir`, the integration tests are skipped.
 * Token ids match Python token-for-token on golden fixtures.
 * Greedy output matches Python's greedy output token-for-token on both the
   step-14,500 and step-15,897 packages (`TranslatorParityTest`, run with

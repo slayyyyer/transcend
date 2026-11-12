@@ -1,0 +1,127 @@
+name: Publish Windows installer
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to rebuild and upload to
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-installer-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Resolve release version
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if (-not $env:RELEASE_TAG) {
+            throw "A release tag is required."
+          }
+          $version = $env:RELEASE_TAG -replace '^v', ''
+          if ($version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
+            throw "Release tag '$env:RELEASE_TAG' must be vX.Y.Z (for example v0.1.0) so jpackage can use it as the Windows version."
+          }
+          "VERSION=$version" >> $env:GITHUB_ENV
+          Write-Output "Building installer version $version for $env:RELEASE_TAG"
+
+      - name: Download the bundled model
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          New-Item -ItemType Directory -Path model-download -Force | Out-Null
+          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern "Transcend-Model.zip" --dir model-download --clobber
+          if ($LASTEXITCODE -ne 0) {
+            throw "Release '$env:RELEASE_TAG' is missing the Transcend-Model.zip asset. Build it with scripts/package_windows_model.ps1 and attach it before publishing."
+          }
+          Expand-Archive -LiteralPath model-download/Transcend-Model.zip -DestinationPath model-extracted -Force
+          $config = Get-ChildItem -LiteralPath model-extracted -Recurse -Filter model_config.json -File | Select-Object -First 1
+          if (-not $config) {
+            throw "Transcend-Model.zip does not contain an exported model package."
+          }
+          "MODEL_DIR=$($config.Directory.FullName)" >> $env:GITHUB_ENV
+          Write-Output "Model package: $($config.Directory.FullName)"
+
+      - name: Install WiX Toolset 3.14.1
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP "wix314-binaries.zip"
+          $wixRoot = Join-Path $env:RUNNER_TEMP "wix314"
+          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip" -OutFile $archive
+          $expected = "6ac824e1642d6f7277d0ed7ea09411a508f6116ba6fae0aa5f2c7daa2ff43d31"
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) {
+            throw "WiX Toolset archive checksum mismatch: expected $expected, got $actual"
+          }
+          Expand-Archive -LiteralPath $archive -DestinationPath $wixRoot -Force
+          $candle = Get-ChildItem -LiteralPath $wixRoot -Recurse -Filter "candle.exe" -File | Select-Object -First 1
+          if (-not $candle) {
+            throw "WiX Toolset did not unpack with candle.exe."
+          }
+          $bin = $candle.Directory.FullName
+          $bin >> $env:GITHUB_PATH
+          "WIX=$bin" >> $env:GITHUB_ENV
+
+      - name: Build and test the Java runtime
+        shell: pwsh
+        run: |
+          mvn -B -ntp -f java/pom.xml package "-Dtranscend.model.dir=$env:MODEL_DIR"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Maven package failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/build_windows_installer.ps1 `
+            -ModelDir $env:MODEL_DIR `
+            -Version $env:VERSION `
+            -SkipMaven `
+            -OutputDir java/target/release
+
+      - name: Upload installer to release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          $msi = "java/target/release/Transcend-Translator-Setup.msi"
+          $checksum = "$msi.sha256"
+          if (-not (Test-Path -LiteralPath $msi -PathType Leaf)) {
+            throw "Installer was not created: $msi"
+          }
+          if (-not (Test-Path -LiteralPath $checksum -PathType Leaf)) {
+            throw "Checksum was not created: $checksum"
+          }
+          gh release upload $env:RELEASE_TAG $msi $checksum --repo $env:GITHUB_REPOSITORY --clobber
+          if ($LASTEXITCODE -ne 0) {
+            throw "Uploading the installer to $env:RELEASE_TAG failed."
+          }
+          $hash = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
+          "Installer SHA-256: ``$hash``" >> $env:GITHUB_STEP_SUMMARY
+          "Download: https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:RELEASE_TAG/Transcend-Translator-Setup.msi" >> $env:GITHUB_STEP_SUMMARY
