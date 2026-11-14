@@ -1,0 +1,372 @@
+{
+  "title": "Tatoeba 350M arm vs full-data 350M checkpoint on newstest2014",
+  "benchmark": "newstest2014 (wmt14/full)",
+  "tag": "tatoeba",
+  "training": {
+    "global_step": 40149,
+    "tokens_seen": 350000282,
+    "stop_reason": "max_train_tokens",
+    "walltime_s": 16860.76,
+    "cumulative_walltime_s": 32494.19,
+    "best_metric": 54.7324
+  },
+  "baseline": {
+    "label": "full350",
+    "checkpoint": "models\\scaled_full\\best.pre_extend.pt",
+    "step": 38000,
+    "sha256": "fee0f72cfc4556f03fd6820157cc9c530c41f0a6db67153f8185d1e92b813277"
+  },
+  "candidates": {
+    "tatoeba": {
+      "label": "tatoeba",
+      "checkpoint": "models\\data_ablation\\tatoeba\\best.pt",
+      "step": 39000,
+      "sha256": "6eabf9a2831f98cd852e72ccac7106a9504286ea622e66477e2e4b7323186813"
+    }
+  },
+  "decoders": {
+    "greedy": {
+      "beam_size": 1,
+      "length_penalty": 1.0,
+      "min_new_tokens": 0
+    },
+    "beam4": {
+      "beam_size": 4,
+      "length_penalty": 1.2,
+      "min_new_tokens": 16
+    }
+  },
+  "samples": 1000,
+  "directions": {
+    "en-fr": {
+      "n": 2959,
+      "documents": 176,
+      "skipped_overlength": 44,
+      "greedy": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 22.655,
+          "chrfpp": 49.045,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2959
+        },
+        "candidates": {
+          "tatoeba": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 22.655,
+              "chrfpp": 49.045,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.885,
+              "short_5_words": 56,
+              "short_8_words": 245,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "tatoeba",
+              "step": 39000,
+              "bleu": 22.828,
+              "chrfpp": 49.224,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.728,
+              "short_5_words": 54,
+              "short_8_words": 245,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 0.173,
+              "chrfpp": 0.179
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.179,
+                "bootstrap_mean_delta": 0.18,
+                "ci95": [
+                  -0.076,
+                  0.435
+                ],
+                "p_value_one_sided": 0.09,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 0.174,
+                "bootstrap_mean_delta": 0.178,
+                "ci95": [
+                  -0.228,
+                  0.58
+                ],
+                "p_value_one_sided": 0.218,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1475,
+              "baseline_wins": 1386,
+              "ties": 98
+            },
+            "changed_outputs": 2866,
+            "shorter_outputs": 1177,
+            "longer_outputs": 1061
+          }
+        }
+      },
+      "beam4": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 24.079,
+          "chrfpp": 50.318,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2959
+        },
+        "candidates": {
+          "tatoeba": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 24.079,
+              "chrfpp": 50.318,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.857,
+              "short_5_words": 20,
+              "short_8_words": 246,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "tatoeba",
+              "step": 39000,
+              "bleu": 24.224,
+              "chrfpp": 50.319,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.724,
+              "short_5_words": 19,
+              "short_8_words": 242,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 0.145,
+              "chrfpp": 0.001
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.001,
+                "bootstrap_mean_delta": -0.003,
+                "ci95": [
+                  -0.239,
+                  0.23
+                ],
+                "p_value_one_sided": 0.52,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 0.145,
+                "bootstrap_mean_delta": 0.094,
+                "ci95": [
+                  -0.278,
+                  0.464
+                ],
+                "p_value_one_sided": 0.327,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1419,
+              "baseline_wins": 1399,
+              "ties": 141
+            },
+            "changed_outputs": 2829,
+            "shorter_outputs": 1109,
+            "longer_outputs": 1006
+          }
+        }
+      }
+    },
+    "fr-en": {
+      "n": 2922,
+      "documents": 176,
+      "skipped_overlength": 81,
+      "greedy": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 21.26,
+          "chrfpp": 48.755,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2922
+        },
+        "candidates": {
+          "tatoeba": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 21.26,
+              "chrfpp": 48.755,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.131,
+              "short_5_words": 66,
+              "short_8_words": 256,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "tatoeba",
+              "step": 39000,
+              "bleu": 21.803,
+              "chrfpp": 49.178,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.121,
+              "short_5_words": 72,
+              "short_8_words": 269,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 0.543,
+              "chrfpp": 0.423
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.424,
+                "bootstrap_mean_delta": 0.421,
+                "ci95": [
+                  0.184,
+                  0.665
+                ],
+                "p_value_one_sided": 0.001,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 0.543,
+                "bootstrap_mean_delta": 0.54,
+                "ci95": [
+                  0.162,
+                  0.898
+                ],
+                "p_value_one_sided": 0.001,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1492,
+              "baseline_wins": 1294,
+              "ties": 136
+            },
+            "changed_outputs": 2792,
+            "shorter_outputs": 1061,
+            "longer_outputs": 1062
+          }
+        }
+      },
+      "beam4": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 22.145,
+          "chrfpp": 49.882,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2922
+        },
+        "candidates": {
+          "tatoeba": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 22.145,
+              "chrfpp": 49.882,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.495,
+              "short_5_words": 7,
+              "short_8_words": 223,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "tatoeba",
+              "step": 39000,
+              "bleu": 22.481,
+              "chrfpp": 50.233,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.465,
+              "short_5_words": 7,
+              "short_8_words": 242,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 0.336,
+              "chrfpp": 0.351
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.351,
+                "bootstrap_mean_delta": 0.349,
+                "ci95": [
+                  0.118,
+                  0.568
+                ],
+                "p_value_one_sided": 0.001,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 0.337,
+                "bootstrap_mean_delta": 0.332,
+                "ci95": [
+                  -0.021,
+                  0.673
+                ],
+                "p_value_one_sided": 0.034,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1449,
+              "baseline_wins": 1320,
+              "ties": 153
+            },
+            "changed_outputs": 2778,
+            "shorter_outputs": 999,
+            "longer_outputs": 1059
+          }
+        }
+      }
+    }
+  }
+}

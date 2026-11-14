@@ -1,0 +1,372 @@
+{
+  "title": "ParaCrawl 350M arm vs full-data 350M checkpoint on newstest2014",
+  "benchmark": "newstest2014 (wmt14/full)",
+  "tag": "paracrawl",
+  "training": {
+    "global_step": 40144,
+    "tokens_seen": 350001418,
+    "stop_reason": "max_train_tokens",
+    "walltime_s": 29408.45,
+    "cumulative_walltime_s": 29408.45,
+    "best_metric": 54.9413
+  },
+  "baseline": {
+    "label": "full350",
+    "checkpoint": "models\\scaled_full\\best.pre_extend.pt",
+    "step": 38000,
+    "sha256": "fee0f72cfc4556f03fd6820157cc9c530c41f0a6db67153f8185d1e92b813277"
+  },
+  "candidates": {
+    "paracrawl": {
+      "label": "paracrawl",
+      "checkpoint": "models\\data_ablation\\paracrawl\\best.pt",
+      "step": 40000,
+      "sha256": "bf4cd44e429e0b5d84f3eba71afa76b4b8b6a923c9fff63872d13e952ef45e32"
+    }
+  },
+  "decoders": {
+    "greedy": {
+      "beam_size": 1,
+      "length_penalty": 1.0,
+      "min_new_tokens": 0
+    },
+    "beam4": {
+      "beam_size": 4,
+      "length_penalty": 1.2,
+      "min_new_tokens": 16
+    }
+  },
+  "samples": 1000,
+  "directions": {
+    "en-fr": {
+      "n": 2959,
+      "documents": 176,
+      "skipped_overlength": 44,
+      "greedy": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 22.655,
+          "chrfpp": 49.045,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2959
+        },
+        "candidates": {
+          "paracrawl": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 22.655,
+              "chrfpp": 49.045,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.885,
+              "short_5_words": 56,
+              "short_8_words": 245,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "paracrawl",
+              "step": 40000,
+              "bleu": 23.968,
+              "chrfpp": 50.062,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.61,
+              "short_5_words": 62,
+              "short_8_words": 267,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 1.313,
+              "chrfpp": 1.017
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 1.017,
+                "bootstrap_mean_delta": 1.019,
+                "ci95": [
+                  0.77,
+                  1.275
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 1.313,
+                "bootstrap_mean_delta": 1.316,
+                "ci95": [
+                  0.918,
+                  1.692
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1578,
+              "baseline_wins": 1267,
+              "ties": 114
+            },
+            "changed_outputs": 2850,
+            "shorter_outputs": 1208,
+            "longer_outputs": 992
+          }
+        }
+      },
+      "beam4": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 24.079,
+          "chrfpp": 50.318,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2959
+        },
+        "candidates": {
+          "paracrawl": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 24.079,
+              "chrfpp": 50.318,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.857,
+              "short_5_words": 20,
+              "short_8_words": 246,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "paracrawl",
+              "step": 40000,
+              "bleu": 25.22,
+              "chrfpp": 51.2,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2959,
+              "mean_words": 22.697,
+              "short_5_words": 16,
+              "short_8_words": 247,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 1.141,
+              "chrfpp": 0.882
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.882,
+                "bootstrap_mean_delta": 0.883,
+                "ci95": [
+                  0.651,
+                  1.119
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 1.141,
+                "bootstrap_mean_delta": 1.114,
+                "ci95": [
+                  0.714,
+                  1.517
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1577,
+              "baseline_wins": 1211,
+              "ties": 171
+            },
+            "changed_outputs": 2793,
+            "shorter_outputs": 1106,
+            "longer_outputs": 965
+          }
+        }
+      }
+    },
+    "fr-en": {
+      "n": 2922,
+      "documents": 176,
+      "skipped_overlength": 81,
+      "greedy": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 21.26,
+          "chrfpp": 48.755,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2922
+        },
+        "candidates": {
+          "paracrawl": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 21.26,
+              "chrfpp": 48.755,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.131,
+              "short_5_words": 66,
+              "short_8_words": 256,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "paracrawl",
+              "step": 40000,
+              "bleu": 22.488,
+              "chrfpp": 49.677,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 20.856,
+              "short_5_words": 68,
+              "short_8_words": 291,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 1.228,
+              "chrfpp": 0.922
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.922,
+                "bootstrap_mean_delta": 0.923,
+                "ci95": [
+                  0.661,
+                  1.174
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 1.229,
+                "bootstrap_mean_delta": 1.229,
+                "ci95": [
+                  0.898,
+                  1.55
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1589,
+              "baseline_wins": 1193,
+              "ties": 140
+            },
+            "changed_outputs": 2789,
+            "shorter_outputs": 1181,
+            "longer_outputs": 924
+          }
+        }
+      },
+      "beam4": {
+        "baseline": {
+          "label": "full350",
+          "bleu": 22.145,
+          "chrfpp": 49.882,
+          "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+          "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+          "n": 2922
+        },
+        "candidates": {
+          "paracrawl": {
+            "baseline": {
+              "label": "full350",
+              "step": 38000,
+              "bleu": 22.145,
+              "chrfpp": 49.882,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.495,
+              "short_5_words": 7,
+              "short_8_words": 223,
+              "empty": 0
+            },
+            "candidate": {
+              "label": "paracrawl",
+              "step": 40000,
+              "bleu": 23.281,
+              "chrfpp": 50.77,
+              "bleu_signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.5.1",
+              "chrfpp_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.5.1",
+              "n": 2922,
+              "mean_words": 21.144,
+              "short_5_words": 11,
+              "short_8_words": 238,
+              "empty": 0
+            },
+            "delta": {
+              "bleu": 1.136,
+              "chrfpp": 0.888
+            },
+            "paired_bootstrap": {
+              "chrfpp": {
+                "metric": "chrfpp",
+                "observed_delta": 0.888,
+                "bootstrap_mean_delta": 0.891,
+                "ci95": [
+                  0.618,
+                  1.146
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              },
+              "bleu": {
+                "metric": "bleu",
+                "observed_delta": 1.137,
+                "bootstrap_mean_delta": 1.14,
+                "ci95": [
+                  0.767,
+                  1.481
+                ],
+                "p_value_one_sided": 0.0,
+                "samples": 1000,
+                "resampling_unit": "document",
+                "unit_count": 176
+              }
+            },
+            "sentence_chrfpp": {
+              "candidate_wins": 1552,
+              "baseline_wins": 1203,
+              "ties": 167
+            },
+            "changed_outputs": 2765,
+            "shorter_outputs": 1096,
+            "longer_outputs": 904
+          }
+        }
+      }
+    }
+  }
+}
