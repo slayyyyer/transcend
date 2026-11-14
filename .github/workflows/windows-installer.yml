@@ -1,12 +1,15 @@
-name: Publish Windows installer
+name: Build Windows installer
+
+# Builds the MSI into an existing DRAFT release. The release never becomes
+# public here: attach the model archive, run this workflow, verify the attached
+# installer, then publish the release yourself. Running it against a published
+# release fails on purpose.
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing release tag to rebuild and upload to
+        description: Draft release tag to build into (for example v0.1.0)
         required: true
         type: string
 
@@ -14,29 +17,28 @@ permissions:
   contents: write
 
 concurrency:
-  group: windows-installer-${{ github.event.release.tag_name || inputs.tag }}
+  group: windows-installer-${{ inputs.tag }}
   cancel-in-progress: false
+
+env:
+  MODEL_ASSET: Transcend-Model.zip
+  # SHA-256 of the model archive that must be attached to the draft release.
+  # This pin covers the 800M step-77,000 package. Rebuild the archive with
+  # scripts/package_windows_model.ps1, re-upload it, and update this value in
+  # the same change so a stale or wrong asset fails before the MSI is built.
+  MODEL_SHA256: c4eb95f4b86f47ad4b6ea82923c3b7c404a886f5c796938cecec5577198d3c76
 
 jobs:
   windows-installer:
     runs-on: windows-latest
     steps:
-      - name: Check out release source
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-          cache: maven
-
-      - name: Resolve release version
+      - name: Validate the draft release
+        id: release
         shell: pwsh
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          REPO: ${{ github.repository }}
         run: |
           if (-not $env:RELEASE_TAG) {
             throw "A release tag is required."
@@ -45,21 +47,56 @@ jobs:
           if ($version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
             throw "Release tag '$env:RELEASE_TAG' must be vX.Y.Z (for example v0.1.0) so jpackage can use it as the Windows version."
           }
+          $raw = gh api "repos/$env:REPO/releases/tags/$env:RELEASE_TAG" 2>$null
+          if ($LASTEXITCODE -ne 0 -or -not $raw) {
+            throw "Release '$env:RELEASE_TAG' does not exist. Create a draft release with that tag and attach $env:MODEL_ASSET before running this workflow."
+          }
+          $release = $raw | ConvertFrom-Json
+          if (-not $release.draft) {
+            throw "Release '$env:RELEASE_TAG' is already public. This workflow only builds into draft releases so the installer exists before users can download the release. Publish the release only after this workflow has attached the MSI."
+          }
+          $commit = gh api "repos/$env:REPO/commits/$($release.target_commitish)" --jq ".sha" 2>$null
+          if ($LASTEXITCODE -ne 0 -or -not $commit) {
+            throw "Could not resolve target '$($release.target_commitish)' for release '$env:RELEASE_TAG'."
+          }
           "VERSION=$version" >> $env:GITHUB_ENV
-          Write-Output "Building installer version $version for $env:RELEASE_TAG"
+          "COMMIT=$commit" >> $env:GITHUB_ENV
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "commit=$commit" >> $env:GITHUB_OUTPUT
+          Write-Output "Draft release '$env:RELEASE_TAG' (version $version) targets $commit"
 
-      - name: Download the bundled model
+      - name: Check out the release target
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release.outputs.commit }}
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Download and verify the bundled model
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          REPO: ${{ github.repository }}
         run: |
           New-Item -ItemType Directory -Path model-download -Force | Out-Null
-          gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --pattern "Transcend-Model.zip" --dir model-download --clobber
+          gh release download $env:RELEASE_TAG --repo $env:REPO --pattern $env:MODEL_ASSET --dir model-download --clobber
           if ($LASTEXITCODE -ne 0) {
-            throw "Release '$env:RELEASE_TAG' is missing the Transcend-Model.zip asset. Build it with scripts/package_windows_model.ps1 and attach it before publishing."
+            throw "Release '$env:RELEASE_TAG' is missing the $env:MODEL_ASSET asset. Build it with scripts/package_windows_model.ps1 and attach it to the draft release before running this workflow."
           }
-          Expand-Archive -LiteralPath model-download/Transcend-Model.zip -DestinationPath model-extracted -Force
+          $archive = Join-Path "model-download" $env:MODEL_ASSET
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          $expected = $env:MODEL_SHA256.ToLowerInvariant()
+          if ($actual -ne $expected) {
+            throw "Transcend-Model.zip SHA-256 mismatch. Expected $expected (pinned in .github/workflows/windows-installer.yml), got $actual. Rebuild the archive, re-upload it to the draft release, and update the pin in the same change."
+          }
+          Write-Output "Model archive SHA-256 verified: $actual"
+          Expand-Archive -LiteralPath $archive -DestinationPath model-extracted -Force
           $config = Get-ChildItem -LiteralPath model-extracted -Recurse -Filter model_config.json -File | Select-Object -First 1
           if (-not $config) {
             throw "Transcend-Model.zip does not contain an exported model package."
@@ -104,12 +141,28 @@ jobs:
             -SkipMaven `
             -OutputDir java/target/release
 
-      - name: Upload installer to release
+      - name: Attach the installer to the draft release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          REPO: ${{ github.repository }}
         run: |
+          $raw = gh api "repos/$env:REPO/releases/tags/$env:RELEASE_TAG" 2>$null
+          if ($LASTEXITCODE -ne 0 -or -not $raw) {
+            throw "Release '$env:RELEASE_TAG' disappeared while the installer was being built."
+          }
+          $release = $raw | ConvertFrom-Json
+          if (-not $release.draft) {
+            throw "Release '$env:RELEASE_TAG' became public during the build, so the installer was not attached. Reopen a draft (or create a new one) and rerun this workflow before publishing."
+          }
+          $current = gh api "repos/$env:REPO/commits/$($release.target_commitish)" --jq ".sha" 2>$null
+          if ($LASTEXITCODE -ne 0 -or -not $current) {
+            throw "Could not re-resolve target '$($release.target_commitish)' before uploading the installer."
+          }
+          if ($current -ne $env:COMMIT) {
+            throw "Release target '$($release.target_commitish)' moved from $env:COMMIT to $current while the installer was being built. Rerun this workflow so the MSI matches the code that will be tagged when the release is published."
+          }
           $msi = "java/target/release/Transcend-Translator-Setup.msi"
           $checksum = "$msi.sha256"
           if (-not (Test-Path -LiteralPath $msi -PathType Leaf)) {
@@ -118,10 +171,21 @@ jobs:
           if (-not (Test-Path -LiteralPath $checksum -PathType Leaf)) {
             throw "Checksum was not created: $checksum"
           }
-          gh release upload $env:RELEASE_TAG $msi $checksum --repo $env:GITHUB_REPOSITORY --clobber
+          gh release upload $env:RELEASE_TAG $msi $checksum --repo $env:REPO --clobber
           if ($LASTEXITCODE -ne 0) {
             throw "Uploading the installer to $env:RELEASE_TAG failed."
           }
+          $assets = @(gh release view $env:RELEASE_TAG --repo $env:REPO --json assets --jq ".assets[].name")
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not verify the release assets."
+          }
+          foreach ($required in @("Transcend-Translator-Setup.msi", "Transcend-Translator-Setup.msi.sha256")) {
+            if ($assets -notcontains $required) {
+              throw "Release '$env:RELEASE_TAG' is missing the $required asset after upload."
+            }
+          }
           $hash = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash.ToLowerInvariant()
+          Write-Output "Installer SHA-256: $hash"
           "Installer SHA-256: ``$hash``" >> $env:GITHUB_STEP_SUMMARY
-          "Download: https://github.com/$env:GITHUB_REPOSITORY/releases/download/$env:RELEASE_TAG/Transcend-Translator-Setup.msi" >> $env:GITHUB_STEP_SUMMARY
+          "Download after publishing: https://github.com/$env:REPO/releases/download/$env:RELEASE_TAG/Transcend-Translator-Setup.msi" >> $env:GITHUB_STEP_SUMMARY
+          "Release ``$env:RELEASE_TAG`` is still a DRAFT. The MSI and checksum are attached; verify them, then publish the release." >> $env:GITHUB_STEP_SUMMARY

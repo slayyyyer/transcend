@@ -77,12 +77,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build_windows_in
 # -> java/target/release/Transcend-Translator-Setup.msi
 ```
 
-For a release, use a `vX.Y.Z` tag. Attach the model archive to the **draft**
-release as `Transcend-Model.zip`, then publish it. The
-`.github/workflows/windows-installer.yml` workflow downloads that asset, runs
-the Java tests, builds the MSI, and uploads
-`Transcend-Translator-Setup.msi` plus its SHA-256 file to the same release. The
-workflow can also be run manually with an existing release tag.
+For a release, use a `vX.Y.Z` tag and create a **draft** release for it. Attach
+the model archive as `Transcend-Model.zip`, then run the "Build Windows
+installer" workflow manually with that tag. The workflow refuses to run against
+a public release, verifies the archive against the pinned `MODEL_SHA256` in
+`.github/workflows/windows-installer.yml`, runs the Java tests, builds the MSI,
+and uploads `Transcend-Translator-Setup.msi` plus its SHA-256 file **while the
+release is still a draft**. Verify the attached files, then publish the release
+yourself. When the model archive changes, rebuild it with
+`scripts/package_windows_model.ps1`, re-upload it, and update `MODEL_SHA256` in
+the same change.
 
 The website's Windows download button targets the stable asset:
 `https://github.com/slayyyyer/transcend/releases/latest/download/Transcend-Translator-Setup.msi`.
