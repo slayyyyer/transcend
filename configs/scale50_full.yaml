@@ -1,0 +1,49 @@
+# 50M-parameter scale check: full Europarl v7 + News Commentary v9.
+#
+# The 48.2M-parameter model fits the 4 GB RTX 3050 Ti at micro-batch 8.
+# This is the matched baseline for configs/scale50_combined.yaml. Both runs
+# use the same 350M-token budget, seed, frozen tokenizer, schedule and batch.
+name: scale50_full
+seed: 1337
+
+model:
+  vocab_size: auto
+  d_model: 512
+  encoder_layers: 6
+  decoder_layers: 6
+  attention_heads: 8
+  ffn_dim: 2048
+  dropout: 0.1
+  max_positions: 512
+
+tokenizer:
+  target_vocab_size: 8000
+  min_pair_frequency: 2
+
+data:
+  source: europarl_full
+  train_pairs: 0
+  max_source_tokens: 128
+  max_target_tokens: 136
+  max_char_ratio: 3.0
+  block_size: 200
+
+train:
+  device: auto
+  precision: auto
+  num_threads: 8
+  peak_lr: 3.0e-4
+  warmup_updates: 1000
+  token_budget: 8192
+  max_micro_batch: 8
+  max_steps: 45000
+  max_train_tokens: 350000000
+  max_walltime_s: 144000
+  checkpoint_every: 1000
+  validate_every: 1000
+  patience: 30
+
+eval:
+  max_new_tokens: 136
+  beam_size: 1
+  dev_limit: 300
