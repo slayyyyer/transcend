@@ -352,9 +352,47 @@ Phase 2, after the extension and data-expansion arms:
 
 ## Everyday-language expansion (Tatoeba and bounded ParaCrawl)
 
-This iteration adds data-pipeline support only. No model was trained on the new
-sources, so none of the measured BLEU/chrF++ results in this repository are
-claims about Tatoeba or ParaCrawl.
+This iteration added data-pipeline support first. The Tatoeba-only 350M arm
+completed at step 40,149 / 350,000,282 tokens and was evaluated against the
+full-data 350M baseline. FR→EN improved by +0.543/+0.336 BLEU and
++0.423/+0.351 chrF++ (greedy/beam 4), with the chrF++ 95% intervals excluding
+zero; EN→FR was positive but not statistically significant. No cell regressed.
+The result is direction-specific and automatic metrics only. The ParaCrawl-only
+350M arm completed at step 40,144 / 350,001,418 tokens and was evaluated
+against the same baseline. All four cells improved: +1.313/+1.228 BLEU and
++1.017/+0.922 chrF++ greedy, and +1.141/+1.136 BLEU and +0.882/+0.888 chrF++
+with beam 4 (EN→FR/FR→EN). Every paired chrF++ 95% interval excludes zero. The
+ParaCrawl result is more consistent than Tatoeba's direction-specific gain, but
+it remains automatic metrics only. See
+`reports/newstest2014.paracrawl.comparisons.{json,md}`. The combined arm at the
+19.8M/350M-token tier remains unlaunched. A separate 50M-parameter scale check
+(below) completed its baseline and is training the combined mixture; it has no
+comparison result yet.
+
+### 800M ParaCrawl scale-up (complete)
+
+The 350M ParaCrawl arm met the predeclared consistency bar: it improved both
+directions and both decoders, and every paired chrF++ 95% interval excludes
+zero. A fresh 800M-token ParaCrawl run was launched on 2026-11-11 from random
+initialization, not as a continuation of the 350M arm, using
+`configs/scaled_full_paracrawl_800m.yaml` over the
+`europarl_full_paracrawl` mixture and writing to
+`models/data_ablation/paracrawl_800m`. The comparison target is the
+dev-selected 800M continuation `models/scaled_full/best.pt` at step 77,000, so
+this is an 800M-vs-800M comparison.
+
+The run stopped on `max_train_tokens` at step 91,754 / 800,004,736 tokens after
+40,230.72 s this invocation and 67,653.36 s cumulative, at 12,083.9 target
+tokens/s and 570.89 ms mean update. The dev-selected best is step 91,000 at
+56.4130 mean chrF++; the final checkpoint last validated at 56.5487 (EN→FR)
+and 56.2773 (FR→EN). Against the 800M baseline, all four newstest2014 cells
+improved: +1.153/+1.079 BLEU/chrF++ EN→FR greedy and +1.432/+1.011 beam 4;
++1.476/+1.085 FR→EN greedy and +1.560/+1.103 beam 4. Paired chrF++ 95%
+intervals are [+0.757, +1.388], [+0.743, +1.283], [+0.843, +1.334] and
+[+0.903, +1.324]; all exclude zero. Sentence-level chrF++ W/L/T is
+1604/1196/159, 1606/1167/186, 1569/1162/191 and 1583/1144/195. This is
+automatic metrics only; see
+`reports/newstest2014.paracrawl_800m.comparisons.{json,md}`.
 
 * Tatoeba is acquired from the weekly per-language sentence files plus the
   EN-FR link file. The weekly files are UTF-8 and do not contain a per-row
@@ -385,16 +423,52 @@ claims about Tatoeba or ParaCrawl.
   tokenizer, decoding settings and 350M-token budget. A new tokenizer, if one is
   ever trained, must read `train.tsv` only; an existing checkpoint must not be
   retokenized.
-* The four configs are `configs/scaled_full.yaml` (existing data),
+* The four 19.8M configs are `configs/scaled_full.yaml` (existing data),
   `configs/scaled_full_tatoeba.yaml`, `configs/scaled_full_paracrawl.yaml`, and
   `configs/scaled_full_combined.yaml`. Exact preparation and training commands
-  are in `docs/DATA_CARD.md`; the long runs are deliberately not launched.
+  are in `docs/DATA_CARD.md`; Tatoeba and ParaCrawl completed and were
+  evaluated, and the 350M combined arm remains deliberately unlaunched. The
+  separate 50M pair (`configs/scale50_full.yaml` and
+  `configs/scale50_combined.yaml`) is described below.
 * The separate 24-row everyday review set covers questions, negation, names,
   numbers, idioms and *tu/vous*. Its French references are project-authored
   drafts and are labeled `not_bilingual_human_reviewed`; it is excluded from
   training and is not a general-quality benchmark.
 * OpenSubtitles, GlobalVoices, WikiMatrix and Giga-French remain later
   candidates. The full ParaCrawl release is not a first-step download.
+
+### 50M-parameter scale check (baseline complete, combined training)
+
+The 19.8M model is capacity-limited on the 4 GB card, so a larger model was
+checked against the same 350M-token recipes. This is a model-size axis, not a
+fourth data arm: it does not replace the 19.8M four-way comparison and must not
+be mixed into it.
+
+* Architecture: 6 encoder + 6 decoder layers, `d_model` 512, 8 attention heads,
+  FFN 2,048, dropout 0.1, sinusoidal positions, tied embeddings, 8,000-entry
+  frozen byte-BPE tokenizer, 128 source / 136 target limits. **48,236,544
+trainable parameters**, measured from the constructed model.
+* Configs: `configs/scale50_full.yaml` (full Europarl v7 + News Commentary v9)
+  and `configs/scale50_combined.yaml` (the same base plus the audited Tatoeba
+  and bounded ParaCrawl mixture). Seed, tokenizer, limits, peak LR 3e-4, 1,000
+  warmup updates, 8,192-token update budget, 350M-token cap, 45,000-step cap and
+  40-hour walltime cap are identical; only `data.source` and the name differ.
+  Both are committed so the run can be reproduced exactly.
+* Baseline: `models/scale50/full` completed on 2026-11-14 at step 41,373 /
+  350,001,072 tokens, stop reason `max_train_tokens`. Cumulative walltime
+  109,110.43 s (about 30.3 h), throughput 5,719.76 target tokens/s, mean update
+  1,787.78 ms. The dev-selected best is step 41,000 at 56.2123 mean chrF++
+  (EN→FR 56.3831 / FR→EN 56.0415, the same validation). `best.pt` is step 41,000 and
+  `checkpoint.pt` is step 41,373. The 45,000-step cap was not reached, and the
+  350M-token cap decided the stop.
+* Combined: `models/scale50/combined` started from random initialization on
+  2026-11-14 07:47 EST and is training under `scripts/run_scale50_combined.sh`.
+  At the time of writing it had passed ~450 of ~42,725 updates and had produced
+  no checkpoint or evaluation result. Do not report a combined number until it
+  stops and both 50M checkpoints are evaluated on the same newstest2014 rows.
+* No newstest2014 evaluation exists for the 50M baseline yet. Its dev chrF++ is
+  in-domain and selected the checkpoint; it is not an external quality claim
+  and is not directly comparable to the 19.8M test results.
 
 ## Acceptance criteria recorded before final testing
 

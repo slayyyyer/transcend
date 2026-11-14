@@ -14,13 +14,17 @@
 | Full-data 350M baseline | `models/scaled_full/best.pre_extend.pt`, step 38,000 (preserved; 19,825,920 parameters) |
 | 800M continuation best | `models/scaled_full/best.pt`, step 77,000 |
 | 800M continuation final | `models/scaled_full/checkpoint.pt`, step 91,691 |
+| 800M ParaCrawl best | `models/data_ablation/paracrawl_800m/best.pt`, step 91,000 (dev-selected; 19,825,920 parameters) |
+| 800M ParaCrawl final | `models/data_ablation/paracrawl_800m/checkpoint.pt`, step 91,754 |
+| 50M scale-check best | `models/scale50/full/best.pt`, step 41,000 (48,236,544 parameters) |
+| 50M scale-check final | `models/scale50/full/checkpoint.pt`, step 41,373 |
 | Scaled export | `models/scaled_export` (12 files, 237,211,722 B; step 18,000; not the default package) |
 | Scaled export encoder SHA-256 | `8937c77c0caac9db4eba9502ebb3acf6c4414dfdea11dc42f2cf4047ed836b7f` |
 | Exported package | `models/accel_export` (11 files, 120 MB; default, rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
 | Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
 | Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
-| Training code version | repository state at 2026-11-09 |
+| Training code version | repository state at 2026-11-14 |
 
 The model was initialized from the documented random scheme `N(0, 0.02)` with
 seed 1337 (`nmt/model.py::INITIALIZATION_MANIFEST`). No pretrained weights,
@@ -136,12 +140,61 @@ from the held-out block split; small-model history in
 | 15,000 | 46.81 | 46.86 | 46.76 |
 | 15,500 | 46.82 | 47.03 | 46.60 |
 
-## Everyday-language data expansion (preparation only)
+### 50M-parameter scale check (baseline complete; combined training)
+
+A separate model-size check asks whether the 19.8M model is capacity-limited on
+this card. It uses a 6+6-layer model with `d_model` 512, 8 heads, FFN 2,048 and
+**48,236,544 trainable parameters**, the same frozen 8,000-entry tokenizer and
+128/136 limits, and the same 350M-token budget. It is a model-size axis, not a
+data ablation, and it is not folded into the main tables.
+
+| Field | Value |
+| --- | --- |
+| Config | `configs/scale50_full.yaml` (committed) |
+| Data | full Europarl v7 + News Commentary v9 (`europarl_full` mixture) |
+| Target tokens seen | 350,001,072 |
+| Optimizer updates | 41,373 (dev-selected best step 41,000) |
+| Best development chrF++ | 56.2123 mean (step 41,000) |
+| Wall clock | 109,110.43 s cumulative (~30.3 h) |
+| Stop | `max_train_tokens` at step 41,373 |
+| Throughput | 5,719.76 target tokens/s; 1,787.78 ms mean update |
+
+`models/scale50/full/best.pt` is the step-41,000 checkpoint and
+`checkpoint.pt` is step 41,373. No newstest2014 evaluation has been run for
+this checkpoint, so its dev chrF++ is the only quality number and is not
+directly comparable to the 19.8M external results.
+
+The matched combined arm (`configs/scale50_combined.yaml`, the audited Tatoeba
+and bounded ParaCrawl mixture; only `data.source` differs) started from random
+initialization on 2026-11-14 and is still training. **No combined result
+exists.** Do not quote one until the run stops and both 50M checkpoints are
+evaluated on the same retained newstest2014 rows.
+
+## Everyday-language data expansion (Tatoeba and ParaCrawl arms evaluated)
 
 The repository now has a reproducible preparation path for Tatoeba and a
-bounded ParaCrawl v9 sample, plus four comparable 6+6-layer data recipes. This
-card's reported checkpoints were **not** trained on either source. No quality
-improvement from Tatoeba or ParaCrawl is measured or claimed here.
+bounded ParaCrawl v9 sample, plus four comparable 6+6-layer data recipes. The
+checkpoints profiled in the main tables were **not** trained on either source.
+The separate Tatoeba-only and ParaCrawl-only 350M arms have completed and are
+evaluated below; neither result is folded into the main model claims.
+
+**Tatoeba ablation (automatic metrics only):** the arm completed at step
+40,149 / 350,000,282 tokens; its dev-selected best is step 39,000. Against the
+full-data 350M baseline on the same newstest2014 rows, FR→EN improved by
++0.543/+0.336 BLEU and +0.423/+0.351 chrF++ (greedy/beam 4), with the chrF++
+95% intervals excluding zero; EN→FR was positive but not statistically
+significant. No Tatoeba cell regressed. See
+`reports/newstest2014.tatoeba.comparisons.{json,md}`. This is not the
+checkpoint profiled in the main model tables and is not human review.
+
+**ParaCrawl ablation (automatic metrics only):** the arm finished at step
+40,144 / 350,001,418 tokens; its dev-selected best is step 40,000. Against the
+full-data 350M baseline on the same newstest2014 rows, all four cells improved:
++1.313/+1.228 BLEU and +1.017/+0.922 chrF++ greedy, and +1.141/+1.136 BLEU and
++0.882/+0.888 chrF++ with beam 4 (EN→FR/FR→EN). Every paired chrF++ 95%
+interval excludes zero. See `reports/newstest2014.paracrawl.comparisons.{json,md}`.
+This is not the checkpoint profiled in the main model tables and is not human
+review.
 
 - Tatoeba: weekly 2026-11-07 files, CC BY 2.0 FR by default (some CC0), with
   sentence IDs retained for attribution. All translations of an English
@@ -190,6 +243,8 @@ FR→EN: n = 2,922, 81 skipped.
 | Full-data 19.8M step 77,000 (800M best), tuned beam 4 | 26.28 | 52.25 | 23.90 | 51.46 |
 | Full-data 19.8M step 91,691 final (800M), greedy | **25.37** | **51.39** | **23.56** | **50.83** |
 | Full-data 19.8M step 91,691 final (800M), tuned beam 4 | **26.44** | **52.53** | **24.38** | **51.90** |
+| 800M ParaCrawl step 91,000 (dev-selected), greedy | 26.17 | 52.14 | 24.81 | 51.69 |
+| 800M ParaCrawl step 91,000 (dev-selected), tuned beam 4 | **27.71** | **53.26** | **25.46** | **52.57** |
 
 The tuned beam rows use beam 4, length penalty 1.2 and a minimum of 16 new
 target tokens, selected on dev only. For the step-14,500 row, paired chrF++
@@ -231,6 +286,18 @@ dev-selected best is also above baseline; the final test scores are slightly
 higher than the best, but dev preferred 77,000 and final-vs-best was not
 bootstrap-tested. See `reports/newstest2014.scaled_full_800m.comparisons.md`.
 This is automatic metrics only, not human evaluation.
+
+The 800M ParaCrawl arm was trained from random initialization on the
+Europarl + News Commentary + bounded ParaCrawl mixture (`europarl_full_paracrawl`)
+under the same 6+6 architecture, tokenizer, seed and schedule. It stopped at
+step 91,754 / 800,004,736 tokens; its dev-selected best is step 91,000 at
+56.4130 mean chrF++. The comparison is 800M vs 800M: against
+`models/scaled_full/best.pt` (step 77,000), all four newstest2014 cells
+improved by +1.153/+1.079 BLEU/chrF++ EN→FR greedy, +1.432/+1.011 beam 4,
++1.476/+1.085 FR→EN greedy and +1.560/+1.103 beam 4. Every paired chrF++ 95%
+interval excludes zero. See
+`reports/newstest2014.paracrawl_800m.comparisons.{json,md}`. This is automatic
+metrics only, and the arm was not exported to ONNX or reviewed by a human.
 
 ### API-assisted spot check
 
@@ -375,17 +442,29 @@ package. The final step-15,897 checkpoint remains at
   substitute for qualified human evaluation.
 - The everyday review set has no qualified bilingual review; its French
   references are drafts marked `not_bilingual_human_reviewed`. Tatoeba and
-  ParaCrawl are preparation-only, and ParaCrawl's bounded prefix has no per-row
-  quality score. Do not interpret the smoke run as a data-ablation result.
+  ParaCrawl are not used by the checkpoints in the main tables. The separate
+  Tatoeba-only and ParaCrawl-only 350M arms completed and were evaluated as
+  ablations. Tatoeba is FR→EN-specific; ParaCrawl is positive in all four
+  measured cells; both are automatic metrics only. The 350M combined arm
+  remains untrained, and the separate 50M combined arm is still training with
+  no result. ParaCrawl's bounded prefix has no per-row quality score. Do not
+  interpret the smoke run, a training run, or an unlaunched arm as a
+  data-ablation result.
+- The 800M ParaCrawl arm improved over the 800M baseline in all four newstest2014
+  cells, but it is automatic metrics only, it was not exported to ONNX, and it
+  has no human review. Its corpus inherits the bounded ParaCrawl prefix's
+  licensing caveats, so it is not a redistribution-safe artifact.
 
 ## Provenance, licensing and artifacts
 
-Training corpora for the checkpoints in this card: Europarl v7 and WMT14 News
-Commentary v9 from statmt.org, with pinned SHA-256 checksums and retrieval dates
-in `data/prepared/europarl_nc/manifest.json`. Evaluation: newstest2014, recorded
-in `data/prepared/newstest2014/manifest.json`. Tatoeba and bounded ParaCrawl data
-are prepared by `nmt.cli prepare-mixture` but were not used for any checkpoint
-reported here. The corpora are not redistributed; see `NOTICE`, `LICENSE` and
+Training corpora for the checkpoints in the main tables: Europarl v7 and WMT14
+News Commentary v9 from statmt.org, with pinned SHA-256 checksums and retrieval
+dates in `data/prepared/europarl_nc/manifest.json`. Evaluation: newstest2014,
+recorded in `data/prepared/newstest2014/manifest.json`. Tatoeba and bounded
+ParaCrawl data are prepared by `nmt.cli prepare-mixture`; the checkpoints in the
+main tables were not trained on them. The separate Tatoeba-only and
+ParaCrawl-only 350M arms, the 800M ParaCrawl arm and the 50M scale-check
+baseline/combined pair are documented above. The corpora are not redistributed; see `NOTICE`, `LICENSE` and
 `docs/DATA_CARD.md`. Source-code licensing is separate from corpus and
 model-artifact terms; the model artifact inherits the corpus constraints and is
 published for research use only.
