@@ -55,11 +55,12 @@ translation, not production-quality text.
 ## Windows installer
 
 The release build is a per-user Windows x64 MSI built with `jpackage`. It bundles
-a private Java runtime and the `scaled_export` model package, so the installed
+a private Java runtime and the `scaled_export` model package (the 800M
+continuation's step-77,000 checkpoint), so the installed
 app does not need Java, Python, a network connection or a separate model
 download. The model archive omits the unused `torch_state_dict.pt` file.
 
-Build the model archive locally from the verified scaled package:
+Build the model archive locally from the verified shipped package:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/package_windows_model.ps1

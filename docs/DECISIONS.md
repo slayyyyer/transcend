@@ -476,7 +476,9 @@ Engineering criteria (must pass): export/parity, deterministic mask/cache
 behaviour, bounded generation, resume, Java/Python token and output equality.
 These pass: 34 Python tests, 10 Java tests against both the step-14,500 and
 step-15,897 packages, ONNX parity with worst logit absolute differences of
-8.58e-6 and 6.44e-6, and identical greedy generation.
+8.58e-6 and 6.44e-6, and identical greedy generation. The shipped 800M
+step-77,000 package also passes Python↔ONNX parity (worst 1.42e-5) and the
+13-test Java suite, including the greedy parity vectors.
 
 Quality criteria for this hardware budget (expected, not guaranteed): the
 accelerator pilot should beat source-copy on chrF++ in both directions and show

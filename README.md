@@ -25,8 +25,10 @@ dev checkpoint is step 18,000. Full newstest2014 scores are 20.01/19.02 BLEU and
 47.04/46.70 chrF++ greedy, and 21.24/20.30 BLEU and 48.44/48.15 chrF++ with
 beam 4. Versus the final small model that is +7.90/+6.85 BLEU greedy and
 +6.79/+6.19 beam 4; every paired 95% interval excludes zero. The step-18,000
-checkpoint also has a verified `models/scaled_export` ONNX/Java package. It
-remains a pilot, not a usable translator, and no human evaluation was performed.
+checkpoint was exported for verification and is archived at
+`models/scaled_export_step18000`; the installer now bundles the 800M
+continuation's step-77,000 checkpoint at `models/scaled_export`. It remains a
+pilot, not a usable translator, and no human evaluation was performed.
 
 **Full-data follow-up:** the stride-1 preparation is complete. All 2,190,974
 aligned Europarl/News Commentary candidates cleaned to 2,143,227 pairs and
@@ -43,13 +45,23 @@ scores 25.37/23.56 BLEU and 51.39/50.83 chrF++ greedy, and 26.44/24.38 BLEU and
 +2.71/+2.30 BLEU greedy and +2.36/+2.23 BLEU beam 4; all paired 95% intervals
 exclude zero. These are automatic newstest2014 metrics only, not human review.
 
-**Everyday-language data expansion (preparation only):** the pipeline now
-supports Tatoeba and a bounded, filtered ParaCrawl v9 sample. A real-source
-smoke mixture prepared 2,000 Tatoeba + 2,000 ParaCrawl pairs with zero exact
-cross-split overlap and zero near-duplicate train leaks; a tokenizer and a
-10-update CPU model ran end to end. **No model was trained on these sources in
-this iteration**, so there is no new translation-quality claim. The four
-comparable recipes are `configs/scaled_full.yaml`,
+**Everyday-language data expansion (Tatoeba and ParaCrawl arms evaluated):**
+the pipeline now supports Tatoeba and a bounded, filtered ParaCrawl v9 sample.
+A real-source smoke mixture prepared 2,000 Tatoeba + 2,000 ParaCrawl pairs with
+zero exact cross-split overlap and zero near-duplicate train leaks; a tokenizer
+and a 10-update CPU model ran end to end. The Tatoeba-only 350M arm completed
+at step 40,149 / 350,000,282 tokens. Against the full-data 350M baseline on the
+same newstest2014 rows, its dev-selected step-39,000 checkpoint improved FR→EN
+by +0.543/+0.336 BLEU and +0.423/+0.351 chrF++ (greedy/beam 4), with the chrF++
+95% intervals excluding zero; EN→FR was positive but not statistically
+significant. No Tatoeba cell regressed. The ParaCrawl-only 350M arm completed
+at step 40,144 / 350,001,418 tokens; its dev-selected step-40,000 checkpoint
+improved all four cells on the same rows: +1.313/+1.228 BLEU and +1.017/+0.922
+chrF++ greedy, and +1.141/+1.136 BLEU and +0.882/+0.888 chrF++ with beam 4
+(EN→FR/FR→EN). Every paired chrF++ 95% interval excludes zero. See
+`reports/newstest2014.tatoeba.comparisons.{json,md}` and
+`reports/newstest2014.paracrawl.comparisons.{json,md}`. Combined remains
+untrained. These are automatic metrics only, not human review. The four comparable recipes are `configs/scaled_full.yaml`,
 `configs/scaled_full_tatoeba.yaml`, `configs/scaled_full_paracrawl.yaml` and
 `configs/scaled_full_combined.yaml`; see `docs/DATA_CARD.md` for the exact
 commands, licensing, filtering statistics and limitations. The ordered next
@@ -154,12 +166,20 @@ bash scripts/evaluate_full.sh
 #     Its 24-hour walltime is a per-invocation budget; token and step limits
 #     are cumulative.
 bash scripts/extend_full_data.sh
-# Export and verify the scaled package separately; it is not the default.
+# Archive the scaled step-18,000 package; the shipped package is built below.
 $PY -m nmt.cli export --config configs/scaled_accelerator.yaml \
   --checkpoint models/scaled_pilot/best.pt --tokenizer models/cpu_small/tokenizer \
-  --out models/scaled_export --provenance data/prepared/europarl_nc/manifest.json
-$PY -m nmt.cli parity --model-dir models/scaled_export \
+  --out models/scaled_export_step18000 --provenance data/prepared/europarl_nc/manifest.json
+$PY -m nmt.cli parity --model-dir models/scaled_export_step18000 \
   --out reports/parity_scaled.json
+
+# Build and verify the package bundled in the Windows installer: the 800M
+# continuation's dev-selected step-77,000 checkpoint.
+$PY -m nmt.cli export --config configs/scaled_full.yaml \
+  --checkpoint models/scaled_full/best.pt --tokenizer models/cpu_small/tokenizer \
+  --out models/scaled_export --provenance data/prepared/europarl_full/manifest.json
+$PY -m nmt.cli parity --model-dir models/scaled_export \
+  --out reports/parity_800m.json
 
 # 6. Evaluate both directions on the pinned external benchmark, comparing the
 #    archived step-9,500 checkpoint with the current candidate.
@@ -231,10 +251,11 @@ downloads, training, subprocess calls or fallback. The local
 previous step-9,500 package is archived at
 `models/accel_export_step9500/`. The final step-15,897 checkpoint is exported
 separately at `models/accel_export_step15897/` for evaluation and runtime
-verification; it is not the default package. The scaled step-18,000 checkpoint
-is exported at `models/scaled_export/`; it is also not the default package.
-Each package has new checksums, and ONNX parity and the Java suite were rerun
-against it.
+verification; it is not the default package. The Windows installer bundles the
+800M continuation's dev-selected step-77,000 checkpoint at
+`models/scaled_export/`; the earlier scaled step-18,000 export is archived at
+`models/scaled_export_step18000/`. Each package has new checksums, and ONNX
+parity and the Java suite were rerun against it.
 
 ## Architecture and training recipe
 
@@ -458,9 +479,14 @@ The optional everyday-language preparation adds Tatoeba weekly sentence/link
 files (CC BY 2.0 FR by default, some rows CC0) and a bounded ParaCrawl v9 TXT
 prefix (CC0 packaging; underlying website text rights are not asserted). The
 new source totals, checksums and filtering statistics are recorded by
-`nmt.cli prepare-mixture` in the output manifest. These sources are not part of
-the measured models above. Raw archives are not redistributed; attribution and
-limitations are in `NOTICE` and `docs/DATA_CARD.md`.
+`nmt.cli prepare-mixture` in the output manifest. Full 100,000-pair Tatoeba,
+ParaCrawl, and combined mixtures were prepared and audited. The separate
+Tatoeba-only and ParaCrawl-only arms have completed and are evaluated above;
+the 350M combined arm is not yet trained. Neither result is folded into the
+main 350M/800M models. See
+[`reports/data_expansion_full.md`](reports/data_expansion_full.md). Raw archives
+are not redistributed; attribution and limitations are in `NOTICE` and
+`docs/DATA_CARD.md`.
 
 Corpus terms are **not** permissive by default: Europarl's original terms allow
 use but not blanket redistribution, WMT distribution does not grant every
@@ -494,19 +520,32 @@ constraints recorded in the model card.
 - The 800M continuation used about 2.3x the 350M token budget for roughly
   +2.4 BLEU average on newstest2014. Dev peaked at step 77,000 (56.0833 chrF++)
   and did not improve after; the final test scores are slightly above the best,
-  but that small difference was not bootstrap-tested. No ONNX export or Java
-  parity was run for the full-data or 800M checkpoints. It has no human review.
+  but that small difference was not bootstrap-tested. The 800M step-77,000
+  checkpoint is exported and Java-verified as the shipped package; the final
+  step-91,691 checkpoint and the 800M ParaCrawl arm have no ONNX export or Java
+  parity. It has no human review.
 - API-assisted review is a 25-row-per-direction spot check with an unofficial
   no-key Google endpoint. It is not a full benchmark, COMET, or human review.
-- Tatoeba and ParaCrawl are preparation-only in this iteration. The smoke run
-  proves the acquisition/filter/split/tokenizer/training plumbing, not a
-  quality gain. ParaCrawl is a bounded prefix, not a uniform sample of the
-  21 GiB release, and its TXT has no per-row quality score. See
-  `docs/DATA_CARD.md` and `reports/data_expansion_smoke.md`.
+- The Tatoeba-only 350M arm completed and was evaluated against the full-data
+  350M baseline: FR→EN +0.543/+0.336 BLEU and +0.423/+0.351 chrF++
+  (greedy/beam 4), with the chrF++ 95% intervals excluding zero; EN→FR was
+  positive but not statistically significant. The gain is direction-specific
+  and automatic metrics only. The ParaCrawl-only arm improved all four cells:
+  +1.313/+1.228 BLEU and +1.017/+0.922 chrF++ greedy, and +1.141/+1.136 BLEU
+  and +0.882/+0.888 chrF++ beam 4 (EN→FR/FR→EN), with every chrF++ interval
+  excluding zero. The 350M combined arm remains untrained; the separate 50M
+  combined arm is training. Full 100,000-pair mixtures were built and audited. The smoke run and full audit prove the
+  acquisition/filter/split/tokenizer/training plumbing, not a quality gain.
+  ParaCrawl is a bounded prefix, not a uniform sample of the 21 GiB release,
+  and its TXT has no per-row quality score. The optional baseline-wide near
+  audit was skipped, so do not report it as passed. See `docs/DATA_CARD.md`,
+  `reports/data_expansion_smoke.md`, `reports/data_expansion_full.md`,
+  `reports/newstest2014.tatoeba.comparisons.{json,md}`, and
+  `reports/newstest2014.paracrawl.comparisons.{json,md}`.
 
 ## Verification actually run
 
-- `pytest -q`: **42 passed** on CPU, covering tokenizer parity, masking, causal
+- `pytest -q`: **43 passed** on CPU, covering tokenizer parity, masking, causal
   decoder behavior, padding, memorization, resume determinism, ONNX export,
   Python↔ONNX Runtime parity, beam-search validity/exploration, batched/single
   beam parity, minimum-length EOS blocking, Tatoeba/ParaCrawl parsing, language
@@ -514,12 +553,16 @@ constraints recorded in the model card.
   detection, review-set manifests, and a real-source smoke mixture. Review-harness
   tests cover UTF-8 chunking, provider response parsing, provider-scoped caches,
   dry-run output, and report alignment.
+- Full data-preparation audit: Tatoeba 2,198,385 / 21,145 / 20,853; ParaCrawl
+  2,199,355 / 20,950 / 20,862; combined 2,296,415 / 21,957 / 21,926. Added
+  99,135 / 99,919 / 199,050; all nine assertions zero; baseline prefixes
+  unchanged. The baseline-wide near audit was skipped and is not reported as
+  passed. See `reports/data_expansion_full.md`.
 - `mvn -B package -Dtranscend.model.dir=../models/accel_export`: **10 tests, 0
   failures**, including the Java↔Python greedy parity tests.
-- The same 10-test suite passed against
-  `../models/accel_export_step15897` and `../models/scaled_export` with **0
-  failures and 0 skipped**, including each package's Python↔Java greedy parity
-  test.
+- The same suite passed against `../models/accel_export_step15897` (10 tests)
+  and `../models/scaled_export` (13 tests) with **0 failures and 0 skipped**,
+  including each package's Python↔Java greedy parity test.
 - Python↔ONNX parity on three cases: step-14,500 worst max-absolute logit
   difference **8.58e-6** (`reports/parity.json`); step-15,897 **6.44e-6**
   (`reports/parity_step15897.json`); scaled step-18,000 **6.44e-6**
@@ -559,10 +602,11 @@ constraints recorded in the model card.
   Against the preserved 350M baseline, all four BLEU and chrF++ deltas are
   positive with 95% chrF++ intervals excluding zero. See
   `reports/newstest2014.scaled_full_800m.comparisons.md`. Automatic metrics only.
-- The scaled step-18,000 package at `models/scaled_export` has 12 files /
-  237,211,722 B. Python↔ONNX parity passed with worst max-absolute logit
-  difference 6.44e-6 and identical greedy generation; the 10-test Java suite
-  passed against it.
+- The shipped 800M step-77,000 package at `models/scaled_export` has 11 files /
+  237,211,735 B. Python↔ONNX parity passed with worst max-absolute logit
+  difference 1.42e-5 and identical greedy generation; the 13-test Java suite
+  passed against it. The previous step-18,000 package is archived at
+  `models/scaled_export_step18000`.
 - Real API-assisted spot check: 25 rows per direction from the final step-15,897
   checkpoint with Google `gtx` (50 new requests; 50/50 usable), with per-row
   TSV, summary JSON and Markdown under

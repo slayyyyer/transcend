@@ -18,9 +18,10 @@
 | 800M ParaCrawl final | `models/data_ablation/paracrawl_800m/checkpoint.pt`, step 91,754 |
 | 50M scale-check best | `models/scale50/full/best.pt`, step 41,000 (48,236,544 parameters) |
 | 50M scale-check final | `models/scale50/full/checkpoint.pt`, step 41,373 |
-| Scaled export | `models/scaled_export` (12 files, 237,211,722 B; step 18,000; not the default package) |
-| Scaled export encoder SHA-256 | `8937c77c0caac9db4eba9502ebb3acf6c4414dfdea11dc42f2cf4047ed836b7f` |
-| Exported package | `models/accel_export` (11 files, 120 MB; default, rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
+| Shipped ONNX package | `models/scaled_export` (11 files, 237,211,735 B; 800M continuation step 77,000; bundled in the installer) |
+| Shipped export encoder SHA-256 | `a3110fb27f91fc1e8ac616d3b29c072c6361b0153ebcc7d14d07f43e64614539` |
+| Previous scaled export | `models/scaled_export_step18000` (step 18,000; archived, not bundled) |
+| Exported package | `models/accel_export` (11 files, 120 MB; smallest pilot package, not the installer default; rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
 | Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
 | Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
@@ -47,9 +48,11 @@ point.
 
 A separate scaled experiment uses 6 encoder + 6 decoder layers, `d_model` 320,
 5 heads, FFN 1,280 and **19,825,920 trainable parameters**, with the same 8,000
-byte-BPE tokenizer, positions, normalization and sequence limits. Its step-18,000
-checkpoint is exported separately at `models/scaled_export`; the default
-deployable package remains the 9.4M step-14,500 model.
+byte-BPE tokenizer, positions, normalization and sequence limits. The Windows
+installer bundles the 800M continuation's dev-selected step-77,000 checkpoint as
+`models/scaled_export`; the earlier step-18,000 export is archived at
+`models/scaled_export_step18000`, and the 9.4M step-14,500 package remains the
+smallest verified pilot (`models/accel_export`).
 
 ## Training
 
@@ -369,11 +372,17 @@ human judgment is reported. Round-trip similarity is not used.
 
 ## Runtime verification
 
-The default export is step 14,500. The scaled step-18,000 checkpoint is exported
-separately to `models/scaled_export` and checked without replacing the default
-package. The final step-15,897 checkpoint remains at
-`models/accel_export_step15897`.
+The package bundled in the Windows installer is the 800M continuation's
+dev-selected step-77,000 checkpoint (`models/scaled_export`). The earlier scaled
+step-18,000 export is archived at `models/scaled_export_step18000`; the 9.4M
+step-14,500 package remains at `models/accel_export`, and the final step-15,897
+checkpoint at `models/accel_export_step15897`.
 
+- Shipped 800M step-77,000 Python↔ONNX Runtime parity: worst max-absolute logit
+  difference 1.42e-5 and token-for-token identical greedy generation
+  (`reports/parity_800m.json`).
+- Shipped 800M Java Maven suite: 13 tests, 0 failures, 0 skipped, including the
+  Python↔Java greedy parity vectors.
 - Scaled Python↔ONNX Runtime parity: worst max-absolute logit difference 6.44e-6
   and token-for-token identical greedy generation (`reports/parity_scaled.json`).
 - Scaled Java Maven suite: 10 tests, 0 failures, 0 skipped, including the
@@ -429,8 +438,10 @@ package. The final step-15,897 checkpoint remains at
 - The 800M continuation used about 2.3x the 350M token budget for roughly
   +2.4 BLEU average on newstest2014. Dev peaked at step 77,000 (56.0833 chrF++)
   and did not improve after; the final test scores are slightly above the best,
-  but that small difference was not bootstrap-tested. No ONNX export or Java
-  parity was run for the full-data or 800M checkpoints. It has no human review.
+  but that small difference was not bootstrap-tested. The step-77,000 checkpoint
+  is exported and Java-verified as the shipped package; the final step-91,691
+  checkpoint and the 800M ParaCrawl arm have no ONNX export or Java parity. It
+  has no human review.
 - No quantified bias, toxicity, or privacy audit was performed. Parliamentary
   proceedings contain personal names and political content inherited from the
   source corpora.
