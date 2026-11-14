@@ -5,8 +5,8 @@ both trained from scratch, plus an offline Java 17 inference
 library that runs the exported ONNX package without Python or network access.
 
 **Status: proof of concept; both pipelines are complete, but quality is still
-pilot-level.** Every stage below actually ran end to end. The default 9.4M
-small model reached the 82M-token cap at 15,897 updates; its step-14,500
+pilot-level.** Every stage below actually ran end to end. The 9.4M small model
+reached the 82M-token cap at 15,897 updates; its step-14,500
 checkpoint scores BLEU 11.03/11.28 and chrF++ 38.67/38.86 greedy, and the final
 step-15,897 checkpoint raises those to 12.11/12.17 and 39.46/39.53. The same
 dev-tuned beam-4 decoder (length penalty 1.2, minimum 16 tokens) lifts the
@@ -251,7 +251,7 @@ downloads, training, subprocess calls or fallback. The local
 previous step-9,500 package is archived at
 `models/accel_export_step9500/`. The final step-15,897 checkpoint is exported
 separately at `models/accel_export_step15897/` for evaluation and runtime
-verification; it is not the default package. The Windows installer bundles the
+verification; it is not the installer package. The Windows installer bundles the
 800M continuation's dev-selected step-77,000 checkpoint at
 `models/scaled_export/`; the earlier scaled step-18,000 export is archived at
 `models/scaled_export_step18000/`. Each package has new checksums, and ONNX

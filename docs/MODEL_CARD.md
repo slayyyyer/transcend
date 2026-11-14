@@ -8,7 +8,7 @@
 | Checkpoint | `models/accel_pilot/best.pt`, optimizer step 14,500 |
 | Checkpoint SHA-256 | `cf813c77caed6e7e6785318bfa8630feb70d5f26ec2887f45735a2859c126231` |
 | Latest checkpoint | `models/accel_pilot/checkpoint.pt`, step 15,897 (evaluated on newstest2014 after selection; last validation at 15,500) |
-| Scaled experiment checkpoint | `models/scaled_pilot/best.pt`, step 18,000 (19,825,920 parameters; separately exported, not the default) |
+| Scaled experiment checkpoint | `models/scaled_pilot/best.pt`, step 18,000 (19,825,920 parameters; separately exported, not the installer package) |
 | Scaled checkpoint SHA-256 | `2c2f518b1f3b015fdce0cff6ef762a4a0f081643add9ec6865856ba821f22c77` |
 | Scaled latest checkpoint | `models/scaled_pilot/checkpoint.pt`, step 18,799 |
 | Full-data 350M baseline | `models/scaled_full/best.pre_extend.pt`, step 38,000 (preserved; 19,825,920 parameters) |
@@ -21,9 +21,9 @@
 | Shipped ONNX package | `models/scaled_export` (11 files, 237,211,735 B; 800M continuation step 77,000; bundled in the installer) |
 | Shipped export encoder SHA-256 | `a3110fb27f91fc1e8ac616d3b29c072c6361b0153ebcc7d14d07f43e64614539` |
 | Previous scaled export | `models/scaled_export_step18000` (step 18,000; archived, not bundled) |
-| Exported package | `models/accel_export` (11 files, 120 MB; smallest pilot package, not the installer default; rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
-| Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the default package) |
-| Default export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
+| Exported package | `models/accel_export` (11 files, 120 MB; smallest pilot package, not the installer package; rebuilt from step 14,500; step-9,500 copy at `models/accel_export_step9500`) |
+| Final verification package | `models/accel_export_step15897` (11 files, 120 MB; step 15,897; not the installer package) |
+| Small pilot export encoder SHA-256 | `49a5b975af1681dc1a3ffb791669e312cff0701fc21d54a3a42828df2d99ffa2` |
 | Languages | English ↔ French, one shared model, target-language control token |
 | Training code version | repository state at 2026-11-14 |
 
@@ -409,7 +409,7 @@ checkpoint at `models/accel_export_step15897`.
 
 - The small run reached the 82M-token cap at 15,897 updates but not the
   20,000-update target; only 150,000 of 565,475 prepared pairs were sampled.
-- Greedy external BLEU is 11.03/11.28 for the default step-14,500 package, and
+- Greedy external BLEU is 11.03/11.28 for the 9.4M step-14,500 pilot package, and
   corpus chrF++ is 38.67/38.86. The final small checkpoint measured 12.11/12.17
   and 39.46/39.53; the scaled step-18,000 checkpoint measured 20.01/19.02 and
   47.04/46.70. Tuned beam improves these automatic scores further but remains
