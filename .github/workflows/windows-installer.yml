@@ -47,17 +47,19 @@ jobs:
           if ($version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$') {
             throw "Release tag '$env:RELEASE_TAG' must be vX.Y.Z (for example v0.1.0) so jpackage can use it as the Windows version."
           }
-          $raw = gh api "repos/$env:REPO/releases/tags/$env:RELEASE_TAG" 2>$null
-          if ($LASTEXITCODE -ne 0 -or -not $raw) {
-            throw "Release '$env:RELEASE_TAG' does not exist. Create a draft release with that tag and attach $env:MODEL_ASSET before running this workflow."
+          # The releases/tags endpoint only returns published releases; drafts
+          # have to be looked up through the release list, which gh does for us.
+          $json = gh release view $env:RELEASE_TAG --repo $env:REPO --json tagName,isDraft,targetCommitish 2>&1 | Out-String
+          if ($LASTEXITCODE -ne 0) {
+            throw "Release '$env:RELEASE_TAG' was not found. Create a draft release with that tag and attach $env:MODEL_ASSET before running this workflow. gh said: $($json.Trim())"
           }
-          $release = $raw | ConvertFrom-Json
-          if (-not $release.draft) {
+          $release = $json | ConvertFrom-Json
+          if (-not $release.isDraft) {
             throw "Release '$env:RELEASE_TAG' is already public. This workflow only builds into draft releases so the installer exists before users can download the release. Publish the release only after this workflow has attached the MSI."
           }
-          $commit = gh api "repos/$env:REPO/commits/$($release.target_commitish)" --jq ".sha" 2>$null
+          $commit = gh api "repos/$env:REPO/commits/$($release.targetCommitish)" --jq ".sha" 2>$null
           if ($LASTEXITCODE -ne 0 -or -not $commit) {
-            throw "Could not resolve target '$($release.target_commitish)' for release '$env:RELEASE_TAG'."
+            throw "Could not resolve target '$($release.targetCommitish)' for release '$env:RELEASE_TAG'."
           }
           "VERSION=$version" >> $env:GITHUB_ENV
           "COMMIT=$commit" >> $env:GITHUB_ENV
@@ -148,20 +150,20 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag }}
           REPO: ${{ github.repository }}
         run: |
-          $raw = gh api "repos/$env:REPO/releases/tags/$env:RELEASE_TAG" 2>$null
-          if ($LASTEXITCODE -ne 0 -or -not $raw) {
-            throw "Release '$env:RELEASE_TAG' disappeared while the installer was being built."
+          $json = gh release view $env:RELEASE_TAG --repo $env:REPO --json isDraft,targetCommitish 2>&1 | Out-String
+          if ($LASTEXITCODE -ne 0) {
+            throw "Release '$env:RELEASE_TAG' disappeared while the installer was being built. gh said: $($json.Trim())"
           }
-          $release = $raw | ConvertFrom-Json
-          if (-not $release.draft) {
+          $release = $json | ConvertFrom-Json
+          if (-not $release.isDraft) {
             throw "Release '$env:RELEASE_TAG' became public during the build, so the installer was not attached. Reopen a draft (or create a new one) and rerun this workflow before publishing."
           }
-          $current = gh api "repos/$env:REPO/commits/$($release.target_commitish)" --jq ".sha" 2>$null
+          $current = gh api "repos/$env:REPO/commits/$($release.targetCommitish)" --jq ".sha" 2>$null
           if ($LASTEXITCODE -ne 0 -or -not $current) {
-            throw "Could not re-resolve target '$($release.target_commitish)' before uploading the installer."
+            throw "Could not re-resolve target '$($release.targetCommitish)' before uploading the installer."
           }
           if ($current -ne $env:COMMIT) {
-            throw "Release target '$($release.target_commitish)' moved from $env:COMMIT to $current while the installer was being built. Rerun this workflow so the MSI matches the code that will be tagged when the release is published."
+            throw "Release target '$($release.targetCommitish)' moved from $env:COMMIT to $current while the installer was being built. Rerun this workflow so the MSI matches the code that will be tagged when the release is published."
           }
           $msi = "java/target/release/Transcend-Translator-Setup.msi"
           $checksum = "$msi.sha256"
